@@ -16,7 +16,7 @@
 #
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/onukromx/public_html/FoodOS
+    - export DEPLOYPATH=/home/onukromx/public_html/foodos
     - /bin/mkdir -p $DEPLOYPATH/assets/uploads/profiles $DEPLOYPATH/assets/uploads/restaurants $DEPLOYPATH/assets/uploads/menu
     - /bin/cp index.php $DEPLOYPATH/
     - /bin/cp .htaccess $DEPLOYPATH/
