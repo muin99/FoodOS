@@ -1,0 +1,13 @@
+# FoodOS — Apache (cPanel). Adjust RewriteBase if not in site root.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # If deployed to https://yourdomain.com/foodos/ use: RewriteBase /foodos/
+    RewriteBase /foodos/
+</IfModule>
+
+# Protect config and includes from direct HTTP access
+<IfModule mod_authz_core.c>
+    <FilesMatch "^(database\.php|app\.php)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>

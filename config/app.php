@@ -7,7 +7,8 @@
  */
 
 define('BASE_PATH', dirname(__DIR__));
-define('BASE_URL', '/FoodOS'); // adjust if project folder name differs on XAMPP
+// Local XAMPP: /FoodOS  |  cPanel subfolder: /foodos  |  domain root: ''
+define('BASE_URL', '/FoodOS');
 
 define('UPLOAD_PROFILE', BASE_PATH . '/assets/uploads/profiles/');
 define('UPLOAD_RESTAURANT', BASE_PATH . '/assets/uploads/restaurants/');
