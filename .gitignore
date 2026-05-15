@@ -1,0 +1,11 @@
+# Local config overrides (if any)
+config/database.local.php
+
+# Uploads
+assets/uploads/**/*
+!assets/uploads/.gitkeep
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
