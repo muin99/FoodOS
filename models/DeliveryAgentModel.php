@@ -9,5 +9,50 @@
 
 class DeliveryAgentModel
 {
-    // TODO: create, getByUserId, setOnline, updateEarnings, setApproval
+    function registration(
+$conn,
+$name,
+$phone,
+$vehicle,
+$password
+)
+
+{
+
+$sql=
+
+"INSERT INTO delivery_agents
+(name,phone,vehicle_type,password)
+
+VALUES
+('$name','$phone','$vehicle','$password')";
+
+return $conn->query($sql);
+
 }
+
+
+
+function login(
+$conn,
+$phone,
+$password
+)
+
+{
+
+$sql=
+
+"SELECT * FROM delivery_agents
+
+WHERE phone='$phone'
+
+AND password='$password'";
+
+return $conn->query($sql);
+
+}
+
+}
+
+?>

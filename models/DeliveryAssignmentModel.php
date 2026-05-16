@@ -8,5 +8,67 @@
 
 class DeliveryAssignmentModel
 {
-    // TODO: getAvailable, assign, decline, updateStatus, getActiveForAgent
+    function createAssignment(
+$conn,
+$order_id,
+$agent_id,
+$status
+)
+
+{
+
+$sql=
+
+"INSERT INTO delivery_assignments
+(order_id,agent_id,status)
+
+VALUES
+('$order_id','$agent_id','$status')";
+
+return $conn->query($sql);
+
 }
+
+
+
+function getAssignments(
+$conn,
+$agent_id
+)
+
+{
+
+$sql=
+
+"SELECT * FROM delivery_assignments
+
+WHERE agent_id='$agent_id'";
+
+return $conn->query($sql);
+
+}
+
+
+
+function updateAssignmentStatus(
+$conn,
+$id,
+$status
+)
+
+{
+
+$sql=
+
+"UPDATE delivery_assignments
+
+SET status='$status'
+
+WHERE id='$id'";
+
+return $conn->query($sql);
+
+}
+}
+
+?>
