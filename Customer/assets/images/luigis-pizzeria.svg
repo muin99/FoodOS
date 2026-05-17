@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Luigi's Pizzeria">
+  <rect width="640" height="360" fill="#fff3df"/>
+  <circle cx="320" cy="180" r="116" fill="#d58b31"/>
+  <circle cx="320" cy="180" r="94" fill="#f6d06f"/>
+  <g fill="#b51c00">
+    <circle cx="278" cy="154" r="13"/>
+    <circle cx="350" cy="144" r="13"/>
+    <circle cx="378" cy="202" r="13"/>
+    <circle cx="292" cy="218" r="13"/>
+  </g>
+  <g fill="#2e7d32">
+    <ellipse cx="324" cy="122" rx="8" ry="18" transform="rotate(30 324 122)"/>
+    <ellipse cx="248" cy="186" rx="8" ry="18" transform="rotate(-25 248 186)"/>
+    <ellipse cx="360" cy="238" rx="8" ry="18" transform="rotate(25 360 238)"/>
+  </g>
+</svg>

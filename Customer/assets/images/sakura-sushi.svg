@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Sakura Sushi">
+  <rect width="640" height="360" fill="#eef4f5"/>
+  <ellipse cx="320" cy="210" rx="220" ry="74" fill="#263238"/>
+  <g fill="#ffffff">
+    <rect x="175" y="145" width="92" height="54" rx="18"/>
+    <rect x="274" y="128" width="92" height="54" rx="18"/>
+    <rect x="373" y="150" width="92" height="54" rx="18"/>
+  </g>
+  <g fill="#e86f6a">
+    <rect x="189" y="137" width="64" height="22" rx="9"/>
+    <rect x="288" y="120" width="64" height="22" rx="9"/>
+    <rect x="387" y="142" width="64" height="22" rx="9"/>
+  </g>
+</svg>

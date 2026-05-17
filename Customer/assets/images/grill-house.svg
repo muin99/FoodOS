@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="The Grill House">
+  <rect width="640" height="360" fill="#eee8e1"/>
+  <ellipse cx="320" cy="220" rx="190" ry="64" fill="#ffffff"/>
+  <path d="M222 186c30-54 150-64 204-16 34 30 14 78-54 90-86 14-188-22-150-74z" fill="#7a2e21"/>
+  <path d="M260 184c34 20 88 26 134 12" fill="none" stroke="#d9a441" stroke-width="10" stroke-linecap="round"/>
+  <g stroke="#8a8a8a" stroke-width="8" stroke-linecap="round">
+    <path d="M210 270h220"/>
+    <path d="M230 288h180"/>
+  </g>
+</svg>

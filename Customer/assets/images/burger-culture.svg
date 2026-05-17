@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Burger Culture">
+  <rect width="640" height="360" fill="#f3e7dc"/>
+  <rect x="170" y="190" width="300" height="48" rx="12" fill="#784421"/>
+  <rect x="145" y="160" width="350" height="42" rx="10" fill="#f4c542"/>
+  <path d="M140 158c24-70 334-70 358 0z" fill="#d58b31"/>
+  <rect x="150" y="225" width="340" height="38" rx="18" fill="#d58b31"/>
+  <circle cx="254" cy="129" r="6" fill="#fff4cc"/>
+  <circle cx="322" cy="116" r="5" fill="#fff4cc"/>
+  <circle cx="390" cy="130" r="6" fill="#fff4cc"/>
+</svg>

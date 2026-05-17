@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Taco Fiesta">
+  <rect width="640" height="360" fill="#fff0d9"/>
+  <path d="M190 230c26-112 234-112 260 0z" fill="#e6ad42"/>
+  <path d="M228 220c34-58 150-58 184 0z" fill="#7a4e2d"/>
+  <g fill="#2e7d32">
+    <circle cx="272" cy="180" r="12"/>
+    <circle cx="316" cy="168" r="12"/>
+    <circle cx="370" cy="186" r="12"/>
+  </g>
+  <g fill="#e86f6a">
+    <rect x="254" y="200" width="24" height="18" rx="5"/>
+    <rect x="338" y="198" width="24" height="18" rx="5"/>
+  </g>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="The Green Bowl">
+  <rect width="640" height="360" fill="#edf5ec"/>
+  <ellipse cx="320" cy="215" rx="180" ry="72" fill="#ffffff"/>
+  <ellipse cx="320" cy="195" rx="146" ry="54" fill="#5fa85f"/>
+  <circle cx="260" cy="190" r="18" fill="#f4c542"/>
+  <circle cx="322" cy="176" r="16" fill="#b51c00"/>
+  <circle cx="376" cy="206" r="18" fill="#f4f1e6"/>
+  <rect x="288" y="216" width="86" height="14" rx="7" fill="#7a4e2d"/>
+</svg>

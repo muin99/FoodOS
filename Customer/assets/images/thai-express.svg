@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Thai Express">
+  <rect width="640" height="360" fill="#eef0df"/>
+  <ellipse cx="320" cy="225" rx="170" ry="70" fill="#ffffff"/>
+  <ellipse cx="320" cy="205" rx="142" ry="52" fill="#8fbf4d"/>
+  <circle cx="270" cy="194" r="16" fill="#f4c542"/>
+  <circle cx="340" cy="214" r="16" fill="#e86f6a"/>
+  <circle cx="384" cy="190" r="12" fill="#f4f1e6"/>
+  <path d="M210 150c70-38 154-38 224 0" fill="none" stroke="#5d7d34" stroke-width="16" stroke-linecap="round"/>
+</svg>

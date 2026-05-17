@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Brunch Club">
+  <rect width="640" height="360" fill="#f6efe8"/>
+  <ellipse cx="320" cy="238" rx="170" ry="48" fill="#ffffff"/>
+  <rect x="230" y="160" width="180" height="38" rx="19" fill="#d58b31"/>
+  <rect x="222" y="196" width="196" height="38" rx="19" fill="#d58b31"/>
+  <path d="M288 142h64v76h-64z" fill="#f4c542"/>
+  <path d="M260 142c40 32 82 32 122 0" fill="none" stroke="#9b5f24" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="255" cy="154" r="12" fill="#b51c00"/>
+  <circle cx="398" cy="178" r="12" fill="#b51c00"/>
+</svg>
