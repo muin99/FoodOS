@@ -394,6 +394,11 @@
             display: none;
         }
 
+        .success-message.error {
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
         .success-message.show {
             display: block;
         }
