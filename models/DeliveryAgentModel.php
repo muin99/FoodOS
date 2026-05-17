@@ -14,9 +14,6 @@ class DeliveryAgentModel
         $this->conn = $conn;
     }
 
-    // -------------------------------------------------------
-    // EMAIL EXISTS CHECK
-    // -------------------------------------------------------
     public function emailExists($email)
     {
         $stmt = $this->conn->prepare("SELECT id FROM users WHERE email = ?");
@@ -28,14 +25,12 @@ class DeliveryAgentModel
         return $count > 0;
     }
 
-    // -------------------------------------------------------
-    // REGISTRATION
-    // -------------------------------------------------------
+
     public function registration($name, $email, $phone, $vehicle, $password)
     {
         $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
-        // Step 1: users table e insert
+        
         $stmt = $this->conn->prepare(
             "INSERT INTO users (name, email, phone, password_hash, role, is_active)
              VALUES (?, ?, ?, ?, 'agent', 1)"
@@ -50,7 +45,7 @@ class DeliveryAgentModel
         $user_id = $this->conn->insert_id;
         $stmt->close();
 
-        // Step 2: delivery_agents table e insert
+        
         $stmt2 = $this->conn->prepare(
             "INSERT INTO delivery_agents (user_id, vehicle_type, is_online, total_earnings, is_approved)
              VALUES (?, ?, 0, 0.00, 0)"
@@ -62,9 +57,7 @@ class DeliveryAgentModel
         return $result;
     }
 
-    // -------------------------------------------------------
-    // LOGIN
-    // -------------------------------------------------------
+
     public function login($email, $password)
     {
         $stmt = $this->conn->prepare(
@@ -103,9 +96,7 @@ class DeliveryAgentModel
         return ["success" => true, "user" => $user];
     }
 
-    // -------------------------------------------------------
-    // GET AGENT BY USER ID
-    // -------------------------------------------------------
+
     public function getByUserId($user_id)
     {
         $stmt = $this->conn->prepare(
@@ -121,9 +112,7 @@ class DeliveryAgentModel
         return $row;
     }
 
-    // -------------------------------------------------------
-    // UPDATE PROFILE
-    // -------------------------------------------------------
+
     public function updateProfile($user_id, $name, $phone, $vehicle_type, $profile_pic = null)
     {
         if ($profile_pic != null) {
@@ -149,9 +138,7 @@ class DeliveryAgentModel
         return $result;
     }
 
-    // -------------------------------------------------------
-    // CHANGE PASSWORD
-    // -------------------------------------------------------
+
     public function changePassword($user_id, $new_password)
     {
         $hash = password_hash($new_password, PASSWORD_BCRYPT);
@@ -164,9 +151,7 @@ class DeliveryAgentModel
         return $result;
     }
 
-    // -------------------------------------------------------
-    // ONLINE / OFFLINE TOGGLE
-    // -------------------------------------------------------
+
     public function setOnline($user_id, $is_online)
     {
         $stmt = $this->conn->prepare(
@@ -178,9 +163,7 @@ class DeliveryAgentModel
         return $result;
     }
 
-    // -------------------------------------------------------
-    // EARNINGS SUMMARY
-    // -------------------------------------------------------
+
     public function getEarningsSummary($user_id)
     {
         $stmt = $this->conn->prepare(
@@ -218,9 +201,7 @@ class DeliveryAgentModel
         ];
     }
 
-    // -------------------------------------------------------
-    // PERFORMANCE STATS
-    // -------------------------------------------------------
+
     public function getPerformanceStats($user_id)
     {
         $stmt = $this->conn->prepare(

@@ -13,9 +13,7 @@ class DeliveryAssignmentModel
         $this->conn = $conn;
     }
 
-    // -------------------------------------------------------
-    // GET ALL AVAILABLE ORDERS (ready + unassigned)
-    // -------------------------------------------------------
+
     public function getAvailable()
     {
         $stmt = $this->conn->prepare(
@@ -37,12 +35,10 @@ class DeliveryAssignmentModel
         return $rows;
     }
 
-    // -------------------------------------------------------
-    // ACCEPT ASSIGNMENT
-    // -------------------------------------------------------
+
     public function accept($order_id, $agent_user_id)
     {
-        // Check order still available
+        
         $stmt = $this->conn->prepare(
             "SELECT id FROM orders WHERE id = ? AND status = 'ready' AND agent_id IS NULL"
         );
@@ -54,7 +50,7 @@ class DeliveryAssignmentModel
 
         if (!$exists) return false;
 
-        // Set agent on order
+        
         $s1 = $this->conn->prepare(
             "UPDATE orders SET agent_id = ? WHERE id = ?"
         );
@@ -62,7 +58,7 @@ class DeliveryAssignmentModel
         $s1->execute();
         $s1->close();
 
-        // Create assignment row
+
         $s2 = $this->conn->prepare(
             "INSERT INTO delivery_assignments (order_id, agent_id, assigned_at, status)
              VALUES (?, ?, NOW(), 'accepted')"
@@ -74,12 +70,10 @@ class DeliveryAssignmentModel
         return $result;
     }
 
-    // -------------------------------------------------------
-    // DECLINE ASSIGNMENT
-    // -------------------------------------------------------
+
     public function decline($assignment_id, $agent_user_id)
     {
-        // Get order_id
+        
         $stmt = $this->conn->prepare(
             "SELECT order_id FROM delivery_assignments WHERE id = ? AND agent_id = ?"
         );
@@ -92,7 +86,7 @@ class DeliveryAssignmentModel
 
         $order_id = $row["order_id"];
 
-        // Mark declined
+        
         $s1 = $this->conn->prepare(
             "UPDATE delivery_assignments SET status = 'declined' WHERE id = ?"
         );
@@ -100,7 +94,7 @@ class DeliveryAssignmentModel
         $s1->execute();
         $s1->close();
 
-        // Remove agent from order
+        
         $s2 = $this->conn->prepare(
             "UPDATE orders SET agent_id = NULL WHERE id = ?"
         );
@@ -111,15 +105,13 @@ class DeliveryAssignmentModel
         return true;
     }
 
-    // -------------------------------------------------------
-    // UPDATE DELIVERY STATUS (picked_up / on_the_way / delivered)
-    // -------------------------------------------------------
+
     public function updateStatus($assignment_id, $agent_user_id, $new_status)
     {
         $allowed = ["picked_up", "on_the_way", "delivered"];
         if (!in_array($new_status, $allowed)) return false;
 
-        // Get order_id
+        
         $stmt = $this->conn->prepare(
             "SELECT order_id FROM delivery_assignments WHERE id = ? AND agent_id = ?"
         );
@@ -169,7 +161,7 @@ class DeliveryAssignmentModel
             $s2->execute();
             $s2->close();
 
-            // Add delivery_fee to agent earnings
+            
             $s3 = $this->conn->prepare(
                 "UPDATE delivery_agents da
                  JOIN orders o ON o.id = ?
@@ -184,9 +176,7 @@ class DeliveryAssignmentModel
         return true;
     }
 
-    // -------------------------------------------------------
-    // GET ACTIVE DELIVERY FOR AGENT
-    // -------------------------------------------------------
+    
     public function getActiveForAgent($agent_user_id)
     {
         $stmt = $this->conn->prepare(
@@ -212,9 +202,7 @@ class DeliveryAssignmentModel
         return $row;
     }
 
-    // -------------------------------------------------------
-    // GET ORDER ITEMS
-    // -------------------------------------------------------
+
     public function getOrderItems($order_id)
     {
         $stmt = $this->conn->prepare(
@@ -230,9 +218,7 @@ class DeliveryAssignmentModel
         return $rows;
     }
 
-    // -------------------------------------------------------
-    // GET DELIVERY HISTORY
-    // -------------------------------------------------------
+
     public function getHistoryForAgent($agent_user_id)
     {
         $stmt = $this->conn->prepare(
@@ -255,9 +241,7 @@ class DeliveryAssignmentModel
         return $rows;
     }
 
-    // -------------------------------------------------------
-    // CHECK IF NEW ASSIGNMENT AVAILABLE (for AJAX polling)
-    // -------------------------------------------------------
+ 
     public function hasNewAvailable()
     {
         $stmt = $this->conn->prepare(
@@ -270,9 +254,7 @@ class DeliveryAssignmentModel
         return $cnt > 0;
     }
 
-    // -------------------------------------------------------
-    // GET LATEST AVAILABLE (for AJAX notification)
-    // -------------------------------------------------------
+
     public function getLatestAvailable()
     {
         $stmt = $this->conn->prepare(
