@@ -35,7 +35,7 @@
                         <h2>Welcome Back</h2>
                         <p>Log in to your account to continue</p>
                     </div>
-                    <form onsubmit="handleLogin(event, 'customer')">
+                    <form onsubmit="customerLogin(event)">
                         <div class="form-group">
                             <label for="customer-email">Email Address</label>
                             <div class="input-wrapper">
@@ -87,7 +87,7 @@
                         <h2>Manager Login</h2>
                         <p>Log in to manage your restaurant</p>
                     </div>
-                    <form onsubmit="handleLogin(event, 'manager')">
+                    <form action="#" method="post">
                         <div class="form-group">
                             <label for="manager-email">Email Address</label>
                             <div class="input-wrapper">
@@ -139,7 +139,7 @@
                         <h2>Delivery Agent Login</h2>
                         <p>Log in to your delivery account</p>
                     </div>
-                    <form onsubmit="handleLogin(event, 'agent')">
+                    <form action="#" method="post">
                         <div class="form-group">
                             <label for="agent-email">Email Address</label>
                             <div class="input-wrapper">
@@ -191,7 +191,7 @@
                         <h2>Admin Login</h2>
                         <p>Log in to the admin dashboard</p>
                     </div>
-                    <form onsubmit="handleLogin(event, 'admin')">
+                    <form action="#" method="post">
                         <div class="form-group">
                             <label for="admin-email">Admin Email</label>
                             <div class="input-wrapper">
@@ -227,7 +227,7 @@
                         <h2>Create Account</h2>
                         <p>Join BiteBuddy today</p>
                     </div>
-                    <form onsubmit="handleRegister(event)">
+                    <form onsubmit="customerRegister(event)">
                         <div class="section-title">Personal Information</div>
                         
                         <div class="form-row">
@@ -323,11 +323,15 @@
         function switchTab(tabName) {
             // Hide all panes
             const panes = document.querySelectorAll('.tab-pane');
-            panes.forEach(pane => pane.classList.remove('active'));
+            panes.forEach(function(pane) {
+                pane.classList.remove('active');
+            });
 
             // Remove active class from buttons
             const buttons = document.querySelectorAll('.tab-button');
-            buttons.forEach(btn => btn.classList.remove('active'));
+            buttons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
 
             // Show selected pane
             const selectedPane = document.getElementById(tabName);
@@ -336,7 +340,7 @@
             }
 
             // Find and activate the corresponding button
-            buttons.forEach(btn => {
+            buttons.forEach(function(btn) {
                 if (btn.dataset.tab === tabName) {
                     btn.classList.add('active');
                 }
@@ -357,34 +361,46 @@
             input.type = input.type === 'password' ? 'text' : 'password';
         }
 
-        // Handle login
-        function handleLogin(event, userType) {
+        function customerLogin(event) {
             event.preventDefault();
-            const form = event.target;
-            const email = form.querySelector('input[name="email"]').value;
-            const password = form.querySelector('input[name="password"]').value;
 
-            console.log(`${userType} login:`, { email, password });
-            showSuccess(`${userType.charAt(0).toUpperCase() + userType.slice(1)} login submitted!`);
-            // In production, send to backend
+            const formData = new FormData(event.target);
+
+            fetch('../Customer/controller/loginControl.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
+            });
         }
 
-        // Handle registration
-        function handleRegister(event) {
+        function customerRegister(event) {
             event.preventDefault();
-            const form = event.target;
-            const password = form.querySelector('input[name="password"]').value;
-            const confirmPassword = form.querySelector('input[name="confirm_password"]').value;
 
-            if (password !== confirmPassword) {
-                alert('Passwords do not match!');
-                return;
-            }
+            const formData = new FormData(event.target);
 
-            const formData = new FormData(form);
-            console.log('Registration data:', Object.fromEntries(formData));
-            showSuccess('Registration submitted! Check your email for confirmation.');
-            // In production, send to backend
+            fetch('../Customer/controller/loginRegistrationControl.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
+            });
         }
 
         // Update account type
@@ -397,28 +413,6 @@
             }
         }
 
-        // Show success message
-        function showSuccess(message) {
-            const successMsg = document.getElementById('successMessage');
-            successMsg.textContent = message;
-            successMsg.classList.add('show');
-            setTimeout(() => {
-                successMsg.classList.remove('show');
-            }, 3000);
-        }
-
-        // File upload handler
-        document.querySelectorAll('.file-upload').forEach(element => {
-            element.addEventListener('click', function() {
-                this.querySelector('input[type="file"]').click();
-            });
-
-            element.querySelector('input[type="file"]').addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    console.log('File selected:', e.target.files[0].name);
-                }
-            });
-        });
     </script>
 </body>
 </html>
