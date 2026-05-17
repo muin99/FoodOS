@@ -1,11 +1,13 @@
 <?php
-/**
- * ROLE 3 — DELIVERY AGENT: PerformanceController
- * PDF features:
- * - Performance stats: total deliveries, average delivery time, complaints against agent
- */
+// PerformanceController.php
+include "../../config.php";
+include "../../models/DeliveryAgentModel.php";
 
-require_once dirname(__DIR__, 3) . '/includes/bootstrap.php';
-requireRole(['agent']);
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "agent") {
+    header("location:../../views/agent/login.php");
+    exit();
+}
 
-// TODO: stats()
+$model = new DeliveryAgentModel($conn);
+$stats = $model->getPerformanceStats($_SESSION["user_id"]);
+?>

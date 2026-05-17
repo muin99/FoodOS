@@ -1,11 +1,13 @@
 <?php
-/**
- * ROLE 3 — DELIVERY AGENT: HistoryController
- * PDF features:
- * - Complete delivery history: date, restaurant, customer area, earning per delivery
- */
+// HistoryController.php
+include "../../config.php";
+include "../../models/DeliveryAssignmentModel.php";
 
-require_once dirname(__DIR__, 3) . '/includes/bootstrap.php';
-requireRole(['agent']);
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "agent") {
+    header("location:../../views/agent/login.php");
+    exit();
+}
 
-// TODO: index()
+$model   = new DeliveryAssignmentModel($conn);
+$history = $model->getHistoryForAgent($_SESSION["user_id"]);
+?>

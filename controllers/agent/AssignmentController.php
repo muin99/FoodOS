@@ -1,15 +1,37 @@
 <?php
-/**
- * ROLE 3 — DELIVERY AGENT: AssignmentController
- * PDF features:
- * - View available assignments: orders Ready for Pickup and unassigned
- * - Accept assignment: restaurant name/address, customer address, items, instructions
- * - Decline assignment (returns to available pool)
- * - Update status: Picked Up → On the Way → Delivered (reflected on customer tracking via AJAX)
- * - View current active delivery while in progress
- */
+// AssignmentController.php
+include "../../config.php";
+include "../../models/DeliveryAssignmentModel.php";
 
-require_once dirname(__DIR__, 3) . '/includes/bootstrap.php';
-requireRole(['agent']);
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "agent") {
+    header("location:../../views/agent/login.php");
+    exit();
+}
 
-// TODO: available(), accept(), decline(), updateStatus(), active()
+$model   = new DeliveryAssignmentModel($conn);
+$success = "";
+$error   = "";
+
+// -------------------------------------------------------
+// ACCEPT ASSIGNMENT
+// -------------------------------------------------------
+if (isset($_POST["accept"])) {
+    $order_id = (int)$_POST["order_id"];
+    $result   = $model->accept($order_id, $_SESSION["user_id"]);
+
+    if ($result) {
+        $success = "Assignment accepted! Head to the restaurant for pickup.";
+    } else {
+        $error = "This order is no longer available.";
+    }
+}
+
+// -------------------------------------------------------
+// DECLINE ASSIGNMENT
+// -------------------------------------------------------
+if (isset($_POST["decline"])) {
+    $assignment_id = (int)$_POST["assignment_id"];
+    $model->decline($assignment_id, $_SESSION["user_id"]);
+    $success = "Assignment declined.";
+}
+?>

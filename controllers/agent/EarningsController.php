@@ -1,11 +1,13 @@
 <?php
-/**
- * ROLE 3 — DELIVERY AGENT: EarningsController
- * PDF features:
- * - Earnings summary: today, this week, this month, all-time
- */
+// EarningsController.php
+include "../../config.php";
+include "../../models/DeliveryAgentModel.php";
 
-require_once dirname(__DIR__, 3) . '/includes/bootstrap.php';
-requireRole(['agent']);
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "agent") {
+    header("location:../../views/agent/login.php");
+    exit();
+}
 
-// TODO: summary()
+$model    = new DeliveryAgentModel($conn);
+$earnings = $model->getEarningsSummary($_SESSION["user_id"]);
+?>

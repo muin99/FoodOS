@@ -1,14 +1,33 @@
 <?php
-/**
- * ROLE 3 — DELIVERY AGENT: AJAX API (required)
- * PDF: Visual notification (AJAX-driven) when new assignment available while agent is online.
- * Poll while is_online=1; return JSON: { "has_new": true, "assignment": {...} }
- */
+// AJAX API: Poll for new available assignments
+// Returns JSON: { "has_new": true, "assignment": { order_id, restaurant_name, ... } }
 
-header('Content-Type: application/json');
-require_once dirname(__DIR__, 2) . '/includes/bootstrap.php';
-requireRole(['agent']);
+include "../../config.php";
+include "../../models/DeliveryAgentModel.php";
+include "../../models/DeliveryAssignmentModel.php";
 
-// TODO: check for ready unassigned orders near agent (or all available per PDF)
+header("Content-Type: application/json");
 
-echo json_encode(['has_new' => false]);
+if (!isset($_SESSION["user_id"]) || $_SESSION["role"] != "agent") {
+    echo json_encode(["has_new" => false]);
+    exit();
+}
+
+$agentModel = new DeliveryAgentModel($conn);
+$agent      = $agentModel->getByUserId($_SESSION["user_id"]);
+
+// Only notify if agent is online
+if (!$agent || !$agent["is_online"]) {
+    echo json_encode(["has_new" => false]);
+    exit();
+}
+
+$model      = new DeliveryAssignmentModel($conn);
+$has_new    = $model->hasNewAvailable();
+$assignment = $has_new ? $model->getLatestAvailable() : null;
+
+echo json_encode([
+    "has_new"    => $has_new,
+    "assignment" => $assignment
+]);
+?>
