@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#b51c00",
+                        "surface-container-low": "#eef5f7",
+                        "on-secondary-fixed-variant": "#00531a",
+                        "on-tertiary-fixed-variant": "#00504e",
+                        "surface-dim": "#d4dbdd",
+                        "surface-container": "#e8eff1",
+                        "secondary-container": "#80f98b",
+                        "outline": "#916f69",
+                        "on-secondary-container": "#007327",
+                        "on-primary-container": "#fffbff",
+                        "surface-tint": "#ba1c00",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#8e1300",
+                        "on-secondary-fixed": "#002106",
+                        "primary-fixed": "#ffdad3",
+                        "on-tertiary-container": "#f3fffd",
+                        "inverse-surface": "#2b3234",
+                        "on-surface": "#161d1f",
+                        "tertiary-fixed": "#5af9f3",
+                        "background": "#f4fafd",
+                        "surface-container-high": "#e2e9ec",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#e5bdb6",
+                        "surface-container-highest": "#dde4e6",
+                        "surface-bright": "#f4fafd",
+                        "surface": "#f4fafd",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#ffb4a5",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#00827f",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#2edcd7",
+                        "secondary-fixed-dim": "#66df75",
+                        "secondary": "#006e25",
+                        "on-surface-variant": "#5c403a",
+                        "on-error": "#ffffff",
+                        "primary-container": "#dc3214",
+                        "inverse-on-surface": "#ebf2f4",
+                        "surface-variant": "#dde4e6",
+                        "inverse-primary": "#ffb4a5",
+                        "secondary-fixed": "#83fc8e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#006764",
+                        "on-background": "#161d1f",
+                        "on-primary-fixed": "#3e0400",
+                        "on-tertiary-fixed": "#00201f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "gutter-mobile": "16px",
+                        "unit": "8px",
+                        "margin-mobile": "20px",
+                        "gutter-desktop": "24px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Geist"],
+                        "body-md": ["Geist"],
+                        "headline-sm": ["Geist"],
+                        "headline-lg": ["Geist"],
+                        "headline-lg-mobile": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "display-lg": ["Geist"],
+                        "headline-md": ["Geist"],
+                        "label-md": ["Geist"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-toggle:checked ~ .toggle-bg { background-color: #006e25; }
+        .status-toggle:checked ~ .toggle-dot { transform: translateX(100%); }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md sticky top-0 z-50 shadow-md">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto z-50">
+<div class="flex items-center gap-4">
+<span class="text-headline-md font-headline-md font-black text-primary dark:text-primary-fixed-dim">BiteBuddy</span>
+</div>
+<div class="flex items-center gap-6">
+<!-- Status Toggle -->
+<div class="flex items-center gap-3 bg-surface-container px-4 py-2 rounded-full border border-outline-variant">
+<span class="font-label-md text-label-md text-on-surface-variant">Status</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer status-toggle" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+<span class="font-label-md text-label-md text-secondary font-bold">Online</span>
+</div>
+<div class="hidden md:flex gap-4">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high rounded-full transition-colors">notifications</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
+<img alt="User avatar" data-alt="A professional headshot of a friendly delivery agent in a clean red uniform, smiling warmly at the camera. The background is a soft-focus urban street during the daytime with warm, natural sunlight. The image has a modern, high-clarity commercial photography style with vibrant colors and crisp details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-ktX_c-VQXbB0Y0_MO9wV1eTntoyCvWIZCryre8aghsja_UHYjRgVmO4Bdoary4Qd3TamqDvtNp2r9pYIX3LlxaWG2r5ovHkQDJ-QcNGnPU3MrQaZO-_thBd8Z29tfQtXMuY97-Al_Yo89uSDWtYhE0NMuX-Q58IGaIHTDuvXYlo4TU2iAAA9BEel-gTlL2qG5Sy6MPQx1VZFPsn4UAcCGV_x9KmDnXxkx8veh-TvYPcElyPVXkUpsQT4QgRFnuPcQsfnakop-EQ"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 md:flex md:gap-gutter-desktop">
+<!-- Sidebar Navigation (Desktop) -->
+<aside class="hidden md:flex flex-col w-64 gap-2 shrink-0">
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container rounded-xl px-4 py-3 active:scale-[0.98] transition-all shadow-md" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">location_on</span>
+<span class="font-label-md text-label-md">Addresses</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-4">
+<button class="flex items-center gap-3 text-error px-4 py-3 hover:bg-error-container/10 w-full text-left rounded-xl transition-all">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Sign Out</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-grow flex flex-col gap-8">
+<!-- Bento Earnings & Active Task Section -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter-desktop">
+<!-- Earnings Summary -->
+<div class="lg:col-span-1 bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30 flex flex-col justify-between overflow-hidden relative">
+<div class="relative z-10">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Today's Earnings</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mt-1">$142.50</h2>
+<div class="flex items-center gap-2 mt-4 text-secondary font-label-md">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span>+12% from yesterday</span>
+</div>
+</div>
+<div class="mt-6 flex justify-between items-end relative z-10">
+<div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Deliveries</p>
+<p class="font-headline-sm text-headline-sm">18</p>
+</div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Active Hours</p>
+<p class="font-headline-sm text-headline-sm">6.5h</p>
+</div>
+</div>
+<!-- Abstract Background Element -->
+<div class="absolute -right-4 -bottom-4 opacity-5">
+<span class="material-symbols-outlined text-[120px]">payments</span>
+</div>
+</div>
+<!-- Active Assignment Card -->
+<div class="lg:col-span-2 bg-primary text-on-primary rounded-xl overflow-hidden shadow-lg border border-primary-container flex flex-col md:flex-row">
+<div class="p-6 flex-grow">
+<div class="flex justify-between items-start mb-4">
+<span class="bg-white/20 px-3 py-1 rounded-full text-label-md font-label-md uppercase tracking-widest">Active Task</span>
+<span class="font-label-md text-label-md">Est. $14.20</span>
+</div>
+<div class="space-y-4">
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary-fixed">store</span>
+<div class="w-0.5 h-8 border-l-2 border-dashed border-white/30 my-1"></div>
+<span class="material-symbols-outlined text-tertiary-fixed">location_on</span>
+</div>
+<div class="flex flex-col justify-between py-1">
+<div>
+<p class="font-label-md text-label-md text-white/70">Pickup: Bella Italia</p>
+<p class="font-body-md text-body-md font-semibold">452 Market St, Suite 10</p>
+</div>
+<div class="mt-4">
+<p class="font-label-md text-label-md text-white/70">Drop-off: Sarah Jenkins</p>
+<p class="font-body-md text-body-md font-semibold">1200 Riverside Dr, Apt 4B</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 flex gap-3">
+<button class="flex-1 bg-white text-primary font-label-md py-3 rounded-lg hover:bg-surface-container-lowest transition-colors active:scale-95 duration-150">Start Navigation</button>
+<button class="bg-white/10 p-3 rounded-lg hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined">call</span>
+</button>
+</div>
+</div>
+<div class="md:w-1/3 min-h-[150px] relative bg-surface-container-high">
+<div class="absolute inset-0 grayscale opacity-50 contrast-125" data-alt="A stylized overhead map of a city street layout, with clean lines and a minimalist color palette of whites and grays. The map highlights a path between two points with a glowing red line. The style is modern and digital, reminiscent of high-end GPS navigation interfaces, set against a bright, professional background." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA5iMiG17mPyQuicA80O06Ks_6_YLTsqFIa5-Or-6Caz350udc4p9SdnumOJFh9oAFxjjdw4O7XbY4alhKCOnnzIgr8XJ6F_UxXhC-Kda-xfSqpUY8js9hQNk2oyVpAS5sBfNlShBBk2vRAWIf07tfGt-UF4mr-xJGz3CIBHWX3yvmtOStnWFdekYcuH812Zy4vW0kpqwB7XLH9l-LnWqF5k7FQezzY4B99UOkUpzr25vklgSrc59GKydZmO2O_sy3kcRs-VGjV4hg')"></div>
+<div class="absolute inset-0 flex items-center justify-center bg-primary/20">
+<span class="bg-primary px-4 py-2 rounded-full text-label-md shadow-lg border border-white/20">Live Map</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Available Assignments Section -->
+<section class="mt-4">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Ready for Pickup</h3>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+<span>Auto-refreshing</span>
+</div>
+</div>
+<!-- Assignment Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+<!-- Assignment Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/30 shadow-[0px_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.08)] transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden">
+<img alt="Restaurant logo" data-alt="A macro close-up of a fresh, delicious artisanal pizza with melted mozzarella, bright red tomato sauce, and green basil leaves. The lighting is warm and appetizing, highlighting the texture of the crispy crust. The image is professional food photography with a shallow depth of field and high clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAioUUKhpbGHqbN9yLdHyonRefxeMc247YxRyxGT5eUqkMAIDnCslauqwxnhwSCfpohYK7vJLaouxSHpd932Ie1LzjfW4QonhvUaYx7_nlm4ubOtCYBPwhMd9Jb9nH2RJDrZU5HklnEoGsLqfZi9Z4PH5htwS0RWJ2JX7dpNa49aAcCO9ep87kCPiYSZ5UtFhzI_yVmdF0CI4hXYZi-GzpN5a-tBDSl4Mk1ufpz6pzfEY45DyRPFRJ3ivKIjaWwvjTbZWhQU7w8vOE"/>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm">Pizza Heaven</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Fast Food • 0.8 miles away</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-secondary font-bold font-body-md">$8.50</p>
+<p class="text-label-md font-label-md text-on-surface-variant">+$2.00 Tip</p>
+</div>
+</div>
+<div class="bg-surface-container px-4 py-3 rounded-lg mb-5 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">timer</span>
+<span class="font-label-md text-label-md text-on-surface">Pickup in 4 mins</span>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-md py-3 rounded-lg group-hover:bg-primary/90 transition-colors active:scale-95 duration-150">Accept Task</button>
+</div>
+<!-- Assignment Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/30 shadow-[0px_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.08)] transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden">
+<img alt="Restaurant logo" data-alt="A vibrant and healthy poke bowl filled with fresh salmon cubes, bright edamame, sliced radish, and avocado, all beautifully arranged on a bed of rice. The colors are rich and saturated, set against a clean, modern white background with soft, natural morning light. High-end food commercial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG6idUn15tjBb_9NpA8X0hWOrW29mOBaEXIg1FT4uf1YxlQod0ggDhoYc-ExF8DwaY1Ki5Ktf6KHHdmXaO6m2y5BpYREwTLv2u0K-Gn2f9uXewEaG7FZj8UcLfahp32byQVy0B5hkT2ojxXxEtArFxBwNTmXb-bXhlj_RmzNrgYIOfO8TmpQEbuP9CVvyyuqaetRe3xqPS-2UpOpUn1Lwyyq9LqCKNHxlDUpr433-v-Vh8yt9nDtsaPKIwqIAAIuQjpx97iwvDMAE"/>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm">Green Garden</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Salads • 1.4 miles away</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-secondary font-bold font-body-md">$12.75</p>
+<p class="text-label-md font-label-md text-on-surface-variant">Ready now</p>
+</div>
+</div>
+<div class="bg-surface-container px-4 py-3 rounded-lg mb-5 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">shopping_bag</span>
+<span class="font-label-md text-label-md text-on-surface">3 Large Items</span>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-md py-3 rounded-lg group-hover:bg-primary/90 transition-colors active:scale-95 duration-150">Accept Task</button>
+</div>
+<!-- Assignment Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 border border-outline-variant/30 shadow-[0px_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.08)] transition-all group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden">
+<img alt="Restaurant logo" data-alt="A gourmet cheeseburger with a thick beef patty, melting cheddar cheese, crisp lettuce, and a toasted sesame seed bun. The burger is presented on a minimalist dark plate, illuminated by dramatic side-lighting that emphasizes the juicy texture and high-quality ingredients. Professional culinary photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuALb0WH1_qxBa-RvWK-Zt45CnaCVqyKFWBdwDhMavRXJI2ee8l0pfo_XhZoGS3yejA18Wz1ojlsuLx0e4rDAh28JqSV-5LptFz5oXasT9pqEheZvc53_RIbUEhfE4MkY2K8w6_ELsx0ZC7B4FF9wtzHZdfdE-c6rlTTcV_JSGe0VUwlSuIstzXRZSWlVQ_CQHvcYVkzm6lvmk-jEe6wAWyscKa2xwAFo9AQtL8fMTewInFavlWFRQhWDCjiEFjs3pUDFHcJf1caodc"/>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm">Burger Joint</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Burgers • 2.1 miles away</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-secondary font-bold font-body-md">$6.20</p>
+<p class="text-label-md font-label-md text-on-surface-variant">+$1.50 Tip</p>
+</div>
+</div>
+<div class="bg-surface-container px-4 py-3 rounded-lg mb-5 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[20px]">distance</span>
+<span class="font-label-md text-label-md text-on-surface">Long Distance (+Bonus)</span>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-md py-3 rounded-lg group-hover:bg-primary/90 transition-colors active:scale-95 duration-150">Accept Task</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Mobile Bottom Navigation -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface/80 backdrop-blur-md border-t border-outline-variant/30 px-margin-mobile py-3 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-md text-[10px]">Dashboard</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-[10px]">Orders</span>
+</a>
+<div class="relative -top-6">
+<button class="bg-primary text-on-primary w-14 h-14 rounded-full shadow-lg flex items-center justify-center border-4 border-background">
+<span class="material-symbols-outlined text-[28px]">electric_bolt</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">wallet</span>
+<span class="font-label-md text-[10px]">Earnings</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-[10px]">Profile</span>
+</a>
+</nav>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline mt-12 pb-24 md:pb-8">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-8 w-full max-w-container-max mx-auto">
+<div class="flex flex-col items-center md:items-start gap-2 mb-6 md:mb-0">
+<span class="text-headline-sm font-headline-sm font-extrabold text-primary dark:text-primary-fixed-dim">BiteBuddy</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 BiteBuddy. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary underline transition-all" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary underline transition-all" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary underline transition-all" href="#">Cookies</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary underline transition-all" href="#">Partner with Us</a>
+</div>
+</div>
+</footer>
+</body></html>
