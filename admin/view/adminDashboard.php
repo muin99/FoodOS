@@ -5,9 +5,24 @@ $activePage = 'dashboard';
 $basePath   = '../../';
 $extraCss   = ['../assets/css/adminDashboard.css'];
 
-// include __DIR__ . '/../../dirCommon/header.php';
-
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><?= $pageTitle ?></title>
+
+  <?php
+  if (!empty($extraCss)) {
+      foreach ($extraCss as $css) {
+          echo '<link rel="stylesheet" href="' . $css . '">';
+      }
+  }
+  ?>
+</head>
+<body>
 
 <div class="admin-wrap">
 
@@ -23,6 +38,7 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
         <h2>Platform Overview</h2>
         <p>Real-time health and operational metrics for BiteBuddy.</p>
       </div>
+
       <div class="search-box">
         <input type="text" placeholder="Search resources...">
       </div>
@@ -77,6 +93,7 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
               <th>Status</th>
             </tr>
           </thead>
+
           <tbody>
 
             <tr>
@@ -86,9 +103,12 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
                   <span>Sarah Jenkins</span>
                 </div>
               </td>
+
               <td>Customer</td>
               <td>42</td>
-              <td><span class="status active-status">Active</span></td>
+              <td>
+                <span class="status active-status">Active</span>
+              </td>
             </tr>
 
             <tr>
@@ -98,9 +118,12 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
                   <span>Mario's Pizza</span>
                 </div>
               </td>
+
               <td>Restaurant Admin</td>
               <td>1,204</td>
-              <td><span class="status active-status">Active</span></td>
+              <td>
+                <span class="status active-status">Active</span>
+              </td>
             </tr>
 
             <tr>
@@ -110,9 +133,12 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
                   <span>John Doe</span>
                 </div>
               </td>
+
               <td>Delivery Agent</td>
               <td>89</td>
-              <td><span class="status suspended">Suspended</span></td>
+              <td>
+                <span class="status suspended">Suspended</span>
+              </td>
             </tr>
 
           </tbody>
@@ -125,6 +151,7 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
 
         <!-- PENDING APPROVALS -->
         <div class="box">
+
           <h3>Pending Approvals</h3>
 
           <div class="approval-item">
@@ -132,6 +159,7 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
               <strong>Burger Haven</strong>
               <p>Restaurant Request</p>
             </div>
+
             <div class="btn-group">
               <button class="approve-btn">&#10004;</button>
               <button class="reject-btn">&#10006;</button>
@@ -143,28 +171,39 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
               <strong>David Wilson</strong>
               <p>Agent Application</p>
             </div>
+
             <div class="btn-group">
               <button class="approve-btn">&#10004;</button>
               <button class="reject-btn">&#10006;</button>
             </div>
           </div>
+
         </div>
 
         <!-- GLOBAL SETTINGS -->
         <div class="box settings">
+
           <h3>Global Settings</h3>
 
           <label for="commission">Commission Rate (%)</label>
           <input id="commission" type="number" value="15">
 
           <label for="delivery-fee">Base Delivery Fee ($)</label>
-          <input id="delivery-fee" type="number" value="2.99" step="0.01">
+          <input
+            id="delivery-fee"
+            type="number"
+            value="2.99"
+            step="0.01"
+          >
 
-          <button class="save-btn">Save Configurations</button>
+          <button class="save-btn">
+            Save Configurations
+          </button>
+
         </div>
 
       </div>
-      <!-- right-panel -->
+      <!-- /.right-panel -->
 
     </div>
     <!-- /.content -->
@@ -175,4 +214,5 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
 </div>
 <!-- /.admin-wrap -->
 
-<?php include __DIR__ . '/../../dirCommon/footer.php'; ?>
+</body>
+</html>
