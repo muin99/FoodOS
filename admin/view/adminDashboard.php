@@ -5,7 +5,7 @@ $activePage = 'dashboard';
 $basePath   = '../../';
 $extraCss   = ['../assets/css/adminDashboard.css'];
 
-include __DIR__ . '/../../dirCommon/header.php';
+// include __DIR__ . '/../../dirCommon/header.php';
 
 ?>
 
