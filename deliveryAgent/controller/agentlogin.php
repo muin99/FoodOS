@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../../dirCommon/dbconnect.php';
-include '../model/loginRegistration.php';
+include '../model/deliveryagentmodel.php';
 
 $email    = $_POST['email']    ?? '';
 $password = $_POST['password'] ?? '';
@@ -32,5 +32,5 @@ $_SESSION['agent_id']   = $user['agent_id'];
 
 echo json_encode([
     'success'  => true,
-    'redirect' => '../Agent/view/agentDashboard.php'
+    'redirect' => '../deliveryAgent/view/dashboard.html'
 ]);

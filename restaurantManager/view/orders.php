@@ -11,7 +11,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="../../assets/css/manager-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/manager-dashboard.css">
 </head>
 
 <body>
@@ -64,7 +64,7 @@
         <a href="#" class="logout">Logout</a>
 
         <div class="promo">
-            <img src="../../assets/images/burger.png" alt="Burger">
+            <img src="../assets/images/burger.png" alt="Burger">
             <h3>Good Food</h3>
             <p>Good Mood</p>
         </div>

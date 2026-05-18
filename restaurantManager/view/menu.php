@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <link rel="stylesheet" href="../../assets/css/manager-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/manager-dashboard.css">
 </head>
 
 <body>
@@ -63,7 +63,7 @@
         <a href="#" class="logout">Logout</a>
 
         <div class="promo">
-            <img src="../../assets/images/burger.png" alt="Burger">
+            <img src="../assets/images/burger.png" alt="Burger">
             <h3>Good Food</h3>
             <p>Good Mood</p>
         </div>
@@ -176,7 +176,7 @@
                                 <tr data-item-id="">
                                     <td>
                                         <div class="item-info">
-                                            <img src="../../assets/images/burger.png" alt="Menu Item">
+                                            <img src="../assets/images/burger.png" alt="Menu Item">
                                             <div>
                                                 <h4 id="firstMenuItemName">No item loaded</h4>
                                                 <p id="firstMenuItemDescription">Menu items will appear here after JS/AJAX.</p>

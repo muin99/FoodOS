@@ -1,7 +1,7 @@
 <?php
 session_start();
 include '../../dirCommon/dbconnect.php';
-include '../model/loginRegistration.php';
+include '../model/deliveryagentmodel.php';
 
 $firstName    = $_POST['firstname']       ?? '';
 $lastName     = $_POST['lastname']        ?? '';
@@ -53,5 +53,5 @@ if ($result == false) {
 echo json_encode([
     'success' => true,
     'message' => 'Registration successful! Your account is pending admin approval. You will be notified once approved.',
-    'redirect' => '../view/login.php'
+    'redirect' => '../../dirCommon/login.html'
 ]);
