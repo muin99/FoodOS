@@ -28,7 +28,7 @@ if ($admin == false) {
     exit;
 }
 
-if (!password_verify($password, $admin['password'])) {
+if (!password_verify($password, $admin['password_hash'])) {
     echo json_encode([
         'success' => false,
         'message' => 'Wrong password.'
@@ -51,5 +51,5 @@ $_SESSION['admin_role']  = $admin['role'];
 
 echo json_encode([
     'success' => true,
-    'redirect' => '../views/adminDashboard.php'
+    'redirect' => '../../FoodOS/admin/view/adminDashboard.php'
 ]);
