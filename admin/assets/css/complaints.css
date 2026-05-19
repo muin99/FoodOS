@@ -1,0 +1,48 @@
+.table-section {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #2d6cdf;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.status.pending { background: orange; color: white; padding: 5px 10px; border-radius: 20px; }
+.status.resolved { background: green; color: white; padding: 5px 10px; border-radius: 20px; }
+
+.complaint-box {
+    margin-top: 20px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn.view { background: #2d6cdf; color: white; }
+.btn.success { background: green; color: white; }

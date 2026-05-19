@@ -28,17 +28,14 @@ if (!isset($orders)) {
 
 <div class="admin-wrap">
 
-    <!-- SIDEBAR -->
     <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <div class="main">
 
-        <!-- TOP BAR -->
         <div class="topbar">
             <h2>📦 All Orders</h2>
         </div>
 
-        <!-- FILTER PANEL -->
         <form class="filter-box" method="GET">
 
             <select name="status">
@@ -59,8 +56,6 @@ if (!isset($orders)) {
             <button type="submit">Filter</button>
 
         </form>
-
-        <!-- TABLE -->
         <div class="table-section">
 
             <table class="orders-table">
