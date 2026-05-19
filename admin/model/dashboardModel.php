@@ -9,7 +9,8 @@ function getTotalUsers($conn)
 
 function getActiveRestaurants($conn)
 {
-    $sql = "SELECT COUNT(*) as total FROM restaurants WHERE is_approved = 1 AND is_open = 1";
+    // FIXED: is_approved = 2 means Approved (was wrongly set to 1 = Pending)
+    $sql = "SELECT COUNT(*) as total FROM restaurants WHERE is_approved = 2 AND is_open = 1";
     $res = mysqli_query($conn, $sql);
     return mysqli_fetch_assoc($res)['total'];
 }

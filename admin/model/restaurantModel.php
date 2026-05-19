@@ -22,27 +22,26 @@ function getAllRestaurants($conn)
 
     return $data;
 }
-
 function approveRestaurant($conn, $id)
 {
-    $sql = "UPDATE restaurants SET is_approved = 1 WHERE id = $id";
-    return mysqli_query($conn, $sql);
+    $sql = "UPDATE restaurants SET is_approved = 2 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
 }
 
-function rejectRestaurant($conn, $id)
+function blockRestaurant($conn, $id)
 {
-    $sql = "DELETE FROM restaurants WHERE id = $id";
-    return mysqli_query($conn, $sql);
+    $sql = "UPDATE restaurants SET is_approved = 3 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
 }
 
-function suspendRestaurant($conn, $id)
+function pendingRestaurant($conn, $id)
 {
-    $sql = "UPDATE restaurants SET is_open = 0 WHERE id = $id";
-    return mysqli_query($conn, $sql);
-}
-
-function reactivateRestaurant($conn, $id)
-{
-    $sql = "UPDATE restaurants SET is_open = 1 WHERE id = $id";
-    return mysqli_query($conn, $sql);
+    $sql = "UPDATE restaurants SET is_approved = 1 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    return $stmt->execute();
 }
