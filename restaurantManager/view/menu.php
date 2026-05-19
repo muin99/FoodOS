@@ -163,6 +163,11 @@ while($row = mysqli_fetch_assoc($result)){
                         Add Item
                     </button>
 
+                    <button type="button" class="outline-btn" id="addCategoryBtn" data-action="add-category">
+                        <i class="fa-solid fa-folder-plus"></i>
+                        Add Category
+                    </button>
+
                 </div>
 
             </div>
@@ -172,6 +177,23 @@ while($row = mysqli_fetch_assoc($result)){
                     Categories
                 </button>
             </div>
+
+            <section class="manager-form-panel" id="addCategoryPanel" style="display: none;">
+                <h2>Add Category</h2>
+                <form id="addCategoryForm">
+                    <input type="hidden" name="action" value="add_category">
+                    <label>
+                        <span>Name</span>
+                        <input type="text" name="name" required>
+                    </label>
+                    <label>
+                        <span>Display Order</span>
+                        <input type="number" name="display_order" min="0" value="0">
+                    </label>
+                    <button type="submit" class="solid-btn">Save Category</button>
+                    <p id="categoryMessage"></p>
+                </form>
+            </section>
 
             <section class="manager-form-panel" id="addItemPanel" style="display: none;">
                 <h2>Add Menu Item</h2>
@@ -217,12 +239,18 @@ while($row = mysqli_fetch_assoc($result)){
                 <div class="category-box" id="categoryList">
 
                     <?php foreach ($categories as $category): ?>
-                        <a href="menu.php?category_id=<?= (int)$category['id'] ?>" class="category-row <?= (int)$selectedCategoryId === (int)$category['id'] ? 'active-category' : '' ?>" data-category-name="<?= htmlspecialchars(strtolower($category['name'])) ?>">
-                            <span class="category-icon">☰</span>
-                            <strong><?= htmlspecialchars($category['name']) ?></strong>
-                            <small><?= (int)($categoryCounts[$category['id']] ?? 0) ?> Items</small>
-                            <i class="fa-solid fa-angle-right"></i>
-                        </a>
+                        <div class="category-row-wrap">
+                            <a href="menu.php?category_id=<?= (int)$category['id'] ?>" class="category-row <?= (int)$selectedCategoryId === (int)$category['id'] ? 'active-category' : '' ?>" data-category-name="<?= htmlspecialchars(strtolower($category['name'])) ?>">
+                                <span class="category-icon">☰</span>
+                                <strong><?= htmlspecialchars($category['name']) ?></strong>
+                                <small><?= (int)($categoryCounts[$category['id']] ?? 0) ?> Items</small>
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                            <div class="category-actions">
+                                <button type="button" class="edit-category-btn" data-category-id="<?= (int)$category['id'] ?>" data-name="<?= htmlspecialchars($category['name']) ?>" data-display-order="<?= (int)$category['display_order'] ?>">Edit</button>
+                                <button type="button" class="delete-category-btn" data-category-id="<?= (int)$category['id'] ?>" data-item-count="<?= (int)($categoryCounts[$category['id']] ?? 0) ?>">Delete</button>
+                            </div>
+                        </div>
                     <?php endforeach; ?>
 
                     <?php if (count($categories) === 0): ?>
@@ -322,13 +350,23 @@ function confirmLogout(event) {
 
 <script>
 const addItemBtn = document.getElementById('addItemBtn');
+const addCategoryBtn = document.getElementById('addCategoryBtn');
 const addItemPanel = document.getElementById('addItemPanel');
+const addCategoryPanel = document.getElementById('addCategoryPanel');
 const addItemForm = document.getElementById('addItemForm');
+const addCategoryForm = document.getElementById('addCategoryForm');
 const menuMessage = document.getElementById('menuMessage');
+const categoryMessage = document.getElementById('categoryMessage');
 
 if (addItemBtn && addItemPanel) {
     addItemBtn.addEventListener('click', function() {
         addItemPanel.style.display = addItemPanel.style.display === 'none' ? 'block' : 'none';
+    });
+}
+
+if (addCategoryBtn && addCategoryPanel) {
+    addCategoryBtn.addEventListener('click', function() {
+        addCategoryPanel.style.display = addCategoryPanel.style.display === 'none' ? 'block' : 'none';
     });
 }
 
@@ -352,6 +390,61 @@ if (addItemForm) {
         });
     });
 }
+
+if (addCategoryForm) {
+    addCategoryForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        submitMenuAction(new FormData(addCategoryForm)).then(function(data) {
+            categoryMessage.textContent = data.message || '';
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+}
+
+document.querySelectorAll('.edit-category-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        const name = prompt('Category name', button.dataset.name || '');
+        if (name === null) return;
+        const displayOrder = prompt('Display order', button.dataset.displayOrder || '0');
+        if (displayOrder === null) return;
+
+        const formData = new FormData();
+        formData.append('action', 'update_category');
+        formData.append('id', button.dataset.categoryId);
+        formData.append('name', name);
+        formData.append('display_order', displayOrder);
+
+        submitMenuAction(formData).then(function(data) {
+            alert(data.message || 'Category updated.');
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.delete-category-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        if (Number(button.dataset.itemCount || 0) > 0) {
+            alert('Move or delete items before deleting this category.');
+            return;
+        }
+
+        if (!confirm('Delete this category?')) return;
+        const formData = new FormData();
+        formData.append('action', 'delete_category');
+        formData.append('id', button.dataset.categoryId);
+
+        submitMenuAction(formData).then(function(data) {
+            alert(data.message || 'Category deleted.');
+            if (data.success) {
+                location.href = 'menu.php';
+            }
+        });
+    });
+});
 
 document.querySelectorAll('.edit-item-btn').forEach(function(button) {
     button.addEventListener('click', function() {

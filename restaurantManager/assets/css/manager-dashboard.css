@@ -1271,6 +1271,36 @@ body{
     width: auto;
 }
 
+.category-row-wrap {
+    border-bottom: 1px solid #f0e6df;
+}
+
+.category-row-wrap .category-row {
+    border-bottom: 0;
+}
+
+.category-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 18px 12px 62px;
+}
+
+.category-actions button {
+    border: 1px solid #e0d3ca;
+    border-radius: 6px;
+    background: #fff;
+    color: #4b3029;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 10px;
+}
+
+.category-actions button:hover {
+    border-color: #c21807;
+    color: #c21807;
+}
+
 /* ---------- Menu Tabs ---------- */
 .menu-tabs {
     display: flex;

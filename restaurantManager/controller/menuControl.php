@@ -7,6 +7,111 @@ $action = $_POST['action'] ?? '';
 $id = (int)($_POST['id'] ?? 0);
 $managerId = (int)$_SESSION['user_id'];
 
+function getManagerRestaurantId($conn, $managerId)
+{
+    $stmt = mysqli_prepare($conn, "SELECT id FROM restaurants WHERE manager_id = ? ORDER BY id ASC LIMIT 1");
+    mysqli_stmt_bind_param($stmt, "i", $managerId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $restaurant = mysqli_fetch_assoc($result);
+
+    return $restaurant ? (int)$restaurant['id'] : 0;
+}
+
+if ($action == 'add_category') {
+    $restaurantId = getManagerRestaurantId($conn, $managerId);
+    $name = trim($_POST['name'] ?? '');
+    $displayOrder = (int)($_POST['display_order'] ?? 0);
+
+    if ($restaurantId <= 0 || $name == '') {
+        echo json_encode(['success' => false, 'message' => 'Please enter a category name.']);
+        exit;
+    }
+
+    if ($displayOrder <= 0) {
+        $orderResult = mysqli_query($conn, "SELECT COALESCE(MAX(display_order), 0) + 1 AS next_order FROM menu_categories WHERE restaurant_id = $restaurantId");
+        $displayOrder = (int)(mysqli_fetch_assoc($orderResult)['next_order'] ?? 1);
+    }
+
+    $stmt = mysqli_prepare($conn, "INSERT INTO menu_categories (restaurant_id, name, display_order) VALUES (?, ?, ?)");
+    mysqli_stmt_bind_param($stmt, "isi", $restaurantId, $name, $displayOrder);
+    $success = mysqli_stmt_execute($stmt);
+
+    echo json_encode([
+        'success' => $success,
+        'message' => $success ? 'Category added successfully.' : 'Category could not be added. It may already exist.'
+    ]);
+    exit;
+}
+
+if ($action == 'update_category') {
+    $name = trim($_POST['name'] ?? '');
+    $displayOrder = (int)($_POST['display_order'] ?? 0);
+
+    if ($id <= 0 || $name == '') {
+        echo json_encode(['success' => false, 'message' => 'Invalid category update.']);
+        exit;
+    }
+
+    $stmt = mysqli_prepare($conn, "
+        UPDATE menu_categories c
+        INNER JOIN restaurants r ON r.id = c.restaurant_id
+        SET c.name = ?, c.display_order = ?
+        WHERE c.id = ? AND r.manager_id = ?
+    ");
+    mysqli_stmt_bind_param($stmt, "siii", $name, $displayOrder, $id, $managerId);
+    $success = mysqli_stmt_execute($stmt) && mysqli_stmt_affected_rows($stmt) > 0;
+
+    echo json_encode([
+        'success' => $success,
+        'message' => $success ? 'Category updated successfully.' : 'Category not found for this restaurant.'
+    ]);
+    exit;
+}
+
+if ($action == 'delete_category') {
+    if ($id <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid category.']);
+        exit;
+    }
+
+    $countStmt = mysqli_prepare($conn, "
+        SELECT COUNT(mi.id) AS total
+        FROM menu_categories c
+        INNER JOIN restaurants r ON r.id = c.restaurant_id
+        LEFT JOIN menu_items mi ON mi.category_id = c.id
+        WHERE c.id = ? AND r.manager_id = ?
+    ");
+    mysqli_stmt_bind_param($countStmt, "ii", $id, $managerId);
+    mysqli_stmt_execute($countStmt);
+    $countResult = mysqli_stmt_get_result($countStmt);
+    $countRow = mysqli_fetch_assoc($countResult);
+
+    if ($countRow === null) {
+        echo json_encode(['success' => false, 'message' => 'Category not found for this restaurant.']);
+        exit;
+    }
+
+    if ((int)$countRow['total'] > 0) {
+        echo json_encode(['success' => false, 'message' => 'Move or delete items before deleting this category.']);
+        exit;
+    }
+
+    $stmt = mysqli_prepare($conn, "
+        DELETE c FROM menu_categories c
+        INNER JOIN restaurants r ON r.id = c.restaurant_id
+        WHERE c.id = ? AND r.manager_id = ?
+    ");
+    mysqli_stmt_bind_param($stmt, "ii", $id, $managerId);
+    $success = mysqli_stmt_execute($stmt) && mysqli_stmt_affected_rows($stmt) > 0;
+
+    echo json_encode([
+        'success' => $success,
+        'message' => $success ? 'Category deleted successfully.' : 'Category not found for this restaurant.'
+    ]);
+    exit;
+}
+
 if ($action == 'add') {
     $categoryId = (int)($_POST['category_id'] ?? 0);
     $name = trim($_POST['name'] ?? '');
