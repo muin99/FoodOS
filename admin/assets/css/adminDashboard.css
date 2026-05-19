@@ -133,14 +133,12 @@ body {
   background: #f1f1f1;
 }
 
-/* ===================== MAIN AREA ===================== */
 .main {
   margin-left: 260px;
   padding: 40px;
   flex: 1;
 }
 
-/* ===================== TOPBAR ===================== */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -172,7 +170,6 @@ body {
   border-color: #b51c00;
 }
 
-/* ===================== STAT CARDS ===================== */
 .cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -210,14 +207,12 @@ body {
   font-weight: bold;
 }
 
-/* ===================== CONTENT GRID ===================== */
 .content {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 30px;
 }
 
-/* ===================== TABLE SECTION ===================== */
 .table-section {
   background: #fff;
   border-radius: 15px;
@@ -304,7 +299,6 @@ table td {
   color: red;
 }
 
-/* ===================== RIGHT PANEL ===================== */
 .right-panel {
   display: flex;
   flex-direction: column;
@@ -425,7 +419,6 @@ table td {
   background: #444;
 }
 
-/* ===================== RESPONSIVE ===================== */
 @media (max-width: 1100px) {
   .cards {
     grid-template-columns: repeat(2, 1fr);
