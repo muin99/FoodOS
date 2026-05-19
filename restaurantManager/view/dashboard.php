@@ -2,7 +2,18 @@
 session_start();
 include '../../dirCommon/dbconnect.php';
 
-$restaurantId = 7; // replace with session value if needed
+$managerId = $_SESSION['user_id'] ?? 0;
+$restaurantId = 0;
+
+$stmt = mysqli_prepare($conn, "SELECT id FROM restaurants WHERE manager_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, "i", $managerId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$restaurant = mysqli_fetch_assoc($result);
+
+if ($restaurant) {
+    $restaurantId = (int)$restaurant['id'];
+}
 
 // Total Orders
 $sql = "SELECT COUNT(*) as total_orders FROM orders WHERE restaurant_id = ?";
@@ -443,7 +454,7 @@ function confirmLogout(event) {
     let logoutConfirm = confirm("Are you sure you want to logout?");
 
     if (logoutConfirm) {
-        window.location.href = "../../dirCommon/login.html";
+        window.location.href = "../controller/logout.php";
     }
 }
 </script>

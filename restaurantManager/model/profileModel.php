@@ -29,7 +29,7 @@ function updateRestaurantProfile(
 
     mysqli_stmt_bind_param(
         $stmt,
-        'sssssiii',
+        'sssssdii',
         $name,
         $description,
         $cuisineType,

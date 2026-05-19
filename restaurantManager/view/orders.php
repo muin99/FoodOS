@@ -3,18 +3,31 @@
 session_start();
 include '../../dirCommon/dbconnect.php'; // make sure this contains your $conn mysqli connection
 
+$managerId = $_SESSION['user_id'] ?? 0;
+$restaurantId = 0;
+
+$stmt = mysqli_prepare($conn, "SELECT id FROM restaurants WHERE manager_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, "i", $managerId);
+mysqli_stmt_execute($stmt);
+$restaurantResult = mysqli_stmt_get_result($stmt);
+$restaurant = mysqli_fetch_assoc($restaurantResult);
+
+if ($restaurant) {
+    $restaurantId = (int)$restaurant['id'];
+}
+
 // Fetch total orders, preparing, completed
-$totalOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = 7");
+$totalOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = $restaurantId");
 $totalOrders = $totalOrdersQuery->fetch_assoc()['total'] ?? 0;
 
-$preparingOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = 7 AND status='preparing'");
+$preparingOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = $restaurantId AND status='preparing'");
 $preparingOrders = $preparingOrdersQuery->fetch_assoc()['total'] ?? 0;
 
-$completedOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = 7 AND status='delivered'");
+$completedOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = $restaurantId AND status='delivered'");
 $completedOrders = $completedOrdersQuery->fetch_assoc()['total'] ?? 0;
 
 // Fetch pending orders
-$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = 7 AND status='pending' ORDER BY id DESC");
+$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId AND status='pending' ORDER BY id DESC");
 $pendingOrders = [];
 if($pendingOrdersResult){
     while($row = $pendingOrdersResult->fetch_assoc()){
@@ -23,7 +36,7 @@ if($pendingOrdersResult){
 }
 
 // Fetch full order history
-$historyResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = 7 ORDER BY id DESC");
+$historyResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId ORDER BY id DESC");
 $orderHistory = [];
 if($historyResult){
     while($row = $historyResult->fetch_assoc()){
@@ -31,7 +44,7 @@ if($historyResult){
     }
 }
 
-$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = 7 AND status='pending'");
+$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId AND status='pending'");
 $pendingOrders = [];
 if($pendingOrdersResult){
     while($row = $pendingOrdersResult->fetch_assoc()){
@@ -39,7 +52,7 @@ if($pendingOrdersResult){
     }
 }
 
-$orderQuery = $conn->query("SELECT * FROM orders ORDER BY id DESC");
+$orderQuery = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId ORDER BY id DESC");
 $allOrders = $orderQuery->fetch_all(MYSQLI_ASSOC);
 
 $fakePendingOrders = [
@@ -520,7 +533,7 @@ function confirmLogout(event) {
     let logoutConfirm = confirm("Are you sure you want to logout?");
 
     if (logoutConfirm) {
-        window.location.href = "../../dirCommon/login.html";
+        window.location.href = "../controller/logout.php";
     }
 }
 </script>

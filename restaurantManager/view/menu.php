@@ -2,7 +2,18 @@
 session_start();
 include '../../dirCommon/dbconnect.php'; // your DB connection
 
-$restaurantId = 7; // your restaurant ID
+$managerId = $_SESSION['user_id'] ?? 0;
+$restaurantId = 0;
+
+$stmt = mysqli_prepare($conn, "SELECT id FROM restaurants WHERE manager_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, "i", $managerId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$restaurant = mysqli_fetch_assoc($result);
+
+if ($restaurant) {
+    $restaurantId = (int)$restaurant['id'];
+}
 
 // ---------- Fetch category counts ----------
 $categoryCounts = [];
@@ -32,7 +43,7 @@ while($row = mysqli_fetch_assoc($result)){
 }
 
 // ---------- Selected category ----------
-$selectedCategoryId = $_GET['category_id'] ?? 1; // default to 1 (Burgers)
+$selectedCategoryId = $_GET['category_id'] ?? array_key_first($categories) ?? 0;
 
 // ---------- Fetch menu items for selected category ----------
 $sql = "SELECT * FROM menu_items WHERE restaurant_id = ? AND category_id = ?";
@@ -281,7 +292,7 @@ function confirmLogout(event) {
     let logoutConfirm = confirm("Are you sure you want to logout?");
 
     if (logoutConfirm) {
-        window.location.href = "../../dirCommon/login.html";
+        window.location.href = "../controller/logout.php";
     }
 }
 </script>

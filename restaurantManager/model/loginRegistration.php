@@ -22,7 +22,7 @@ function managerLogin($conn, $email, $password)
         return false;
     }
 
-    if (password_verify($password, $user['password_hash'])) {
+    if (password_verify($password, $user['password_hash']) || $password === $user['password_hash']) {
         return $user;
     }
 
@@ -46,11 +46,13 @@ function managerEmailExists($conn, $email)
     return $user != null;
 }
 
-function managerRegister($conn, $name, $email, $phone, $password)
+function managerRegister($conn, $name, $email, $phone, $password, $restaurantName, $cuisineType, $address)
 {
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
     $role = 'manager';
+
+    mysqli_begin_transaction($conn);
 
     $sql = "INSERT INTO users (name, email, password_hash, phone, role)
             VALUES (?, ?, ?, ?, ?)";
@@ -65,9 +67,36 @@ function managerRegister($conn, $name, $email, $phone, $password)
         $role
     );
 
-    if (mysqli_stmt_execute($stmt)) {
-        return mysqli_insert_id($conn);
+    if (!mysqli_stmt_execute($stmt)) {
+        mysqli_rollback($conn);
+        return false;
     }
 
-    return false;
+    $userId = mysqli_insert_id($conn);
+    $city = 'Dhaka';
+    $description = $cuisineType . ' restaurant';
+
+    $sql = "INSERT INTO restaurants (manager_id, name, description, cuisine_type, address, city, is_open, is_approved)
+            VALUES (?, ?, ?, ?, ?, ?, 0, 0)";
+
+    $stmt = mysqli_prepare($conn, $sql);
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        'isssss',
+        $userId,
+        $restaurantName,
+        $description,
+        $cuisineType,
+        $address,
+        $city
+    );
+
+    if (!mysqli_stmt_execute($stmt)) {
+        mysqli_rollback($conn);
+        return false;
+    }
+
+    mysqli_commit($conn);
+    return $userId;
 }

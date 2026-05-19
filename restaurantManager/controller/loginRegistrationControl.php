@@ -11,13 +11,16 @@ $phone = $_POST['phone'] ?? '';
 $password = $_POST['password'] ?? '';
 $confirmPassword = $_POST['confirm_password'] ?? '';
 $accountType = $_POST['account_type'] ?? '';
+$restaurantName = trim($_POST['restaurant_name'] ?? '');
+$cuisineType = trim($_POST['cuisine_type'] ?? '');
+$address = trim($_POST['address'] ?? '');
 
-if ($accountType != 'restaurant_manager') {
+if ($accountType != 'manager') {
     echo json_encode(['success' => false, 'message' => 'Please select Restaurant Manager registration.']);
     exit;
 }
 
-if ($firstName == '' || $lastName == '' || $email == '' || $phone == '' || $password == '') {
+if ($firstName == '' || $lastName == '' || $email == '' || $phone == '' || $password == '' || $restaurantName == '' || $cuisineType == '' || $address == '') {
     echo json_encode(['success' => false, 'message' => 'Please fill in all required fields.']);
     exit;
 }
@@ -38,7 +41,7 @@ if (managerEmailExists($conn, $email)) {
 }
 
 $name = trim($firstName . ' ' . $lastName);
-$newUserId = managerRegister($conn, $name, $email, $phone, $password);
+$newUserId = managerRegister($conn, $name, $email, $phone, $password, $restaurantName, $cuisineType, $address);
 
 if ($newUserId == false) {
     echo json_encode(['success' => false, 'message' => 'Registration failed.']);

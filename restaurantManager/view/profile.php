@@ -4,7 +4,7 @@ session_start();
 include '../../dirCommon/dbconnect.php';
 
 $managerName = $_SESSION['user_name'] ?? 'Manager';
-$managerId = 1;
+$managerId = $_SESSION['user_id'] ?? 0;
 
 $restaurantName = '';
 $description = '';
@@ -363,7 +363,7 @@ function confirmLogout(event) {
     let logoutConfirm = confirm("Are you sure you want to logout?");
 
     if (logoutConfirm) {
-        window.location.href = "../../dirCommon/login.html";
+        window.location.href = "../controller/logout.php";
     }
 }
 
@@ -432,7 +432,7 @@ function confirmLogout(event) {
     let logoutConfirm = confirm("Are you sure you want to logout?");
 
     if (logoutConfirm) {
-        window.location.href = "../../dirCommon/login.html";
+        window.location.href = "../controller/logout.php";
     }
 }
 </script>

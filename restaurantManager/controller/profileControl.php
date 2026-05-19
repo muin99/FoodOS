@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$managerId = 1;
+$managerId = $_SESSION['user_id'];
 
 $name = $_POST['name'] ?? '';
 $description = $_POST['description'] ?? '';

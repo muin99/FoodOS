@@ -4,7 +4,7 @@ session_start();
 include '../../dirCommon/dbconnect.php';
 include '../model/agentModel.php';
 
-if($_SESSION['user_role']!='agent'){
+if(($_SESSION['user_role'] ?? '')!='agent' || !isset($_SESSION['user_id'])){
 echo json_encode([
 'success'=>false
 ]);
