@@ -29,5 +29,5 @@ $_SESSION['agent_id']   = $user['agent_id'];
 
 echo json_encode([
     'success'  => true,
-    'redirect' => '/FoodOS/deliveryAgent/view/dashboard.html?v=agent-dashboard-v2'
+    'redirect' => '../deliveryAgent/view/dashboard.html'
 ]);

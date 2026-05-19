@@ -6,6 +6,7 @@
     <title>BiteBuddy - Login & Registration</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
     <header>
         <div class="header-content">
@@ -16,7 +17,7 @@
 
     <main>
         <div class="container">
-            <!-- Tabs Navigation -->
+
             <div class="tabs">
                 <button class="tab-button active" data-tab="customer-login">Customer</button>
                 <button class="tab-button" data-tab="manager-login">Manager</button>
@@ -25,7 +26,6 @@
                 <button class="tab-button" data-tab="register">Register</button>
             </div>
 
-            <!-- Form Content -->
             <div class="form-content">
                 <div class="success-message" id="successMessage"></div>
 
@@ -35,6 +35,7 @@
                         <h2>Welcome Back</h2>
                         <p>Log in to your account to continue</p>
                     </div>
+
                     <form onsubmit="customerLogin(event)">
                         <div class="form-group">
                             <label for="customer-email">Email Address</label>
@@ -65,11 +66,13 @@
                     </form>
 
                     <div class="divider"><span>Or continue with</span></div>
+
                     <div class="social-buttons">
                         <button class="social-btn">
                             <img src="https://www.google.com/favicon.ico" alt="Google">
                             Google
                         </button>
+
                         <button class="social-btn">
                             <img src="https://www.facebook.com/favicon.ico" alt="Facebook">
                             Facebook
@@ -87,7 +90,8 @@
                         <h2>Manager Login</h2>
                         <p>Log in to manage your restaurant</p>
                     </div>
-                    <form action="#" method="post">
+
+                    <form onsubmit="managerLogin(event)">
                         <div class="form-group">
                             <label for="manager-email">Email Address</label>
                             <div class="input-wrapper">
@@ -117,11 +121,13 @@
                     </form>
 
                     <div class="divider"><span>Or continue with</span></div>
+
                     <div class="social-buttons">
                         <button class="social-btn">
                             <img src="https://www.google.com/favicon.ico" alt="Google">
                             Google
                         </button>
+
                         <button class="social-btn">
                             <img src="https://www.facebook.com/favicon.ico" alt="Facebook">
                             Facebook
@@ -169,11 +175,13 @@
                     </form>
 
                     <div class="divider"><span>Or continue with</span></div>
+
                     <div class="social-buttons">
                         <button class="social-btn">
                             <img src="https://www.google.com/favicon.ico" alt="Google">
                             Google
                         </button>
+
                         <button class="social-btn">
                             <img src="https://www.facebook.com/favicon.ico" alt="Facebook">
                             Facebook
@@ -227,14 +235,16 @@
                         <h2>Create Account</h2>
                         <p>Join BiteBuddy today</p>
                     </div>
-                    <form onsubmit="registerAccount(event)">
+
+                    <form onsubmit="registerByType(event)">
                         <div class="section-title">Personal Information</div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="reg-fname">First Name</label>
                                 <input type="text" id="reg-fname" name="firstname" placeholder="John" required>
                             </div>
+
                             <div class="form-group">
                                 <label for="reg-lname">Last Name</label>
                                 <input type="text" id="reg-lname" name="lastname" placeholder="Doe" required>
@@ -256,6 +266,7 @@
                                 <label for="reg-password">Password</label>
                                 <input type="password" id="reg-password" name="password" placeholder="••••••••" required>
                             </div>
+
                             <div class="form-group">
                                 <label for="reg-confirm">Confirm Password</label>
                                 <input type="password" id="reg-confirm" name="confirm_password" placeholder="••••••••" required>
@@ -263,20 +274,20 @@
                         </div>
 
                         <div class="section-title">Account Type</div>
+
                         <div class="form-group">
                             <label for="reg-type">Select Account Type</label>
                             <select id="reg-type" name="account_type" required onchange="updateAccountType(this.value)">
                                 <option value="">Choose account type...</option>
                                 <option value="customer">Customer</option>
                                 <option value="agent">Delivery Agent</option>
-                                <option value="restaurant_manager">Restaurant Manager</option>
+                                <option value="manager">Restaurant Manager</option>
                             </select>
                         </div>
 
-                        <!-- Restaurant Manager Fields (shown conditionally) -->
                         <div id="restaurant-fields" style="display: none;">
                             <div class="section-title">Restaurant Details</div>
-                            
+
                             <div class="form-group">
                                 <label for="reg-restaurant">Restaurant Name</label>
                                 <input type="text" id="reg-restaurant" name="restaurant_name" placeholder="The Golden Grille">
@@ -295,6 +306,7 @@
                                         <option value="chinese">Chinese</option>
                                     </select>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="reg-address">Address</label>
                                     <input type="text" id="reg-address" name="address" placeholder="123 Restaurant St">
@@ -302,16 +314,15 @@
                             </div>
                         </div>
 
-                        <!-- Delivery Agent Fields (shown conditionally) -->
                         <div id="agent-fields" style="display: none;">
-                            <div class="section-title">Delivery Agent Details</div>
+                            <div class="section-title">Delivery Details</div>
+
                             <div class="form-group">
                                 <label for="reg-vehicle">Vehicle Type</label>
                                 <select id="reg-vehicle" name="vehicle_type">
-                                    <option value="">Select vehicle...</option>
+                                    <option value="">Select Vehicle</option>
                                     <option value="bike">Bike</option>
                                     <option value="cycle">Cycle</option>
-                                    <option value="scooter">Scooter</option>
                                     <option value="car">Car</option>
                                 </select>
                             </div>
@@ -334,27 +345,22 @@
     </main>
 
     <script>
-        // Tab Switching
         function switchTab(tabName) {
-            // Hide all panes
             const panes = document.querySelectorAll('.tab-pane');
             panes.forEach(function(pane) {
                 pane.classList.remove('active');
             });
 
-            // Remove active class from buttons
             const buttons = document.querySelectorAll('.tab-button');
             buttons.forEach(function(btn) {
                 btn.classList.remove('active');
             });
 
-            // Show selected pane
             const selectedPane = document.getElementById(tabName);
             if (selectedPane) {
                 selectedPane.classList.add('active');
             }
 
-            // Find and activate the corresponding button
             buttons.forEach(function(btn) {
                 if (btn.dataset.tab === tabName) {
                     btn.classList.add('active');
@@ -362,7 +368,6 @@
             });
         }
 
-        // Tab button event listeners
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -370,12 +375,6 @@
             });
         });
 
-        const requestedTab = new URLSearchParams(window.location.search).get('tab');
-        if (requestedTab && document.getElementById(requestedTab)) {
-            switchTab(requestedTab);
-        }
-
-        // Toggle password visibility
         function togglePassword(inputId) {
             const input = document.getElementById(inputId);
             input.type = input.type === 'password' ? 'text' : 'password';
@@ -435,13 +434,72 @@
             });
         }
 
-        // Update account type
+        function managerLogin(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../restaurantManager/controller/loginControl.php', true);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+
+                    if (data.success) {
+                        window.location.href = data.redirect;
+                    } else {
+                        alert(data.message);
+                    }
+                } else {
+                    alert('Something went wrong.');
+                }
+            };
+
+            xhr.send(formData);
+        }
+
+        function managerRegister(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../restaurantManager/controller/loginRegistrationControl.php', true);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+
+                    if (data.success) {
+                        window.location.href = data.redirect;
+                    } else {
+                        alert(data.message);
+                    }
+                } else {
+                    alert('Something went wrong.');
+                }
+            };
+
+            xhr.send(formData);
+        }
+
+        function registerByType(event) {
+            const accountType = document.getElementById('reg-type').value;
+
+            if (accountType === 'manager') {
+                managerRegister(event);
+            } else if (accountType === 'agent') {
+                agentRegister(event);
+            } else {
+                customerRegister(event);
+            }
+        }
+
         function updateAccountType(value) {
             const restaurantFields = document.getElementById('restaurant-fields');
             const agentFields = document.getElementById('agent-fields');
-            const vehicleField = document.getElementById('reg-vehicle');
-
-            if (value === 'restaurant_manager') {
+            if (value === 'manager') {
                 restaurantFields.style.display = 'block';
             } else {
                 restaurantFields.style.display = 'none';
@@ -449,21 +507,12 @@
 
             if (value === 'agent') {
                 agentFields.style.display = 'block';
-                vehicleField.required = true;
             } else {
                 agentFields.style.display = 'none';
-                vehicleField.required = false;
-                vehicleField.value = '';
             }
         }
 
-        function switchAgentRegister() {
-            switchTab('register');
-            const accountType = document.getElementById('reg-type');
-            accountType.value = 'agent';
-            updateAccountType('agent');
-        }
-
+        // agent login
         function agentLogin(event) {
             event.preventDefault();
 
@@ -482,9 +531,27 @@
                 } else {
                     alert(data.message);
                 }
+            });
+        }
+
+        function agentRegister(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            fetch('../deliveryAgent/controller/agentregistration.php', {
+                method: 'POST',
+                body: formData
             })
-            .catch(function() {
-                alert('Agent login failed. Please try again.');
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
             });
         }
 

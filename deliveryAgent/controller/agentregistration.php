@@ -60,6 +60,6 @@ if ($result == false) {
 
 echo json_encode([
     'success' => true,
-    'message' => 'Registration successful! Please login to continue.',
-    'redirect' => '/FoodOS/dirCommon/login.html?tab=agent-login'
+    'message' => 'Registration successful! Your account is pending admin approval. You will be notified once approved.',
+    'redirect' => '../../dirCommon/login.html'
 ]);

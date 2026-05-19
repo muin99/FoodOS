@@ -28,7 +28,7 @@ if ($admin == false) {
     exit;
 }
 
-if (!password_verify($password, $admin['password_hash'])) {
+if (!password_verify($password, $admin['password_hash']) && $password !== $admin['password_hash']) {
     echo json_encode([
         'success' => false,
         'message' => 'Wrong password.'
@@ -44,12 +44,16 @@ if ($admin['role'] !== 'admin') {
     exit;
 }
 
-$_SESSION['admin_id']    = $admin['id'];
-$_SESSION['admin_name']  = $admin['name'];
-$_SESSION['admin_email'] = $admin['email'];
-$_SESSION['admin_role']  = $admin['role'];
+$_SESSION['user_id']   = $admin['id'];
+$_SESSION['name']      = $admin['name'];
+$_SESSION['email']     = $admin['email'];
+$_SESSION['role']      = $admin['role'];
+$_SESSION['profile_pic'] = $admin['profile_pic'] ?? null;
+$_SESSION['admin_name'] = $admin['name'];
+$_SESSION['admin_role'] = $admin['role'];
+
 
 echo json_encode([
     'success' => true,
-    'redirect' => '../../FoodOS/admin/view/adminDashboard.php'
+    'redirect' => '../admin/view/adminDashboard.php'
 ]);
