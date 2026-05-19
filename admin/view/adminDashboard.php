@@ -98,52 +98,34 @@ include '../controller/dashboardController.php';
 
           <tbody>
 
-            <tr>
-              <td>
-                <div class="user-info">
-                  <img src="https://i.pravatar.cc/101" alt="Sarah Jenkins">
-                  <span>Sarah Jenkins</span>
-                </div>
-              </td>
+          <?php foreach ($users as $user): ?>
 
-              <td>Customer</td>
-              <td>42</td>
-              <td>
+          <tr>
+            <td>
+              <div class="user-info">
+                <img src="https://i.pravatar.cc/10<?= $user['id'] ?>" alt="user">
+                <span><?= htmlspecialchars($user['name']) ?></span>
+              </div>
+            </td>
+
+            <td><?= ucfirst($user['role']) ?></td>
+
+            <td>
+                <?= $user['total_orders'] ?? 0 ?>
+            </td>
+
+            <td>
+              <?php if ($user['is_active'] == 1): ?>
                 <span class="status active-status">Active</span>
-              </td>
-            </tr>
+              <?php else: ?>
+                <span class="status suspended">Inactive</span>
+              <?php endif; ?>
+            </td>
+          </tr>
 
-            <tr>
-              <td>
-                <div class="user-info">
-                  <img src="https://i.pravatar.cc/102" alt="Mario's Pizza">
-                  <span>Mario's Pizza</span>
-                </div>
-              </td>
+          <?php endforeach; ?>
 
-              <td>Restaurant Admin</td>
-              <td>1,204</td>
-              <td>
-                <span class="status active-status">Active</span>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div class="user-info">
-                  <img src="https://i.pravatar.cc/103" alt="John Doe">
-                  <span>John Doe</span>
-                </div>
-              </td>
-
-              <td>Delivery Agent</td>
-              <td>89</td>
-              <td>
-                <span class="status suspended">Suspended</span>
-              </td>
-            </tr>
-
-          </tbody>
+        </tbody>
         </table>
 
       </div>

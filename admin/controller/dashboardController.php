@@ -7,4 +7,6 @@ $totalUsers = getTotalUsers($conn);
 $totalRestaurants = getActiveRestaurants($conn);
 $totalOrdersToday = getTotalOrdersToday($conn);
 $totalActiveAgents = getActiveDeliveryAgents($conn);
+$users = getAllUsers($conn);
+
 ?>

@@ -7,3 +7,4 @@ function adminLogin($conn, $email)
 
     return mysqli_fetch_assoc($result);
 }
+
