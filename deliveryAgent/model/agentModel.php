@@ -67,6 +67,40 @@ function getActiveAssignment($conn, $agentId)
     return mysqli_fetch_assoc($result);
 }
 
+function getAgentActiveDelivery($conn, $agentId)
+{
+    return getActiveAssignment($conn, $agentId);
+}
+
+function getAgentProfile($conn, $userId)
+{
+    $sql = "
+        SELECT
+            da.id AS agent_id,
+            da.is_online,
+            da.vehicle_type,
+            da.total_earnings,
+            da.is_approved,
+            u.id AS user_id,
+            u.name,
+            u.email,
+            u.phone
+        FROM delivery_agents da
+        INNER JOIN users u ON u.id = da.user_id
+        WHERE da.user_id = ? AND u.role = 'agent'
+        LIMIT 1
+    ";
+
+    $stmt = mysqli_prepare($conn, $sql);
+    if (!$stmt) return null;
+
+    mysqli_stmt_bind_param($stmt, 'i', $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return mysqli_fetch_assoc($result) ?: null;
+}
+
 function getNewAssignmentsSince($conn, $lastChecked)
 {
     $sql = "
