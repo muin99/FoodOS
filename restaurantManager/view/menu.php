@@ -223,202 +223,39 @@ while($row = mysqli_fetch_assoc($result)){
                                 </tr>
                             </thead>
 
-                           
-          
+                            <tbody id="menuItemsTable">
 
-<tbody id="menuItemsTable">
-<?php if(count($menuItems) == 0): ?>
-<tr><td colspan="4">No items in this category.</td></tr>
-<?php else: ?>
-<?php foreach($menuItems as $item): ?>
-<tr data-item-id="<?= $item['id'] ?>">
+                                <!-- JS can load menu items here later -->
 
-    <!-- Item info -->
-    <td>
-        <div class="item-info">
-             <div>
-                <h4><?= htmlspecialchars($item['name']) ?></h4>
-                <p><?= htmlspecialchars($item['description']) ?></p>
-            </div>
-        </div>
-    </td>
+                                <tr data-item-id="">
+                                    <td>
+                                        <div class="item-info">
+                                            <img src="../assets/images/burger.png" alt="Menu Item">
+                                            <div>
+                                                <h4 id="firstMenuItemName">No item loaded</h4>
+                                                <p id="firstMenuItemDescription">Menu items will appear here after JS/AJAX.</p>
+                                            </div>
+                                        </div>
+                                    </td>
 
-    <!-- Price -->
-    <td>
-        <span class="price-text">৳<?= number_format($item['price'], 2) ?></span>
-        <input type="number" step="0.01" class="price-input" value="<?= $item['price'] ?>" style="display:none;">
-    </td>
+                                    <td id="firstMenuItemPrice">৳0</td>
 
-    <!-- Availability -->
-    <td>
-        <span class="avail-text <?= $item['is_available'] ? 'available-badge' : 'unavailable-badge' ?>">
-            <?= $item['is_available'] ? 'Available' : 'Unavailable' ?>
-        </span>
-        <input type="checkbox" class="avail-input" <?= $item['is_available'] ? 'checked' : '' ?> style="display:none;">
-    </td>
+                                    <td>
+                                        <span class="available-badge" id="firstMenuItemStatus">
+                                            Waiting
+                                        </span>
+                                    </td>
 
-    <!-- Actions -->
-    <td>
-        <button type="button" class="edit-btn">✏️</button>
-        <button type="button" class="save-btn" style="display:none;">Save💾</button>
-        <button type="button" class="delete-btn" data-item-id="<?= $item['id'] ?>">🗑️</button>
-    </td>
+                                    <td>
+                                        <button type="button" class="edit-item-btn" data-action="edit-item" data-item-id="">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
 
-</tr>
-<?php endforeach; ?>
-<?php endif; ?>
-</tbody>
-
-<script>
-
-
-
-document.querySelectorAll('.edit-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const row = btn.closest('tr');
-        // Hide Edit, show Save
-        btn.style.display = 'none';
-        row.querySelector('.save-btn').style.display = 'inline-block';
-        // Hide static text, show inputs
-        row.querySelector('.price-text').style.display = 'none';
-        row.querySelector('.price-input').style.display = 'inline-block';
-        row.querySelector('.avail-text').style.display = 'none';
-        row.querySelector('.avail-input').style.display = 'inline-block';
-    });
-});
-
-document.querySelectorAll('.save-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const row = btn.closest('tr');
-        const itemId = row.dataset.itemId;
-        const price = row.querySelector('.price-input').value;
-        const isAvailable = row.querySelector('.avail-input').checked ? 1 : 0;
-
-        const formData = new FormData();
-        formData.append('id', itemId);
-        formData.append('price', price);
-        formData.append('is_available', isAvailable);
-
-        fetch('../controller/menuControl.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-            if(data.success){
-                // Update text spans
-                row.querySelector('.price-text').textContent = '৳' + parseFloat(price).toFixed(2);
-                row.querySelector('.avail-text').textContent = isAvailable ? 'Available' : 'Unavailable';
-                // Show static text, hide inputs
-                row.querySelector('.price-text').style.display = 'inline';
-                row.querySelector('.price-input').style.display = 'none';
-                row.querySelector('.avail-text').style.display = 'inline';
-                row.querySelector('.avail-input').style.display = 'none';
-                // Show Edit, hide Save
-                row.querySelector('.edit-btn').style.display = 'inline-block';
-                btn.style.display = 'none';
-            }
-        });
-    });
-});
-
-
-
-
-document.querySelectorAll('.save-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const row = btn.closest('tr');
-        const itemId = row.dataset.itemId;
-        const price = row.querySelector('.price-input').value;
-        const isAvailable = row.querySelector('.avail-input').checked ? 1 : 0;
-
-        const formData = new FormData();
-        formData.append('id', itemId);
-        formData.append('price', price);
-        formData.append('is_available', isAvailable);
-        formData.append('action', 'update'); // indicate update action
-
-        fetch('../controller/menuControl.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-            if(data.success){
-                // update table text
-                row.querySelector('.price-text').textContent = '৳' + parseFloat(price).toFixed(2);
-                row.querySelector('.avail-text').textContent = isAvailable ? 'Available' : 'Unavailable';
-                row.querySelector('.avail-text').className = isAvailable ? 'avail-text available-badge' : 'avail-text unavailable-badge';
-
-                // hide inputs, show text
-                row.querySelector('.price-text').style.display = 'inline';
-                row.querySelector('.price-input').style.display = 'none';
-                row.querySelector('.avail-text').style.display = 'inline';
-                row.querySelector('.avail-input').style.display = 'none';
-                row.querySelector('.edit-btn').style.display = 'inline-block';
-                btn.style.display = 'none';
-            }
-        });
-    });
-});
-
-
-
-
-document.querySelectorAll('.delete-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        if(!confirm('Are you sure you want to delete this item?')) return;
-
-        const itemId = btn.dataset.itemId;
-        const formData = new FormData();
-        formData.append('id', itemId);
-        formData.append('action', 'delete');
-
-        fetch('../controller/menuControl.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-            if(data.success){
-                btn.closest('tr').remove();
-            }
-        });
-    });
-});
-
-</script>
-
-<script>
-let ascending = true; // initial sort order
-
-document.getElementById('priceHeader').addEventListener('click', () => {
-    const table = document.querySelector('.menu-items-table tbody'); // tbody selector
-    const rows = Array.from(table.querySelectorAll('tr'));
-
-    rows.sort((a, b) => {
-        const priceA = parseFloat(a.querySelector('.price-text').textContent.replace(/[^\d.]/g, ''));
-        const priceB = parseFloat(b.querySelector('.price-text').textContent.replace(/[^\d.]/g, ''));
-        return ascending ? priceA - priceB : priceB - priceA;
-    });
-
-    // Remove all rows and re-add sorted
-    rows.forEach(row => table.appendChild(row));
-
-    ascending = !ascending;
-
-    // toggle arrow
-    document.getElementById('priceHeader').innerHTML = `Price ${ascending ? '&#9650;' : '&#9660;'}`;
-});
-</script>
-
-
-
-
-
+                                        <button type="button" class="delete-item-btn" data-action="delete-item" data-item-id="">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
 
                             </tbody>
 

@@ -130,7 +130,7 @@ if ($restaurant != null) {
                         <div class="logo-upload">
 
                             <img
-                                src="../assets/images/logo.png"
+                                src="../assets/images/burger.png"
                                 alt="Restaurant Logo"
                                 id="restaurantLogo"
                             >

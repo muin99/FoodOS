@@ -145,8 +145,7 @@
                         <h2>Delivery Agent Login</h2>
                         <p>Log in to your delivery account</p>
                     </div>
-
-                    <form action="#" method="post">
+                    <form onsubmit="agentLogin(event)">
                         <div class="form-group">
                             <label for="agent-email">Email Address</label>
                             <div class="input-wrapper">
@@ -200,8 +199,7 @@
                         <h2>Admin Login</h2>
                         <p>Log in to the admin dashboard</p>
                     </div>
-
-                    <form action="#" method="post">
+                    <form onsubmit="adminLogin(event)">
                         <div class="form-group">
                             <label for="admin-email">Admin Email</label>
                             <div class="input-wrapper">
@@ -282,8 +280,8 @@
                             <select id="reg-type" name="account_type" required onchange="updateAccountType(this.value)">
                                 <option value="">Choose account type...</option>
                                 <option value="customer">Customer</option>
-                                <option value="delivery_agent">Delivery Agent</option>
-                                <option value="restaurant_manager">Restaurant Manager</option>
+                                <option value="agent">Delivery Agent</option>
+                                <option value="manager">Restaurant Manager</option>
                             </select>
                         </div>
 
@@ -472,13 +470,61 @@
 
         function updateAccountType(value) {
             const restaurantFields = document.getElementById('restaurant-fields');
-
-            if (value === 'restaurant_manager') {
+            if (value === 'manager') {
                 restaurantFields.style.display = 'block';
             } else {
                 restaurantFields.style.display = 'none';
             }
         }
+
+        // agent login
+        function agentLogin(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            fetch('../deliveryAgent/controller/agentlogin.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        // admin login
+        function adminLogin(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+
+            fetch('../admin/controller/adminLoginController.php', {
+                method: 'POST',
+                body: formData
+                })
+            .then(response => response.json())
+            .then(data => {
+
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Something went wrong!");
+            });
+        }
+
     </script>
 </body>
 </html>

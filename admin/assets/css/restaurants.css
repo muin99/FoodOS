@@ -1,0 +1,171 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #fafafa;
+    color: #1a1c1c;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background: #f3f3f3;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.logo {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo-box {
+    width: 40px;
+    height: 40px;
+    background: #ff5722;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.nav a {
+    display: block;
+    padding: 12px;
+    margin-bottom: 5px;
+    text-decoration: none;
+    color: #444;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.nav a:hover {
+    background: #eaeaea;
+}
+
+.nav a.active {
+    background: #ff5722;
+    color: white;
+}
+.main {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+}
+
+.topbar {
+    background: #fff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+}
+
+.search {
+    width: 350px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.content {
+    padding: 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn {
+    background: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filters select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table th,
+.table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.suspended {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.actions button {
+    padding: 6px 10px;
+    border: none;
+    margin-right: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.footer {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
