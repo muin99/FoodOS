@@ -1,7 +1,8 @@
 <?php
 // orders.php
-session_start();
-include '../../dirCommon/dbconnect.php'; // make sure this contains your $conn mysqli connection
+include __DIR__ . '/../controller/managerSession.php';
+managerRequirePage();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
 $managerId = $_SESSION['user_id'] ?? 0;
 $restaurantId = 0;
@@ -44,67 +45,8 @@ if($historyResult){
     }
 }
 
-$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId AND status='pending'");
-$pendingOrders = [];
-if($pendingOrdersResult){
-    while($row = $pendingOrdersResult->fetch_assoc()){
-        $pendingOrders[] = $row;
-    }
-}
-
 $orderQuery = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId ORDER BY id DESC");
 $allOrders = $orderQuery->fetch_all(MYSQLI_ASSOC);
-
-$fakePendingOrders = [
-    [
-        'id' => 1001,
-        'customer_id' => 1,
-        'restaurant_id' => 7,
-        'agent_id' => null,
-        'delivery_address' => 'Dhanmondi, Dhaka',
-        'payment_method' => 'Cash',
-        'subtotal' => 420.00,
-        'delivery_fee' => 50.00,
-        'total_amount' => 470.00,
-        'estimated_delivery_minutes' => 30
-    ],
-    [
-        'id' => 1002,
-        'customer_id' => 2,
-        'restaurant_id' => 7,
-        'agent_id' => null,
-        'delivery_address' => 'Gulshan, Dhaka',
-        'payment_method' => 'Card',
-        'subtotal' => 650.00,
-        'delivery_fee' => 60.00,
-        'total_amount' => 710.00,
-        'estimated_delivery_minutes' => 35
-    ],
-    [
-        'id' => 1003,
-        'customer_id' => 3,
-        'restaurant_id' => 7,
-        'agent_id' => null,
-        'delivery_address' => 'Banani, Dhaka',
-        'payment_method' => 'Cash',
-        'subtotal' => 780.00,
-        'delivery_fee' => 70.00,
-        'total_amount' => 850.00,
-        'estimated_delivery_minutes' => 40
-    ],
-    [
-        'id' => 1004,
-        'customer_id' => 4,
-        'restaurant_id' => 7,
-        'agent_id' => null,
-        'delivery_address' => 'Uttara, Dhaka',
-        'payment_method' => 'Card',
-        'subtotal' => 560.00,
-        'delivery_fee' => 60.00,
-        'total_amount' => 620.00,
-        'estimated_delivery_minutes' => 25
-    ]
-];
 ?>
 
 
@@ -271,24 +213,27 @@ $fakePendingOrders = [
             <div class="pending-orders-box">
     <div class="panel-heading">
         <h2>Pending Orders</h2>
-        <span><?= count($fakePendingOrders) ?> New</span>
+        <span><?= count($pendingOrders) ?> New</span>
     </div>
 
-    <?php foreach($fakePendingOrders as $order): ?>
-        <div class="pending-order-card" id="fake-order-<?= $order['id'] ?>">
+    <?php foreach($pendingOrders as $order): ?>
+        <div class="pending-order-card" id="order-<?= $order['id'] ?>">
             <h3>Order #<?= $order['id'] ?></h3>
             <p>Total: ৳<?= number_format($order['total_amount'], 2) ?></p>
             <p>Address: <?= htmlspecialchars($order['delivery_address']) ?></p>
 
             <button 
                 type="button" 
-                class="ready-fake-order-btn"
-                data-order='<?= json_encode($order) ?>'
+                class="ready-order-btn"
+                data-order-id="<?= (int)$order['id'] ?>"
             >
                 Ready to Pickup
             </button>
         </div>
     <?php endforeach; ?>
+    <?php if(count($pendingOrders) === 0): ?>
+        <p>No pending orders right now.</p>
+    <?php endif; ?>
 </div>
 
 
@@ -502,28 +447,6 @@ document.querySelectorAll(".ready-order-btn").forEach(function(btn){
 
 <script>
 
-document.querySelectorAll(".ready-fake-order-btn").forEach(function(btn){
-    btn.addEventListener("click", function(){
-        let orderData = this.dataset.order;
-        let card = this.closest(".pending-order-card");
-
-        let formData = new FormData();
-        formData.append("order", orderData);
-
-        fetch("../controller/fakeOrderControl.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message);
-
-            if(data.success){
-                card.remove();
-            }
-        });
-    });
-});
 </script>
 
 <script>

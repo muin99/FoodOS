@@ -1,14 +1,7 @@
 <?php
-session_start();
-
-header('Content-Type: application/json');
-
-include '../../dirCommon/dbconnect.php';
-
-if (($_SESSION['user_role'] ?? '') != 'manager' || !isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'Please login first.']);
-    exit;
-}
+include __DIR__ . '/managerSession.php';
+managerRequireJson();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 if (!is_array($input)) {

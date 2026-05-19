@@ -1,6 +1,7 @@
 <?php
-session_start();
-include '../../dirCommon/dbconnect.php'; // your DB connection
+include __DIR__ . '/../controller/managerSession.php';
+managerRequirePage();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
 $managerId = $_SESSION['user_id'] ?? 0;
 $restaurantId = 0;
@@ -175,42 +176,18 @@ while($row = mysqli_fetch_assoc($result)){
 
                 <div class="category-box" id="categoryList">
 
-                    <!-- JS can load categories here later -->
-
-                    <a href="menu.php?category_id=1" class="category-row <?= $selectedCategoryId == 1 ? 'active-category' : '' ?>" data-category-name="burgers">
-                           <span class="category-icon">🍔</span>
-                            <strong>Burgers</strong>
-                           <small id="burgerItemCount"><?= $categoryCounts[1] ?? 0 ?> Items</small>
-                        <i class="fa-solid fa-angle-right"></i>
-                    </a>
-
-                    <a href="menu.php?category_id=2" class="category-row <?= $selectedCategoryId == 2 ? 'active-category' : '' ?>" data-category-name="pizzas">
-                            <span class="category-icon">🍕</span>
-                            <strong>Pizzas</strong>
-                            <small id="pizzaItemCount"><?= $categoryCounts[2] ?? 0 ?> Items</small>
+                    <?php foreach ($categories as $category): ?>
+                        <a href="menu.php?category_id=<?= (int)$category['id'] ?>" class="category-row <?= (int)$selectedCategoryId === (int)$category['id'] ? 'active-category' : '' ?>" data-category-name="<?= htmlspecialchars(strtolower($category['name'])) ?>">
+                            <span class="category-icon">☰</span>
+                            <strong><?= htmlspecialchars($category['name']) ?></strong>
+                            <small><?= (int)($categoryCounts[$category['id']] ?? 0) ?> Items</small>
                             <i class="fa-solid fa-angle-right"></i>
-                    </a>
+                        </a>
+                    <?php endforeach; ?>
 
-                    <a href="menu.php?category_id=3" class="category-row <?= $selectedCategoryId == 3 ? 'active-category' : '' ?>" data-category-name="drinks">
-                            <span class="category-icon">🥤</span>
-                            <strong>Drinks</strong>
-                            <small id="drinkItemCount"><?= $categoryCounts[3] ?? 0 ?> Items</small>
-                            <i class="fa-solid fa-angle-right"></i>
-                    </a>
-
-                    <a href="menu.php?category_id=4" class="category-row <?= $selectedCategoryId == 4 ? 'active-category' : '' ?>" data-category-name="sides">
-                            <span class="category-icon">🍟</span>
-                            <strong>Sides</strong>
-                            <small id="sideItemCount"><?= $categoryCounts[4] ?? 0 ?> Items</small>
-                            <i class="fa-solid fa-angle-right"></i>
-                    </a>
-
-                    <a href="menu.php?category_id=5" class="category-row <?= $selectedCategoryId == 5 ? 'active-category' : '' ?>" data-category-name="desserts">
-                          <span class="category-icon">🍰</span>
-                         <strong>Desserts</strong>
-                         <small id="dessertItemCount"><?= $categoryCounts[5] ?? 0 ?> Items</small>
-                          <i class="fa-solid fa-angle-right"></i>
-                    </a>
+                    <?php if (count($categories) === 0): ?>
+                        <p>No menu categories found.</p>
+                    <?php endif; ?>
 
                 </div>
 
@@ -236,37 +213,43 @@ while($row = mysqli_fetch_assoc($result)){
 
                             <tbody id="menuItemsTable">
 
-                                <!-- JS can load menu items here later -->
-
-                                <tr data-item-id="">
-                                    <td>
-                                        <div class="item-info">
-                                            <img src="../assets/images/burger.png" alt="Menu Item">
-                                            <div>
-                                                <h4 id="firstMenuItemName">No item loaded</h4>
-                                                <p id="firstMenuItemDescription">Menu items will appear here after JS/AJAX.</p>
+                                <?php foreach ($menuItems as $item): ?>
+                                    <tr data-item-id="<?= (int)$item['id'] ?>">
+                                        <td>
+                                            <div class="item-info">
+                                                <img src="<?= htmlspecialchars('../../' . ($item['image_path'] ?: 'restaurantManager/assets/images/burger.png')) ?>" alt="Menu Item">
+                                                <div>
+                                                    <h4><?= htmlspecialchars($item['name']) ?></h4>
+                                                    <p><?= htmlspecialchars($item['description'] ?? '') ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
 
-                                    <td id="firstMenuItemPrice">৳0</td>
+                                        <td>৳<?= number_format((float)$item['price'], 2) ?></td>
 
-                                    <td>
-                                        <span class="available-badge" id="firstMenuItemStatus">
-                                            Waiting
-                                        </span>
-                                    </td>
+                                        <td>
+                                            <span class="available-badge">
+                                                <?= (int)$item['is_available'] === 1 ? 'Available' : 'Hidden' ?>
+                                            </span>
+                                        </td>
 
-                                    <td>
-                                        <button type="button" class="edit-item-btn" data-action="edit-item" data-item-id="">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
+                                        <td>
+                                            <button type="button" class="edit-item-btn" data-action="edit-item" data-item-id="<?= (int)$item['id'] ?>">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
 
-                                        <button type="button" class="delete-item-btn" data-action="delete-item" data-item-id="">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                            <button type="button" class="delete-item-btn" data-action="delete-item" data-item-id="<?= (int)$item['id'] ?>">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+
+                                <?php if (count($menuItems) === 0): ?>
+                                    <tr>
+                                        <td colspan="4">No items found in this category.</td>
+                                    </tr>
+                                <?php endif; ?>
 
                             </tbody>
 

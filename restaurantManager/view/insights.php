@@ -1,6 +1,7 @@
 <?php
-session_start();
-include '../../dirCommon/dbconnect.php';
+include __DIR__ . '/../controller/managerSession.php';
+managerRequirePage();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
 $managerId = $_SESSION['user_id'] ?? 0;
 $restaurantId = 0;

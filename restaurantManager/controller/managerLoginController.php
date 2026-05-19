@@ -1,10 +1,11 @@
 <?php
-session_start();
-
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 
-include '../../dirCommon/dbconnect.php';
-include '../model/managerModel.php';
+include __DIR__ . '/../../dirCommon/dbconnect.php';
+include __DIR__ . '/../model/managerModel.php';
 
 $email = $_POST['email'] ?? '';
 $password = $_POST['password'] ?? '';

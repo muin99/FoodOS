@@ -1,7 +1,9 @@
 <?php
-include '../../dirCommon/dbconnect.php';
+include __DIR__ . '/managerSession.php';
+managerRequireJson();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
-$id = $_POST['id'] ?? null;
+$id = (int)($_POST['id'] ?? 0);
 $action = $_POST['action'] ?? '';
 
 if(!$id) {
@@ -12,23 +14,33 @@ if(!$id) {
 if($action == 'update'){
     $price = $_POST['price'] ?? 0;
     $isAvailable = $_POST['is_available'] ?? 0;
+    $managerId = (int)$_SESSION['user_id'];
 
-    $stmt = mysqli_prepare($conn, "UPDATE menu_items SET price=?, is_available=? WHERE id=?");
-    mysqli_stmt_bind_param($stmt, "dii", $price, $isAvailable, $id);
-    if(mysqli_stmt_execute($stmt)){
+    $stmt = mysqli_prepare($conn, "
+        UPDATE menu_items mi
+        INNER JOIN restaurants r ON r.id = mi.restaurant_id
+        SET mi.price = ?, mi.is_available = ?
+        WHERE mi.id = ? AND r.manager_id = ?
+    ");
+    mysqli_stmt_bind_param($stmt, "diii", $price, $isAvailable, $id, $managerId);
+    if(mysqli_stmt_execute($stmt) && mysqli_stmt_affected_rows($stmt) > 0){
         echo json_encode(['success'=>true,'message'=>'Item updated successfully']);
     } else {
-        echo json_encode(['success'=>false,'message'=>'Update failed']);
+        echo json_encode(['success'=>false,'message'=>'Item not found for this restaurant.']);
     }
 }
 
 if($action == 'delete'){
-    $stmt = mysqli_prepare($conn, "DELETE FROM menu_items WHERE id=?");
-    mysqli_stmt_bind_param($stmt, "i", $id);
-    if(mysqli_stmt_execute($stmt)){
+    $managerId = (int)$_SESSION['user_id'];
+    $stmt = mysqli_prepare($conn, "
+        DELETE mi FROM menu_items mi
+        INNER JOIN restaurants r ON r.id = mi.restaurant_id
+        WHERE mi.id = ? AND r.manager_id = ?
+    ");
+    mysqli_stmt_bind_param($stmt, "ii", $id, $managerId);
+    if(mysqli_stmt_execute($stmt) && mysqli_stmt_affected_rows($stmt) > 0){
         echo json_encode(['success'=>true,'message'=>'Item deleted successfully']);
     } else {
-        echo json_encode(['success'=>false,'message'=>'Delete failed']);
+        echo json_encode(['success'=>false,'message'=>'Item not found for this restaurant.']);
     }
 }
-?>
