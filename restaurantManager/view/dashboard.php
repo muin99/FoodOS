@@ -1,3 +1,89 @@
+<?php
+session_start();
+include '../../dirCommon/dbconnect.php';
+
+$restaurantId = 7; // replace with session value if needed
+
+// Total Orders
+$sql = "SELECT COUNT(*) as total_orders FROM orders WHERE restaurant_id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$totalOrders = mysqli_fetch_assoc($result)['total_orders'] ?? 0;
+
+// Total Sales (sum of total_amount where delivered)
+$sql = "SELECT SUM(total_amount) as total_sales FROM orders WHERE restaurant_id = ? AND status='delivered'";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$totalSales = mysqli_fetch_assoc($result)['total_sales'] ?? 0;
+
+// Preparing Orders
+$sql = "SELECT COUNT(*) as preparing_orders FROM orders WHERE restaurant_id = ? AND status='preparing'";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$preparingOrders = mysqli_fetch_assoc($result)['preparing_orders'] ?? 0;
+
+// Completed Orders
+$sql = "SELECT COUNT(*) as completed_orders FROM orders WHERE restaurant_id = ? AND status='delivered'";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$completedOrders = mysqli_fetch_assoc($result)['completed_orders'] ?? 0;
+
+
+
+
+
+// Recent Sales
+$sql = "SELECT o.id, u.name AS customer_name, o.total_amount, o.status
+        FROM orders o
+        JOIN users u ON o.customer_id = u.id
+        WHERE o.restaurant_id = ?
+        ORDER BY o.id DESC
+        LIMIT 100";
+
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+$recentSales = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $recentSales[] = $row;
+}
+
+
+// Top Selling Items
+$sql = "SELECT m.name, m.image_path, SUM(oi.quantity) AS total_sold
+        FROM order_items oi
+        JOIN menu_items m ON oi.menu_item_id = m.id
+        JOIN orders o ON oi.order_id = o.id
+        WHERE o.restaurant_id = ?
+        GROUP BY m.id, m.name, m.image_path
+        ORDER BY total_sold DESC
+        LIMIT 4";
+
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+$topSellingItems = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $topSellingItems[] = $row;
+}
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +149,7 @@
 
         </nav>
 
-        <a href="#" class="logout">Logout</a>
+        <a href="#" class="logout" onclick="confirmLogout(event)">Logout</a>
 
         <div class="promo">
             <img src="../assets/images/burger.png" alt="Burger">
@@ -112,7 +198,7 @@
                 <div>
                     <p>Total Orders</p>
 
-                    <h3 id="totalOrders">0</h3>
+                <h3 id="totalOrders"><?= $totalOrders ?></h3>
 
                     <span>All time orders</span>
                 </div>
@@ -130,7 +216,7 @@
                 <div>
                     <p>Total Sales</p>
 
-                    <h3 id="totalSales">৳0</h3>
+                  <h3 id="totalSales">৳<?= number_format($totalSales,2) ?></h3>
 
                     <span>Delivered orders</span>
                 </div>
@@ -146,9 +232,10 @@
                 </div>
 
                 <div>
-                    <p>Preparing Orders</p>
+                     <p> Preparing order</p>
 
-                    <h3 id="preparingOrders">0</h3>
+
+                   <h3 id="preparingOrders"><?= $preparingOrders ?></h3>
 
                     <span>In kitchen</span>
                 </div>
@@ -166,7 +253,7 @@
                 <div>
                     <p>Completed Orders</p>
 
-                    <h3 id="completedOrders">0</h3>
+                    <h3 id="completedOrders"><?= $completedOrders ?></h3>
 
                     <span>Successfully done</span>
                 </div>
@@ -175,128 +262,122 @@
 
         </section>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- ---------- Dashboard Body ---------- -->
 
         <section class="dashboard-body">
 
-            <!-- ---------- Incoming Orders ---------- -->
+           
+<!-- ---------- Dashboard Bottom ---------- -->
 
-            <div class="dashboard-panel incoming-panel">
+<section class="dashboard-bottom-grid">
 
-                <div class="panel-heading">
+    <!-- Recent Sales -->
 
-                    <h2>Incoming Orders</h2>
+    <div class="dashboard-panel recent-sales-box">
 
-                    <span id="incomingOrdersCount">0 New</span>
+        <div class="panel-heading">
+           <h2>Recent Sales</h2>
+           <a href="#" id="viewAllSales">View All</a>
+        </div> 
 
+        <?php foreach($recentSales as $sale): ?>
+            <div class="recent-sale-item sale-hidden">
+                <img src="../assets/images/burger.png">
+                <div class="sale-info">
+                    <h4>#ORD-<?php echo $sale['id']; ?></h4>
+                    <p><?php echo $sale['customer_name']; ?></p>
                 </div>
 
-                <!-- ---------- Incoming Orders Container ---------- -->
+             <strong>৳<?php echo $sale['total_amount']; ?></strong>
 
-                <div id="incomingOrdersContainer">
-
-                    <!-- JS Will Add Orders Here -->
-
-                    <div class="mini-order active-mini-order">
-
-                        <div class="mini-order-top">
-
-                            <div>
-                                <h4>Order #0000</h4>
-                                <small>Waiting for orders...</small>
-                            </div>
-
-                            <h3>৳0</h3>
-
-                        </div>
-
-                        <p>No incoming orders right now.</p>
-
-                        <div class="mini-order-actions">
-
-                            <button type="button" class="accept-btn">
-                                Accept
-                            </button>
-
-                            <button type="button" class="reject-btn">
-                                Reject
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                    <span class="sale-status <?php echo $sale['status']; ?>">
+                    <?php echo ucfirst($sale['status']); ?>
+                  </span>
 
             </div>
 
-            <!-- ---------- Active Kitchen ---------- -->
+           <?php endforeach; ?>
 
-            <div class="dashboard-panel kitchen-panel">
+        
 
-                <div class="panel-heading">
 
-                    <h2>Active Kitchen</h2>
+    </div>
 
-                    <div class="kitchen-tags">
+    <!-- Top Selling -->
 
-                        <span class="tag-red">
-                            Preparing
-                            <span id="preparingKitchenCount">0</span>
-                        </span>
+    <div class="dashboard-panel top-selling-box">
 
-                        <span class="tag-green">
-                            Ready
-                            <span id="readyKitchenCount">0</span>
-                        </span>
+        <div class="panel-heading">
+            <h2>Top Selling Items</h2>
+        </div>
 
-                    </div>
+        <div class="top-selling-grid">
 
-                </div>
+            <div class="top-food-card">
 
-                <!-- ---------- Kitchen Table ---------- -->
+                <img src="../assets/images/burger.png">
 
-                <table class="kitchen-table">
+                <h4>BBQ Burger</h4>
 
-                    <thead>
+                <p>120 Orders</p>
 
-                        <tr>
-                            <th>ID</th>
-                            <th>Customer</th>
-                            <th>Items</th>
-                            <th>Status</th>
-                            <th>Remaining</th>
-                        </tr>
+            </div>
 
-                    </thead>
+            <div class="top-food-card">
 
-                    <!-- ---------- Kitchen Table Body ---------- -->
+                <img src="../assets/images/pizza.png">
 
-                    <tbody id="activeKitchenTable">
+                <h4>Cheese Pizza</h4>
 
-                        <!-- JS Will Add Kitchen Rows Here -->
+                <p>98 Orders</p>
 
-                        <tr>
+            </div>
 
-                            <td>#0000</td>
-                            <td>No Orders</td>
-                            <td>৳0</td>
+            <div class="top-food-card">
 
-                            <td>
-                                <span class="status preparing">
-                                    Waiting
-                                </span>
-                            </td>
+                <img src="../assets/images/fries.png">
 
-                            <td class="time-red">0 min</td>
+                <h4>French Fries</h4>
 
-                        </tr>
+                <p>75 Orders</p>
 
-                    </tbody>
+            </div>
 
-                </table>
+            <div class="top-food-card">
 
-                <!-- ---------- Restaurant Status ---------- -->
+                <img src="../assets/images/coca.png">
+
+                <h4>Cold Coffee</h4>
+
+                <p>65 Orders</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+  <!-- ---------- Restaurant Status ---------- -->
 
                 <div class="restaurant-status-box">
 
@@ -329,13 +410,72 @@
 
                 </div>
 
-            </div>
 
-        </section>
 
-    </main>
+<script>
+function updateOrderStatus(orderId, newStatus){
+    if(!confirm(`Are you sure you want to mark order #${orderId} as ${newStatus}?`)) return;
 
-</div>
+    fetch('../controller/updateOrder.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: orderId, status: newStatus })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            // Remove order from Incoming Orders list
+            const orderElem = document.getElementById('order-' + orderId);
+            if(orderElem) orderElem.remove();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => alert('AJAX Error: ' + err));
+}
+</script>
+
+
+<script>
+function confirmLogout(event) {
+    event.preventDefault();
+
+    let logoutConfirm = confirm("Are you sure you want to logout?");
+
+    if (logoutConfirm) {
+        window.location.href = "../../dirCommon/login.html";
+    }
+}
+</script>
+
+
+<script>
+document.getElementById('viewAllSales').addEventListener('click', function(event) {
+    event.preventDefault();
+
+    const salesBox = document.querySelector('.recent-sales-box');
+    salesBox.classList.toggle('expanded');
+
+    this.innerText = salesBox.classList.contains('expanded') ? 'Show Less' : 'View All';
+});
+</script>
+
+
+
+<script>
+document.getElementById('restaurantToggle').addEventListener('change', function() {
+    const statusText = document.getElementById('restaurantStatusText');
+    const topStatus = document.getElementById('restaurantStatus');
+
+    if (this.checked) {
+        statusText.innerText = 'Online';
+        if (topStatus) topStatus.innerText = 'Online';
+    } else {
+        statusText.innerText = 'Closed';
+        if (topStatus) topStatus.innerText = 'Closed';
+    }
+});
+</script>
 
 </body>
 </html>
