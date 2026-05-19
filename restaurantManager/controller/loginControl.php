@@ -17,8 +17,6 @@ if ($email == '' || $password == '') {
 
 $user = managerLogin($conn, $email, $password);
 
-
-
 if ($user == false) {
     echo json_encode([
         'success' => false,

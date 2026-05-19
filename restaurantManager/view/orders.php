@@ -1,3 +1,104 @@
+<?php
+// orders.php
+session_start();
+include '../../dirCommon/dbconnect.php'; // make sure this contains your $conn mysqli connection
+
+// Fetch total orders, preparing, completed
+$totalOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = 7");
+$totalOrders = $totalOrdersQuery->fetch_assoc()['total'] ?? 0;
+
+$preparingOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = 7 AND status='preparing'");
+$preparingOrders = $preparingOrdersQuery->fetch_assoc()['total'] ?? 0;
+
+$completedOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = 7 AND status='delivered'");
+$completedOrders = $completedOrdersQuery->fetch_assoc()['total'] ?? 0;
+
+// Fetch pending orders
+$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = 7 AND status='pending' ORDER BY id DESC");
+$pendingOrders = [];
+if($pendingOrdersResult){
+    while($row = $pendingOrdersResult->fetch_assoc()){
+        $pendingOrders[] = $row;
+    }
+}
+
+// Fetch full order history
+$historyResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = 7 ORDER BY id DESC");
+$orderHistory = [];
+if($historyResult){
+    while($row = $historyResult->fetch_assoc()){
+        $orderHistory[] = $row;
+    }
+}
+
+$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = 7 AND status='pending'");
+$pendingOrders = [];
+if($pendingOrdersResult){
+    while($row = $pendingOrdersResult->fetch_assoc()){
+        $pendingOrders[] = $row;
+    }
+}
+
+$orderQuery = $conn->query("SELECT * FROM orders ORDER BY id DESC");
+$allOrders = $orderQuery->fetch_all(MYSQLI_ASSOC);
+
+$fakePendingOrders = [
+    [
+        'id' => 1001,
+        'customer_id' => 1,
+        'restaurant_id' => 7,
+        'agent_id' => null,
+        'delivery_address' => 'Dhanmondi, Dhaka',
+        'payment_method' => 'Cash',
+        'subtotal' => 420.00,
+        'delivery_fee' => 50.00,
+        'total_amount' => 470.00,
+        'estimated_delivery_minutes' => 30
+    ],
+    [
+        'id' => 1002,
+        'customer_id' => 2,
+        'restaurant_id' => 7,
+        'agent_id' => null,
+        'delivery_address' => 'Gulshan, Dhaka',
+        'payment_method' => 'Card',
+        'subtotal' => 650.00,
+        'delivery_fee' => 60.00,
+        'total_amount' => 710.00,
+        'estimated_delivery_minutes' => 35
+    ],
+    [
+        'id' => 1003,
+        'customer_id' => 3,
+        'restaurant_id' => 7,
+        'agent_id' => null,
+        'delivery_address' => 'Banani, Dhaka',
+        'payment_method' => 'Cash',
+        'subtotal' => 780.00,
+        'delivery_fee' => 70.00,
+        'total_amount' => 850.00,
+        'estimated_delivery_minutes' => 40
+    ],
+    [
+        'id' => 1004,
+        'customer_id' => 4,
+        'restaurant_id' => 7,
+        'agent_id' => null,
+        'delivery_address' => 'Uttara, Dhaka',
+        'payment_method' => 'Card',
+        'subtotal' => 560.00,
+        'delivery_fee' => 60.00,
+        'total_amount' => 620.00,
+        'estimated_delivery_minutes' => 25
+    ]
+];
+?>
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,10 +162,10 @@
 
         </nav>
 
-        <a href="#" class="logout">Logout</a>
+        <a href="#" class="logout" onclick="confirmLogout(event)">Logout</a>
 
         <div class="promo">
-            <img src="../../assets/images/burger.png" alt="Burger">
+            <img src="../assets/images/burger.png" alt="Burger">
             <h3>Good Food</h3>
             <p>Good Mood</p>
         </div>
@@ -98,7 +199,7 @@
 
                 <div>
                     <p>Total Order</p>
-                    <h3 id="totalOrderCount">0</h3>
+                   <h3><?= $totalOrders ?></h3>
                     <span id="totalOrderNote">Waiting for data</span>
                 </div>
 
@@ -112,7 +213,7 @@
 
                 <div>
                     <p>Preparing Order</p>
-                    <h3 id="preparingOrderCount">0</h3>
+                   <h3><?= $preparingOrders ?></h3>
                     <span class="blue-text" id="preparingOrderNote">In Progress</span>
                 </div>
 
@@ -126,7 +227,7 @@
 
                 <div>
                     <p>Completed Orders</p>
-                    <h3 id="completedOrderCount">0</h3>
+                    <h3><?= $completedOrders ?></h3>
                     <span id="completedOrderNote">Waiting for data</span>
                 </div>
 
@@ -155,24 +256,31 @@
             <!-- ---------- Pending Orders ---------- -->
 
             <div class="pending-orders-box">
+    <div class="panel-heading">
+        <h2>Pending Orders</h2>
+        <span><?= count($fakePendingOrders) ?> New</span>
+    </div>
 
-                <div class="panel-heading">
-                    <h2>Pending Orders</h2>
-                    <span id="pendingOrderCount">0 New</span>
-                </div>
+    <?php foreach($fakePendingOrders as $order): ?>
+        <div class="pending-order-card" id="fake-order-<?= $order['id'] ?>">
+            <h3>Order #<?= $order['id'] ?></h3>
+            <p>Total: ৳<?= number_format($order['total_amount'], 2) ?></p>
+            <p>Address: <?= htmlspecialchars($order['delivery_address']) ?></p>
 
-                <div id="pendingOrdersContainer">
+            <button 
+                type="button" 
+                class="ready-fake-order-btn"
+                data-order='<?= json_encode($order) ?>'
+            >
+                Ready to Pickup
+            </button>
+        </div>
+    <?php endforeach; ?>
+</div>
 
-                    <!-- JS will load pending order cards here -->
 
-                    <div class="pending-order-card" data-order-id="">
-                        <h3>No Pending Orders</h3>
-                        <p>All orders are currently handled.</p>
-                    </div>
+        
 
-                </div>
-
-            </div>
 
             <!-- ---------- Selected Order Action ---------- -->
 
@@ -268,15 +376,29 @@
                     </thead>
 
                     <tbody id="orderHistoryTable">
+<?php if(count($allOrders) > 0): ?>
+    <?php foreach($allOrders as $order): ?>
+        <tr>
+            <td><?= $order['id'] ?></td>
+            <td><?= $order['customer_id'] ?></td>
+            <td><?= $order['restaurant_id'] ?></td>
+            <td><?= $order['agent_id'] ?></td>
+            <td><?= $order['payment_method'] ?></td>
+            <td><?= number_format($order['subtotal'], 2) ?></td>
+            <td><?= number_format($order['delivery_fee'], 2) ?></td>
+            <td><?= number_format($order['total_amount'], 2) ?></td>
+            <td><?= ucfirst($order['status']) ?></td>
+            <td><?= $order['estimated_delivery_minutes'] ?> min</td>
+            <td><?= $order['created_at'] ?></td>
+        </tr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <tr><td colspan="11">No order history loaded yet.</td></tr>
+<?php endif; ?>
+</tbody>
 
-                        <!-- JS will load order history rows here -->
 
-                        <tr>
-                            <td colspan="11">No order history loaded yet.</td>
-                        </tr>
-
-                    </tbody>
-
+                    
                 </table>
 
             </div>
@@ -286,6 +408,124 @@
     </main>
 
 </div>
+
+
+
+<script>
+document.getElementById("orderSearchInput").addEventListener("keyup", function () {
+    let searchValue = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#orderHistoryTable tr");
+
+    rows.forEach(function (row) {
+        let rowText = row.innerText.toLowerCase();
+
+        if (rowText.includes(searchValue)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
+</script>
+
+<script>
+document.getElementById("orderSortSelect").addEventListener("change", function () {
+    let sortValue = this.value;
+    let tbody = document.getElementById("orderHistoryTable");
+    let rows = Array.from(tbody.querySelectorAll("tr"));
+
+    rows.sort(function (a, b) {
+        let aCells = a.querySelectorAll("td");
+        let bCells = b.querySelectorAll("td");
+
+        if (sortValue === "latest") {
+            return Number(bCells[0].innerText) - Number(aCells[0].innerText);
+        }
+
+        if (sortValue === "amount") {
+            return parseFloat(bCells[7].innerText.replace("৳", "")) - parseFloat(aCells[7].innerText.replace("৳", ""));
+        }
+
+        let statusA = aCells[8].innerText.toLowerCase();
+        let statusB = bCells[8].innerText.toLowerCase();
+
+        if (statusA === sortValue && statusB !== sortValue) return -1;
+        if (statusA !== sortValue && statusB === sortValue) return 1;
+        return 0;
+    });
+
+    rows.forEach(function (row) {
+        tbody.appendChild(row);
+    });
+});
+</script>
+
+
+
+<script>
+document.querySelectorAll(".ready-order-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+        let orderId = this.dataset.orderId;
+
+        let formData = new FormData();
+        formData.append("id", orderId);
+
+        fetch("../controller/orderControl.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+
+            if(data.success){
+                document.getElementById("order-" + orderId).remove();
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+
+<script>
+
+document.querySelectorAll(".ready-fake-order-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+        let orderData = this.dataset.order;
+        let card = this.closest(".pending-order-card");
+
+        let formData = new FormData();
+        formData.append("order", orderData);
+
+        fetch("../controller/fakeOrderControl.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+
+            if(data.success){
+                card.remove();
+            }
+        });
+    });
+});
+</script>
+
+<script>
+function confirmLogout(event) {
+    event.preventDefault();
+
+    let logoutConfirm = confirm("Are you sure you want to logout?");
+
+    if (logoutConfirm) {
+        window.location.href = "../../dirCommon/login.html";
+    }
+}
+</script>
+
+
 
 </body>
 </html>

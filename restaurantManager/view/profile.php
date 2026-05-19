@@ -96,10 +96,10 @@ if ($restaurant != null) {
 
         </nav>
 
-        <a href="#" class="logout" onclick="confirmLogout(event)">Logout</a>
+       <a href="#" class="logout" onclick="confirmLogout(event)">Logout</a>
 
         <div class="promo">
-            <img src="../assets/images/logo.png" alt="Logo">
+            <img src="../assets/images/burger.png" alt="Burger">
             <h3>Good Food</h3>
             <p>Good Mood</p>
         </div>
@@ -422,6 +422,21 @@ function saveProfile() {
     xhr.send(formData);
 }
 </script>
+
+
+
+<script>
+function confirmLogout(event) {
+    event.preventDefault();
+
+    let logoutConfirm = confirm("Are you sure you want to logout?");
+
+    if (logoutConfirm) {
+        window.location.href = "../../dirCommon/login.html";
+    }
+}
+</script>
+
 
 </body>
 </html>
