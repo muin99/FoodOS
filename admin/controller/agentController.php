@@ -11,10 +11,17 @@ $action = $_POST['action'] ?? null;
 $id     = $_POST['id'] ?? null;
 
 
-// HANDLE ACTIONS
-if ($action && $id) {
+if ($action && $id)
+{
+    switch ($action)
+    {
+        case 'approve':
+            approveAgent($conn, $id);
+            break;
 
-    switch ($action) {
+        case 'reject':
+            rejectAgent($conn, $id);
+            break;
 
         case 'activate':
             activateAgent($conn, $id);

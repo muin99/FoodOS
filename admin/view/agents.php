@@ -14,6 +14,7 @@ if (!isset($agents)) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -21,8 +22,7 @@ if (!isset($agents)) {
 
 <title><?= $pageTitle ?></title>
 
-<link rel="stylesheet" href="../assets/css/adminDashboard.css">
-<link rel="stylesheet" href="../assets/css/customers.css">
+<link rel="stylesheet" href="../assets/css/restaurants.css">
 
 </head>
 
@@ -30,157 +30,259 @@ if (!isset($agents)) {
 
 <div class="admin-wrap">
 
-<?php include __DIR__ . '/../partials/sidebar.php'; ?>
+    <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
-<div class="main">
+    <div class="main">
 
-    <div class="topbar">
+        <div class="topbar">
 
-        <h2>Delivery Agent Management</h2>
+            <h2>Delivery Agent Management</h2>
 
-        <div class="search-box">
-            <input type="text" id="searchAgent" placeholder="Search agents...">
-        </div>
-
-    </div>
-
-
-    <!-- CARDS -->
-    <div class="cards">
-
-        <div class="card">
-            <p>Total Agents</p>
-            <h3><?= count($agents) ?></h3>
-        </div>
-
-        <div class="card">
-            <p>Active</p>
-            <h3><?= count(array_filter($agents, fn($a) => $a['is_active'] == 1)) ?></h3>
-        </div>
-
-        <div class="card">
-            <p>Inactive</p>
-            <h3><?= count(array_filter($agents, fn($a) => $a['is_active'] == 0)) ?></h3>
-        </div>
-
-    </div>
-
-
-    <!-- TABLE -->
-    <div class="content">
-
-        <div class="table-section">
-
-            <div class="table-header">
-                <h3>Agent List</h3>
+            <div class="search-box">
+                <input type="text"
+                       id="searchAgent"
+                       placeholder="Search agents...">
             </div>
 
-            <div class="table-wrapper">
+        </div>
 
-                <table id="agentTable">
+        <div class="cards">
 
-                    <thead>
+            <div class="card">
+                <p>Total Agents</p>
+                <h3><?= count($agents) ?></h3>
+            </div>
 
-                        <tr>
-                            <th>Agent</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
+            <div class="card">
+                <p>Pending</p>
+                <h3>
+                    <?= count(array_filter($agents, fn($a) => $a['is_active'] == 2)) ?>
+                </h3>
+            </div>
 
-                    </thead>
+            <div class="card">
+                <p>Active</p>
+                <h3>
+                    <?= count(array_filter($agents, fn($a) => $a['is_active'] == 1)) ?>
+                </h3>
+            </div>
 
-                    <tbody>
+            <div class="card">
+                <p>Block</p>
+                <h3>
+                    <?= count(array_filter($agents, fn($a) => $a['is_active'] == 0)) ?>
+                </h3>
+            </div>
 
-                    <?php foreach ($agents as $a): ?>
+        </div>
 
-                        <tr>
 
-                            <td>
+        <div class="content">
 
-                                <div class="user-info">
-                                    <img src="https://i.pravatar.cc/150?img=<?= $a['id'] ?>">
-                                    <span><?= htmlspecialchars($a['name']) ?></span>
-                                </div>
+            <div class="table-section">
 
-                            </td>
+                <div class="table-header">
+                    <h3>Agent List</h3>
+                </div>
 
-                            <td><?= htmlspecialchars($a['email']) ?></td>
+                <div class="table-wrapper">
 
-                            <td><?= htmlspecialchars($a['phone']) ?></td>
+                    <table id="agentTable">
 
-                            <td>
+                        <thead>
 
-                                <?php if ($a['is_active'] == 1): ?>
+                            <tr>
+                                <th>Agent</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
 
-                                    <span class="status active">Active</span>
+                        </thead>
 
-                                <?php else: ?>
+                        <tbody>
 
-                                    <span class="status inactive">Inactive</span>
+                        <?php foreach ($agents as $a): ?>
 
-                                <?php endif; ?>
+                            <?php if ($a['is_active'] != 2): ?>
 
-                            </td>
+                            <tr>
 
-                            <td>
+                                <!-- AGENT -->
+                                <td>
 
-                                <form method="POST" action="../controller/agentController.php">
+                                    <div class="user-info">
 
-                                    <input type="hidden" name="id" value="<?= $a['id'] ?>">
+                                        <img src="https://i.pravatar.cc/150?img=<?= $a['id'] ?>">
 
-                                    <button type="button"
-                                            class="btn view"
-                                            onclick='viewAgent(<?= json_encode($a) ?>)'>
+                                        <span>
+                                            <?= htmlspecialchars($a['name']) ?>
+                                        </span>
 
-                                        View
+                                    </div>
 
-                                    </button>
+                                </td>
+                                <td>
+                                    <?= htmlspecialchars($a['email']) ?>
+                                </td>
+
+                                <td>
+                                    <?= htmlspecialchars($a['phone']) ?>
+                                </td>
+
+                                <td>
 
                                     <?php if ($a['is_active'] == 1): ?>
 
-                                        <button type="submit"
-                                                name="action"
-                                                value="deactivate"
-                                                class="btn danger">
+                                        <span class="status active">
+                                            Active
+                                        </span>
 
-                                            Deactivate
+                                    <?php elseif ($a['is_active'] == 0): ?>
 
-                                        </button>
-
-                                    <?php else: ?>
-
-                                        <button type="submit"
-                                                name="action"
-                                                value="activate"
-                                                class="btn success">
-
-                                            Reactivate
-
-                                        </button>
+                                        <span class="status inactive">
+                                            Inactive
+                                        </span>
 
                                     <?php endif; ?>
 
+                                </td>
+
+                                <td>
+
+                                    <form method="POST"
+                                          action="../controller/agentController.php"
+                                          style="display:flex; gap:5px;">
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="<?= $a['id'] ?>">
+
+                                        <!-- VIEW -->
+                                        <button type="button"
+                                                class="btn view"
+                                                onclick='viewAgent(<?= json_encode($a) ?>)'>
+
+                                            View
+
+                                        </button>
+
+                                        <!-- DEACTIVATE -->
+                                        <?php if ($a['is_active'] == 1): ?>
+
+                                            <button type="submit"
+                                                    name="action"
+                                                    value="deactivate"
+                                                    class="reject-btn">
+
+                                                Block
+
+                                            </button>
+
+                                        <?php elseif ($a['is_active'] == 0): ?>
+
+                                            <button type="submit"
+                                                    name="action"
+                                                    value="activate"
+                                                    class="approve-btn">
+
+                                                Reactivate
+
+                                            </button>
+
+                                        <?php endif; ?>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                            <?php endif; ?>
+
+                        <?php endforeach; ?>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT PANEL -->
+            <div class="right-panel">
+
+                <div class="box">
+
+                    <h3>Pending Agent Approvals</h3>
+
+                    <?php
+                    $pendingAgents = array_filter(
+                        $agents,
+                        fn($a) => $a['is_active'] == 2
+                    );
+                    ?>
+
+                    <?php if (count($pendingAgents) === 0): ?>
+
+                        <p style="font-size:13px;color:#999;">
+                            No pending agents.
+                        </p>
+
+                    <?php else: ?>
+
+                        <?php foreach ($pendingAgents as $p): ?>
+
+                            <div class="box" style="margin-bottom:10px;">
+
+                                <p style="font-weight:600;margin:0;">
+                                    <?= htmlspecialchars($p['name']) ?>
+                                </p>
+
+                                <p style="font-size:12px;color:#888;margin:4px 0;">
+                                    <?= htmlspecialchars($p['email']) ?>
+                                </p>
+
+                                <p style="font-size:12px;color:#888;margin:4px 0;">
+                                    <?= htmlspecialchars($p['phone']) ?>
+                                </p>
+
+                                <form method="POST"
+                                      action="../controller/agentController.php"
+                                      style="margin-top:8px;">
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="<?= $p['id'] ?>">
+
+                                    <button type="submit"
+                                            name="action"
+                                            value="activate"
+                                            class="btn success"
+                                            style="width:100%;">
+
+                                        Approve Agent
+
+                                    </button>
+
                                 </form>
 
-                            </td>
+                            </div>
 
-                        </tr>
+                        <?php endforeach; ?>
 
-                    <?php endforeach; ?>
+                    <?php endif; ?>
 
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
 
         </div>
 
     </div>
-
-</div>
 
 </div>
 
@@ -192,10 +294,25 @@ if (!isset($agents)) {
 
         <h3>Agent Details</h3>
 
-        <p><b>Name:</b> <span id="m_name"></span></p>
-        <p><b>Email:</b> <span id="m_email"></span></p>
-        <p><b>Phone:</b> <span id="m_phone"></span></p>
-        <p><b>Status:</b> <span id="m_status"></span></p>
+        <p>
+            <b>Name:</b>
+            <span id="m_name"></span>
+        </p>
+
+        <p>
+            <b>Email:</b>
+            <span id="m_email"></span>
+        </p>
+
+        <p>
+            <b>Phone:</b>
+            <span id="m_phone"></span>
+        </p>
+
+        <p>
+            <b>Status:</b>
+            <span id="m_status"></span>
+        </p>
 
         <button onclick="closeModal()" class="btn danger">
             Close
@@ -210,11 +327,21 @@ if (!isset($agents)) {
 
 function viewAgent(a)
 {
-    document.getElementById("m_name").innerText = a.name;
-    document.getElementById("m_email").innerText = a.email;
-    document.getElementById("m_phone").innerText = a.phone;
+    document.getElementById("m_name").innerText =
+        a.name;
+
+    document.getElementById("m_email").innerText =
+        a.email;
+
+    document.getElementById("m_phone").innerText =
+        a.phone;
+
     document.getElementById("m_status").innerText =
-        (a.is_active == 1) ? "Active" : "Inactive";
+        (a.is_active == 2)
+        ? "Pending"
+        : (a.is_active == 1)
+            ? "Active"
+            : "Inactive";
 
     document.getElementById("agentModal").style.display = "flex";
 }
@@ -226,12 +353,14 @@ function closeModal()
 }
 
 
-// SEARCH
-document.getElementById("searchAgent").addEventListener("keyup", function () {
+document.getElementById("searchAgent")
+.addEventListener("keyup", function () {
 
     let val = this.value.toLowerCase();
 
-    let rows = document.querySelectorAll("#agentTable tbody tr");
+    let rows = document.querySelectorAll(
+        "#agentTable tbody tr"
+    );
 
     rows.forEach(row => {
 

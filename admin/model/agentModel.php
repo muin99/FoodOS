@@ -1,6 +1,5 @@
 <?php
 
-// GET ALL DELIVERY AGENTS
 function getAllAgents($conn)
 {
     $sql = "
@@ -22,21 +21,41 @@ function getAllAgents($conn)
 }
 
 
-// ACTIVATE AGENT
+function approveAgent($conn, $id)
+{
+    $sql = "UPDATE users SET is_approved = 2 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+
+    return $stmt->execute();
+}
+
+
+function rejectAgent($conn, $id)
+{
+    $sql = "UPDATE users SET is_approved = 3 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+
+    return $stmt->execute();
+}
+
+
 function activateAgent($conn, $id)
 {
     $sql = "UPDATE users SET is_active = 1 WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
+
     return $stmt->execute();
 }
 
 
-// DEACTIVATE AGENT
 function deactivateAgent($conn, $id)
 {
     $sql = "UPDATE users SET is_active = 0 WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
+
     return $stmt->execute();
 }

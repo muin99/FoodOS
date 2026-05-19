@@ -34,8 +34,7 @@ if (!isset($restaurants)) {
     <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <div class="main">
-
-        <!-- TOPBAR -->
+\
         <div class="topbar">
 
             <div>
@@ -50,7 +49,6 @@ if (!isset($restaurants)) {
 
         </div>
 
-        <!-- CARDS -->
         <div class="cards">
 
             <div class="card">
@@ -83,8 +81,6 @@ if (!isset($restaurants)) {
 
 
         <div class="content">
-
-            <!-- TABLE SECTION -->
             <div class="table-section">
 
                 <div class="table-header">
@@ -114,8 +110,6 @@ if (!isset($restaurants)) {
                             <?php if ($r['is_approved'] != 1): ?>
 
                             <tr>
-
-                                <!-- RESTAURANT -->
                                 <td>
 
                                     <div class="user-info">
@@ -130,18 +124,14 @@ if (!isset($restaurants)) {
                                     </div>
 
                                 </td>
-
-                                <!-- MANAGER -->
                                 <td>
                                     <?= htmlspecialchars($r['manager_name'] ?? 'N/A') ?>
                                 </td>
 
-                                <!-- CITY -->
                                 <td>
                                     <?= htmlspecialchars($r['city']) ?>
                                 </td>
 
-                                <!-- STATUS -->
                                 <td>
 
                                     <?php if ($r['is_approved'] == 2): ?>
@@ -160,7 +150,6 @@ if (!isset($restaurants)) {
 
                                 </td>
 
-                                <!-- ACTIONS -->
                                 <td>
 
                                     <form method="POST"
@@ -180,7 +169,6 @@ if (!isset($restaurants)) {
 
                                         </button>
 
-                                        <!-- BLOCK -->
                                         <?php if ($r['is_approved'] == 2): ?>
 
                                             <button type="submit"
@@ -192,7 +180,6 @@ if (!isset($restaurants)) {
 
                                             </button>
 
-                                        <!-- REACTIVATE -->
                                         <?php elseif ($r['is_approved'] == 3): ?>
 
                                             <button type="submit"

@@ -20,8 +20,7 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
     <h1>BiteBuddy</h1>
     <p>Admin Console</p>
   </div>
-
-  <!-- ===== ADMIN PROFILE ===== -->
+  <!-- admin -->
   <div class="profile">
     <img src="https://i.pravatar.cc/100" alt="Admin Avatar">
 
@@ -31,7 +30,7 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
     </div>
   </div>
 
-  <!-- ===== MENU ===== -->
+  <!-- menu -->
   <nav class="menu">
     <a href="adminDashboard.php"
        class="<?= ($activePage === 'dashboard') ? 'active' : '' ?>">
@@ -40,7 +39,7 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
 
     <a href="customers.php"
        class="<?= ($activePage === 'customers') ? 'active' : '' ?>">
-       Users
+       Customers
     </a>
 
     <a href="restaurants.php"
@@ -64,7 +63,7 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
     </a>
   </nav>
 
-  <!-- ===== BOTTOM ===== -->
+  <!-- bottom -->
   <div class="bottom-links">
     <a href="#">Help Center</a>
 
