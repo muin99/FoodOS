@@ -44,10 +44,12 @@ if ($admin['role'] !== 'admin') {
     exit;
 }
 
-$_SESSION['admin_id']    = $admin['id'];
-$_SESSION['admin_name']  = $admin['name'];
-$_SESSION['admin_email'] = $admin['email'];
-$_SESSION['admin_role']  = $admin['role'];
+$_SESSION['user_id']   = $admin['id'];
+$_SESSION['name']      = $admin['name'];
+$_SESSION['email']     = $admin['email'];
+$_SESSION['role']      = $admin['role'];
+$_SESSION['profile_pic'] = $admin['profile_pic'] ?? null;
+
 
 echo json_encode([
     'success' => true,

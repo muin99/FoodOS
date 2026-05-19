@@ -4,6 +4,7 @@ $pageTitle  = 'BiteBuddy - Admin Dashboard';
 $activePage = 'dashboard';
 $basePath   = '../../';
 $extraCss   = ['../assets/css/adminDashboard.css'];
+include '../controller/dashboardController.php';
 
 ?>
 
@@ -36,7 +37,6 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
     <div class="topbar">
       <div>
         <h2>Platform Overview</h2>
-        <p>Real-time health and operational metrics for BiteBuddy.</p>
       </div>
 
       <div class="search-box">
@@ -48,27 +48,29 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
     <div class="cards">
 
       <div class="card">
-        <span class="green">+12%</span>
+        <!-- <span class="green">+12%</span> -->
         <p>Total Users</p>
-        <h3>1.2M</h3>
+        <!-- <h3>1.2M</h3> -->
+        <h3><?= $totalUsers ?></h3>
       </div>
 
       <div class="card">
-        <span class="green">+5%</span>
+        <!-- <span class="green">+5%</span> -->
         <p>Active Restaurants</p>
-        <h3>14,208</h3>
+        <!-- <h3>14,208</h3> -->
+         <h3><?= $totalRestaurants ?></h3>
       </div>
 
       <div class="card">
-        <span class="red">-2%</span>
-        <p>Platform Revenue</p>
-        <h3>$4.82M</h3>
+        <!-- <span class="red">-2%</span> -->
+        <p>Active Delivery Agents</p>
+        <h3><?= $totalActiveAgents ?></h3>
       </div>
 
       <div class="card">
-        <span class="green">Stable</span>
-        <p>Avg. Delivery Time</p>
-        <h3>28.4m</h3>
+        <!-- <span class="green">Stable</span> -->
+        <p>Total Orders Today</p>
+        <h3><?= $totalOrdersToday ?></h3>
       </div>
 
     </div>
@@ -96,52 +98,34 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
 
           <tbody>
 
-            <tr>
-              <td>
-                <div class="user-info">
-                  <img src="https://i.pravatar.cc/101" alt="Sarah Jenkins">
-                  <span>Sarah Jenkins</span>
-                </div>
-              </td>
+          <?php foreach ($users as $user): ?>
 
-              <td>Customer</td>
-              <td>42</td>
-              <td>
+          <tr>
+            <td>
+              <div class="user-info">
+                <img src="https://i.pravatar.cc/10<?= $user['id'] ?>" alt="user">
+                <span><?= htmlspecialchars($user['name']) ?></span>
+              </div>
+            </td>
+
+            <td><?= ucfirst($user['role']) ?></td>
+
+            <td>
+                <?= $user['total_orders'] ?? 0 ?>
+            </td>
+
+            <td>
+              <?php if ($user['is_active'] == 1): ?>
                 <span class="status active-status">Active</span>
-              </td>
-            </tr>
+              <?php else: ?>
+                <span class="status suspended">Inactive</span>
+              <?php endif; ?>
+            </td>
+          </tr>
 
-            <tr>
-              <td>
-                <div class="user-info">
-                  <img src="https://i.pravatar.cc/102" alt="Mario's Pizza">
-                  <span>Mario's Pizza</span>
-                </div>
-              </td>
+          <?php endforeach; ?>
 
-              <td>Restaurant Admin</td>
-              <td>1,204</td>
-              <td>
-                <span class="status active-status">Active</span>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <div class="user-info">
-                  <img src="https://i.pravatar.cc/103" alt="John Doe">
-                  <span>John Doe</span>
-                </div>
-              </td>
-
-              <td>Delivery Agent</td>
-              <td>89</td>
-              <td>
-                <span class="status suspended">Suspended</span>
-              </td>
-            </tr>
-
-          </tbody>
+        </tbody>
         </table>
 
       </div>
