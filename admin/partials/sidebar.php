@@ -38,8 +38,8 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
        Dashboard
     </a>
 
-    <a href="users.php"
-       class="<?= ($activePage === 'users') ? 'active' : '' ?>">
+    <a href="customers.php"
+       class="<?= ($activePage === 'customers') ? 'active' : '' ?>">
        Users
     </a>
 
