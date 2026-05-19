@@ -6,7 +6,7 @@ include __DIR__ . '/../../dirCommon/dbconnect.php';
 $managerId = $_SESSION['user_id'] ?? 0;
 $restaurantId = 0;
 
-$stmt = mysqli_prepare($conn, "SELECT id FROM restaurants WHERE manager_id = ? LIMIT 1");
+$stmt = mysqli_prepare($conn, "SELECT id, is_open FROM restaurants WHERE manager_id = ? LIMIT 1");
 mysqli_stmt_bind_param($stmt, "i", $managerId);
 mysqli_stmt_execute($stmt);
 $restaurantResult = mysqli_stmt_get_result($stmt);
@@ -15,6 +15,7 @@ $restaurant = mysqli_fetch_assoc($restaurantResult);
 if ($restaurant) {
     $restaurantId = (int)$restaurant['id'];
 }
+$isOpen = (int)($restaurant['is_open'] ?? 0);
 
 $totalOrders = mysqli_fetch_assoc(mysqli_query($conn,
     "SELECT COUNT(*) AS total FROM orders WHERE restaurant_id = $restaurantId"
@@ -29,7 +30,10 @@ $averageRating = mysqli_fetch_assoc(mysqli_query($conn,
 ))['avg_rating'] ?? 0;
 
 $averageRating = number_format($averageRating, 1);
-$reviewGrowth =  100 ;
+$reviewGrowth = $totalReviews > 0 ? 100 : 0;
+$totalRevenue = mysqli_fetch_assoc(mysqli_query($conn,
+    "SELECT COALESCE(SUM(total_amount), 0) AS total FROM orders WHERE restaurant_id = $restaurantId AND status = 'delivered'"
+))['total'] ?? 0;
 
 
 
@@ -266,7 +270,7 @@ if ($maxWeeklyOrder == 0) {
 
                 <div class="online-pill">
                     <i class="fa-solid fa-circle"></i>
-                    <span id="insightRestaurantStatus">Online</span>
+                    <span id="insightRestaurantStatus"><?php echo $isOpen ? 'Online' : 'Closed'; ?></span>
                 </div>
 
             </div>
@@ -298,9 +302,9 @@ if ($maxWeeklyOrder == 0) {
 
                 <div class="insight-card" data-card="revenue-growth">
                      <i class="fa-solid fa-arrow-trend-up green-circle"></i>
-                    <p>Revenue Growth</p>
-                     <h3 id="revenueGrowth">64%</h3>
-                     <span>vs last week</span>
+                    <p>Delivered Revenue</p>
+                     <h3 id="revenueGrowth">৳<?php echo number_format((float)$totalRevenue, 2); ?></h3>
+                     <span>From completed orders</span>
                 </div>
 
             </section>
@@ -498,12 +502,37 @@ if(mysqli_num_rows($reviewResult) > 0){
 
                         <div id="complaintsContainer">
 
-                            <!-- JS can load complaints here later -->
-
-                            <div class="complaint-row" data-complaint-id="">
-                                <p>No complaints loaded</p>
-                                <span class="pending">Waiting</span>
-                            </div>
+                            <?php
+                            $complaintQuery = "
+                                SELECT c.id, c.subject, c.status, u.name
+                                FROM complaints c
+                                INNER JOIN users u ON u.id = c.submitter_id
+                                WHERE EXISTS (
+                                    SELECT 1
+                                    FROM orders o
+                                    WHERE o.customer_id = c.submitter_id
+                                      AND o.restaurant_id = $restaurantId
+                                )
+                                ORDER BY c.created_at DESC
+                                LIMIT 5
+                            ";
+                            $complaintResult = mysqli_query($conn, $complaintQuery);
+                            if ($complaintResult && mysqli_num_rows($complaintResult) > 0):
+                                while ($complaint = mysqli_fetch_assoc($complaintResult)):
+                            ?>
+                                <div class="complaint-row" data-complaint-id="<?php echo (int)$complaint['id']; ?>">
+                                    <p><?php echo htmlspecialchars($complaint['subject']); ?> - <?php echo htmlspecialchars($complaint['name']); ?></p>
+                                    <span class="pending"><?php echo htmlspecialchars(ucfirst($complaint['status'])); ?></span>
+                                </div>
+                            <?php
+                                endwhile;
+                            else:
+                            ?>
+                                <div class="complaint-row" data-complaint-id="">
+                                    <p>No complaints found for this restaurant.</p>
+                                    <span class="pending">Clear</span>
+                                </div>
+                            <?php endif; ?>
 
                         </div>
 

@@ -50,10 +50,71 @@ include __DIR__ . '/../../dirCommon/header.php';
                         <strong>৳<?php echo number_format((float)$order['total_amount'], 2); ?></strong>
                         <small><?php echo htmlspecialchars(date('M d, Y h:i A', strtotime($order['created_at']))); ?></small>
                     </div>
+                    <?php if ($order['status'] === 'delivered'): ?>
+                        <div class="review-panel">
+                            <h3><?php echo $order['review_id'] ? 'Your review' : 'Review this order'; ?></h3>
+                            <?php if (!empty($order['review_reply'])): ?>
+                                <p class="review-reply">Manager reply: <?php echo htmlspecialchars($order['review_reply']); ?></p>
+                            <?php endif; ?>
+                            <form class="review-form">
+                                <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                <label>
+                                    <span>Rating</span>
+                                    <select name="rating" required>
+                                        <option value="">Choose rating</option>
+                                        <?php for ($rating = 5; $rating >= 1; $rating--): ?>
+                                            <option value="<?php echo $rating; ?>" <?php echo (int)($order['review_rating'] ?? 0) === $rating ? 'selected' : ''; ?>>
+                                                <?php echo $rating; ?> star<?php echo $rating > 1 ? 's' : ''; ?>
+                                            </option>
+                                        <?php endfor; ?>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Comment</span>
+                                    <textarea name="comment" rows="3" required><?php echo htmlspecialchars($order['review_comment'] ?? ''); ?></textarea>
+                                </label>
+                                <button type="submit" class="primary-action"><?php echo $order['review_id'] ? 'Update Review' : 'Submit Review'; ?></button>
+                                <p class="review-message"></p>
+                            </form>
+                        </div>
+                    <?php endif; ?>
                 </article>
             <?php endforeach; ?>
         </section>
     <?php endif; ?>
 </main>
+
+<script>
+document.querySelectorAll('.review-form').forEach(function(form) {
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const message = form.querySelector('.review-message');
+        const button = form.querySelector('button');
+        button.disabled = true;
+
+        fetch('../controller/saveReview.php', {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            message.textContent = data.message || '';
+            if (data.success) {
+                setTimeout(function() {
+                    location.reload();
+                }, 500);
+            } else {
+                button.disabled = false;
+            }
+        })
+        .catch(function() {
+            message.textContent = 'Review could not be saved.';
+            button.disabled = false;
+        });
+    });
+});
+</script>
 
 <?php include __DIR__ . '/../../dirCommon/footer.php'; ?>

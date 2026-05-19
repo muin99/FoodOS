@@ -341,47 +341,17 @@ while ($row = mysqli_fetch_assoc($result)) {
         </div>
 
         <div class="top-selling-grid">
+            <?php foreach ($topSellingItems as $item): ?>
+                <div class="top-food-card">
+                    <img src="<?php echo htmlspecialchars('../../' . ($item['image_path'] ?: 'restaurantManager/assets/images/burger.png')); ?>">
+                    <h4><?php echo htmlspecialchars($item['name']); ?></h4>
+                    <p><?php echo (int)$item['total_sold']; ?> Orders</p>
+                </div>
+            <?php endforeach; ?>
 
-            <div class="top-food-card">
-
-                <img src="../assets/images/burger.png">
-
-                <h4>BBQ Burger</h4>
-
-                <p>120 Orders</p>
-
-            </div>
-
-            <div class="top-food-card">
-
-                <img src="../assets/images/pizza.png">
-
-                <h4>Cheese Pizza</h4>
-
-                <p>98 Orders</p>
-
-            </div>
-
-            <div class="top-food-card">
-
-                <img src="../assets/images/fries.png">
-
-                <h4>French Fries</h4>
-
-                <p>75 Orders</p>
-
-            </div>
-
-            <div class="top-food-card">
-
-                <img src="../assets/images/coca.png">
-
-                <h4>Cold Coffee</h4>
-
-                <p>65 Orders</p>
-
-            </div>
-
+            <?php if (count($topSellingItems) === 0): ?>
+                <p>No sales data yet.</p>
+            <?php endif; ?>
         </div>
 
     </div>

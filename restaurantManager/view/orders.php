@@ -27,8 +27,8 @@ $preparingOrders = $preparingOrdersQuery->fetch_assoc()['total'] ?? 0;
 $completedOrdersQuery = $conn->query("SELECT COUNT(*) as total FROM orders WHERE restaurant_id = $restaurantId AND status='delivered'");
 $completedOrders = $completedOrdersQuery->fetch_assoc()['total'] ?? 0;
 
-// Fetch pending orders
-$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId AND status='pending' ORDER BY id DESC");
+// Fetch active restaurant orders
+$pendingOrdersResult = $conn->query("SELECT * FROM orders WHERE restaurant_id = $restaurantId AND status IN ('pending', 'accepted', 'preparing') ORDER BY id DESC");
 $pendingOrders = [];
 if($pendingOrdersResult){
     while($row = $pendingOrdersResult->fetch_assoc()){
@@ -212,27 +212,27 @@ $allOrders = $orderQuery->fetch_all(MYSQLI_ASSOC);
 
             <div class="pending-orders-box">
     <div class="panel-heading">
-        <h2>Pending Orders</h2>
+        <h2>Active Orders</h2>
         <span><?= count($pendingOrders) ?> New</span>
     </div>
 
     <?php foreach($pendingOrders as $order): ?>
         <div class="pending-order-card" id="order-<?= $order['id'] ?>">
             <h3>Order #<?= $order['id'] ?></h3>
+            <p>Status: <?= htmlspecialchars(ucfirst($order['status'])) ?></p>
             <p>Total: ৳<?= number_format($order['total_amount'], 2) ?></p>
             <p>Address: <?= htmlspecialchars($order['delivery_address']) ?></p>
 
-            <button 
-                type="button" 
-                class="ready-order-btn"
-                data-order-id="<?= (int)$order['id'] ?>"
-            >
-                Ready to Pickup
-            </button>
+            <?php if ($order['status'] === 'pending'): ?>
+                <button type="button" class="order-status-btn" data-order-id="<?= (int)$order['id'] ?>" data-status="accepted">Accept</button>
+                <button type="button" class="order-status-btn" data-order-id="<?= (int)$order['id'] ?>" data-status="cancelled">Reject</button>
+            <?php else: ?>
+                <button type="button" class="order-status-btn" data-order-id="<?= (int)$order['id'] ?>" data-status="ready">Ready to Pickup</button>
+            <?php endif; ?>
         </div>
     <?php endforeach; ?>
     <?php if(count($pendingOrders) === 0): ?>
-        <p>No pending orders right now.</p>
+        <p>No active orders right now.</p>
     <?php endif; ?>
 </div>
 
@@ -442,6 +442,51 @@ document.querySelectorAll(".ready-order-btn").forEach(function(btn){
             }
         });
     });
+});
+</script>
+
+<script>
+document.querySelectorAll(".order-status-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+        let orderId = this.dataset.orderId;
+        let status = this.dataset.status;
+        let formData = new FormData();
+        formData.append("id", orderId);
+        formData.append("status", status);
+
+        fetch("../controller/orderControl.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if(data.success){
+                location.reload();
+            }
+        });
+    });
+});
+
+document.querySelectorAll(".pending-order-card").forEach(function(card) {
+    card.addEventListener("click", function(event) {
+        if (event.target.tagName.toLowerCase() === "button") return;
+        const orderId = card.id.replace("order-", "");
+        document.getElementById("selectedOrderId").innerText = "Order #" + orderId;
+        document.getElementById("selectedOrderMessage").innerText = "Choose an action for this order.";
+        document.getElementById("acceptOrderBtn").dataset.orderId = orderId;
+        document.getElementById("rejectOrderBtn").dataset.orderId = orderId;
+    });
+});
+
+document.getElementById("acceptOrderBtn").addEventListener("click", function() {
+    if (!this.dataset.orderId) return alert("Select an order first.");
+    document.querySelector('[data-order-id="' + this.dataset.orderId + '"][data-status="accepted"]')?.click();
+});
+
+document.getElementById("rejectOrderBtn").addEventListener("click", function() {
+    if (!this.dataset.orderId) return alert("Select an order first.");
+    document.querySelector('[data-order-id="' + this.dataset.orderId + '"][data-status="cancelled"]')?.click();
 });
 </script>
 
