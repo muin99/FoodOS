@@ -20,18 +20,23 @@ $extraCss = $extraCss ?? [];
         <div class="page-wrap header-inner">
             <a class="brand" href="<?php echo $basePath; ?>index.php">
                 <span class="brand-icon">B</span>
-                <span>BiteBuddy</span>
+                <span class="brand-copy">
+                    <span>BiteBuddy</span>
+                    <small>FoodOS</small>
+                </span>
             </a>
 
             <nav class="main-nav" aria-label="Main navigation">
-                <a class="<?php echo $activePage === 'browse' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>Customer/view/browseResturants.php">Browse</a>
-                <a class="<?php echo $activePage === 'offers' ? 'active' : ''; ?>" href="#">Offers</a>
-                <a class="<?php echo $activePage === 'support' ? 'active' : ''; ?>" href="#">Support</a>
+                <a class="<?php echo $activePage === 'home' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>index.php">Home</a>
+                <a class="<?php echo $activePage === 'browse' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>Customer/view/browseResturants.php">Restaurants</a>
+                <a href="<?php echo $basePath; ?>restaurantManager/view/dashboard.php">Manager</a>
+                <a href="<?php echo $basePath; ?>deliveryAgent/view/dashboard.html">Delivery</a>
+                <a href="<?php echo $basePath; ?>admin/view/adminDashboard.php">Admin</a>
             </nav>
 
             <div class="header-actions">
-                <a class="cart-link" href="#">Cart</a>
-                <a class="login-link" href="<?php echo $basePath; ?>dirCommon/login.html">Login</a>
+                <a class="cart-link" href="<?php echo $basePath; ?>Customer/view/browseResturants.php">Browse Food</a>
+                <a class="login-link" href="<?php echo $basePath; ?>dirCommon/login.html">Login / Register</a>
             </div>
         </div>
     </header>

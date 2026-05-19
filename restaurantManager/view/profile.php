@@ -1,3 +1,40 @@
+<?php
+session_start();
+
+include '../../dirCommon/dbconnect.php';
+
+$managerName = $_SESSION['user_name'] ?? 'Manager';
+$managerId = $_SESSION['user_id'] ?? 0;
+
+$restaurantName = '';
+$description = '';
+$cuisineType = '';
+$address = '';
+$city = '';
+$deliveryRadius = 5;
+$isOpen = 1;
+
+$sql = "SELECT * FROM restaurants WHERE manager_id = ? LIMIT 1";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, 'i', $managerId);
+mysqli_stmt_execute($stmt);
+
+$result = mysqli_stmt_get_result($stmt);
+$restaurant = mysqli_fetch_assoc($result);
+
+if ($restaurant != null) {
+    $restaurantName = $restaurant['name'];
+    $description = $restaurant['description'];
+    $cuisineType = $restaurant['cuisine_type'];
+    $address = $restaurant['address'];
+    $city = $restaurant['city'];
+    $deliveryRadius = $restaurant['delivery_radius_km'];
+    $isOpen = $restaurant['is_open'];
+}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +96,7 @@
 
         </nav>
 
-        <a href="#" class="logout">Logout</a>
+       <a href="#" class="logout" onclick="confirmLogout(event)">Logout</a>
 
         <div class="promo">
             <img src="../assets/images/burger.png" alt="Burger">
@@ -79,7 +116,6 @@
 
             <div class="profile-title">
                 <h1>Restaurant Profile</h1>
-                <p>Manage restaurant information and settings.</p>
             </div>
 
             <div class="profile-grid">
@@ -102,7 +138,6 @@
                             <button
                                 type="button"
                                 id="changeLogoBtn"
-                                data-action="change-logo"
                             >
                                 Change Logo
                             </button>
@@ -117,11 +152,11 @@
                                 <input
                                     type="text"
                                     id="restaurantName"
-                                    value="Khana Kitchen"
-                                    data-field="name"
+                                    value="<?php echo $restaurantName; ?>"
+                                    readonly
                                 >
 
-                                <i class="fa-solid fa-pen"></i>
+                                <i class="fa-solid fa-pen edit-field"></i>
                             </div>
 
                             <label>Cuisine Type</label>
@@ -130,11 +165,11 @@
                                 <input
                                     type="text"
                                     id="cuisineType"
-                                    value="Fast Food"
-                                    data-field="cuisine_type"
+                                  value="<?php echo $cuisineType; ?>"
+                                    readonly
                                 >
 
-                                <i class="fa-solid fa-pen"></i>
+                                <i class="fa-solid fa-pen edit-field"></i>
                             </div>
 
                             <label>Description</label>
@@ -142,10 +177,10 @@
                             <div class="input-box textarea-box">
                                 <textarea
                                     id="restaurantDescription"
-                                    data-field="description"
-                                >Fast food restaurant</textarea>
+                                    readonly
+                                ><?php echo $description; ?></textarea>
 
-                                <i class="fa-solid fa-pen"></i>
+                                <i class="fa-solid fa-pen edit-field"></i>
                             </div>
 
                             <label>Address</label>
@@ -154,11 +189,11 @@
                                 <input
                                     type="text"
                                     id="restaurantAddress"
-                                    value="Dhanmondi, Dhaka"
-                                    data-field="address"
+                                   value="<?php echo $address; ?>"
+                                    readonly
                                 >
 
-                                <i class="fa-solid fa-pen"></i>
+                                <i class="fa-solid fa-pen edit-field"></i>
                             </div>
 
                             <label>City</label>
@@ -167,11 +202,11 @@
                                 <input
                                     type="text"
                                     id="restaurantCity"
-                                    value="Dhaka"
-                                    data-field="city"
+                                   value="<?php echo $city; ?>"
+                                    readonly
                                 >
 
-                                <i class="fa-solid fa-pen"></i>
+                                <i class="fa-solid fa-pen edit-field"></i>
                             </div>
 
                         </div>
@@ -189,49 +224,40 @@
 
                         <div>
                             <span>Monday</span>
-                            <p id="mondayHours">10:00 AM - 11:00 PM</p>
+                            <p>10:00 AM - 11:00 PM</p>
                         </div>
 
                         <div>
                             <span>Tuesday</span>
-                            <p id="tuesdayHours">10:00 AM - 11:00 PM</p>
+                            <p>10:00 AM - 11:00 PM</p>
                         </div>
 
                         <div>
                             <span>Wednesday</span>
-                            <p id="wednesdayHours">10:00 AM - 11:00 PM</p>
+                            <p>10:00 AM - 11:00 PM</p>
                         </div>
 
                         <div>
                             <span>Thursday</span>
-                            <p id="thursdayHours">10:00 AM - 11:00 PM</p>
+                            <p>10:00 AM - 11:00 PM</p>
                         </div>
 
                         <div>
                             <span>Friday</span>
-                            <p id="fridayHours">10:00 AM - 11:00 PM</p>
+                            <p>10:00 AM - 11:00 PM</p>
                         </div>
 
                         <div>
                             <span>Saturday</span>
-                            <p id="saturdayHours">10:00 AM - 11:00 PM</p>
+                            <p>10:00 AM - 11:00 PM</p>
                         </div>
 
                         <div>
                             <span>Sunday</span>
-                            <p id="sundayHours">10:00 AM - 11:00 PM</p>
+                            <p>10:00 AM - 11:00 PM</p>
                         </div>
 
                     </div>
-
-                    <button
-                        type="button"
-                        class="edit-hours-btn"
-                        id="editHoursBtn"
-                        data-action="edit-hours"
-                    >
-                        Edit Hours
-                    </button>
 
                 </div>
 
@@ -244,11 +270,8 @@
                         <p>
                             <span
                                 id="deliveryRadius"
-                                data-field="delivery_radius_km"
-                            >
-                                5
-                            </span>
-
+                                contenteditable="false"
+                           ><?php echo $deliveryRadius; ?></span>
                             KM
                         </p>
                     </div>
@@ -256,7 +279,6 @@
                     <button
                         type="button"
                         id="editRadiusBtn"
-                        data-action="edit-radius"
                     >
                         Edit
                     </button>
@@ -272,7 +294,6 @@
                         <p
                             class="open-text"
                             id="restaurantOpenText"
-                            data-field="is_open"
                         >
                             Open
                         </p>
@@ -284,7 +305,6 @@
                             type="checkbox"
                             checked
                             id="restaurantToggle"
-                            data-action="toggle-restaurant-status"
                         >
 
                         <span class="slider"></span>
@@ -294,30 +314,39 @@
                 </div>
 
                 <!-- Manager Info -->
-         
-<div class="profile-small-card manager-mini-card">
+                
+            <div class="profile-small-card manager-mini-card">
 
-    <div>
-        <h3>Manager Info</h3>
+                 <div>
+                    <h3>Manager Info</h3>
 
-        <p id="managerName" data-field="manager_name">
-            Manager ID: 1
-        </p>
+               <h2 id="managerName">
+                   <?php echo $managerName; ?>
+              </h2>
 
-        <span id="managerRole" data-field="manager_role">
-            Restaurant Manager
-        </span>
+                 <span id="managerRole">
+                    Restaurant Manager
+                  </span>
+            </div>
+
+    <div style="text-align: right;">
+        <p style="font-size: 14px; color: #777;">Manager ID</p>
+
+        <h2 style="font-size: 28px; color: #c51b05;">
+            <?php echo $managerId; ?>
+        </h2>
     </div>
 
-    <button
-        type="button"
-        id="editManagerBtn"
-        data-action="edit-manager"
-    >
-        Edit
-    </button>
-
 </div>
+
+
+                <button
+                    type="button"
+                    class="edit-hours-btn"
+                    onclick="saveProfile()"
+                >
+                    Save Profile
+                </button>
 
             </div>
 
@@ -326,6 +355,88 @@
     </main>
 
 </div>
+
+<script>
+function confirmLogout(event) {
+    event.preventDefault();
+
+    let logoutConfirm = confirm("Are you sure you want to logout?");
+
+    if (logoutConfirm) {
+        window.location.href = "../controller/logout.php";
+    }
+}
+
+const editButtons = document.querySelectorAll('.edit-field');
+
+editButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+        const box = button.parentElement;
+        const field = box.querySelector('input, textarea');
+
+        if (field) {
+            field.removeAttribute('readonly');
+            field.focus();
+        }
+    });
+});
+
+document.getElementById('editRadiusBtn').addEventListener('click', function() {
+    const radius = document.getElementById('deliveryRadius');
+
+    radius.setAttribute('contenteditable', 'true');
+    radius.focus();
+});
+
+
+document.getElementById('restaurantToggle').addEventListener('change', function() {
+    const statusText = document.getElementById('restaurantOpenText');
+
+    if (this.checked) {
+        statusText.innerText = 'Open';
+    } else {
+        statusText.innerText = 'Closed';
+    }
+});
+
+function saveProfile() {
+    const formData = new FormData();
+
+    formData.append('name', document.getElementById('restaurantName').value);
+    formData.append('description', document.getElementById('restaurantDescription').value);
+    formData.append('cuisine_type', document.getElementById('cuisineType').value);
+    formData.append('address', document.getElementById('restaurantAddress').value);
+    formData.append('city', document.getElementById('restaurantCity').value);
+    formData.append('delivery_radius_km', document.getElementById('deliveryRadius').innerText.trim());
+    formData.append('is_open', document.getElementById('restaurantToggle').checked ? 1 : 0);
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('POST', '../controller/profileControl.php', true);
+
+    xhr.onload = function() {
+        const data = JSON.parse(xhr.responseText);
+        alert(data.message);
+    };
+
+    xhr.send(formData);
+}
+</script>
+
+
+
+<script>
+function confirmLogout(event) {
+    event.preventDefault();
+
+    let logoutConfirm = confirm("Are you sure you want to logout?");
+
+    if (logoutConfirm) {
+        window.location.href = "../controller/logout.php";
+    }
+}
+</script>
+
 
 </body>
 </html>

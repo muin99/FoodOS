@@ -1,3 +1,70 @@
+<?php
+session_start();
+include '../../dirCommon/dbconnect.php'; // your DB connection
+
+$managerId = $_SESSION['user_id'] ?? 0;
+$restaurantId = 0;
+
+$stmt = mysqli_prepare($conn, "SELECT id FROM restaurants WHERE manager_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, "i", $managerId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$restaurant = mysqli_fetch_assoc($result);
+
+if ($restaurant) {
+    $restaurantId = (int)$restaurant['id'];
+}
+
+// ---------- Fetch category counts ----------
+$categoryCounts = [];
+$sql = "SELECT category_id, COUNT(*) as count 
+        FROM menu_items 
+        WHERE restaurant_id = ? 
+        GROUP BY category_id";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+while($row = mysqli_fetch_assoc($result)){
+    $categoryCounts[$row['category_id']] = $row['count'];
+}
+
+// ---------- Fetch all categories ----------
+$sql = "SELECT * FROM menu_categories WHERE restaurant_id = ? ORDER BY display_order";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $restaurantId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+$categories = [];
+while($row = mysqli_fetch_assoc($result)){
+    $categories[$row['id']] = $row;
+}
+
+// ---------- Selected category ----------
+$selectedCategoryId = $_GET['category_id'] ?? array_key_first($categories) ?? 0;
+
+// ---------- Fetch menu items for selected category ----------
+$sql = "SELECT * FROM menu_items WHERE restaurant_id = ? AND category_id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "ii", $restaurantId, $selectedCategoryId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+$menuItems = [];
+while($row = mysqli_fetch_assoc($result)){
+    $menuItems[] = $row;
+}
+?>
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,7 +127,8 @@
 
         </nav>
 
-        <a href="#" class="logout">Logout</a>
+         <a href="#" class="logout" onclick="confirmLogout(event)">Logout</a>
+
 
         <div class="promo">
             <img src="../assets/images/burger.png" alt="Burger">
@@ -86,10 +154,7 @@
 
                 <div class="menu-header-buttons">
 
-                    <button type="button" class="outline-btn" id="addCategoryBtn" data-action="add-category">
-                        <i class="fa-solid fa-list"></i>
-                        Add Category
-                    </button>
+                    
 
                     <button type="button" class="solid-btn" id="addItemBtn" data-action="add-item">
                         <i class="fa-solid fa-plus"></i>
@@ -112,40 +177,40 @@
 
                     <!-- JS can load categories here later -->
 
-                    <button type="button" class="category-row active-category" data-category-id="" data-category-name="burgers">
-                        <span class="category-icon">🍔</span>
-                        <strong>Burgers</strong>
-                        <small id="burgerItemCount">0 Items</small>
+                    <a href="menu.php?category_id=1" class="category-row <?= $selectedCategoryId == 1 ? 'active-category' : '' ?>" data-category-name="burgers">
+                           <span class="category-icon">🍔</span>
+                            <strong>Burgers</strong>
+                           <small id="burgerItemCount"><?= $categoryCounts[1] ?? 0 ?> Items</small>
                         <i class="fa-solid fa-angle-right"></i>
-                    </button>
+                    </a>
 
-                    <button type="button" class="category-row" data-category-id="" data-category-name="pizzas">
-                        <span class="category-icon">🍕</span>
-                        <strong>Pizzas</strong>
-                        <small id="pizzaItemCount">0 Items</small>
-                        <i class="fa-solid fa-angle-right"></i>
-                    </button>
+                    <a href="menu.php?category_id=2" class="category-row <?= $selectedCategoryId == 2 ? 'active-category' : '' ?>" data-category-name="pizzas">
+                            <span class="category-icon">🍕</span>
+                            <strong>Pizzas</strong>
+                            <small id="pizzaItemCount"><?= $categoryCounts[2] ?? 0 ?> Items</small>
+                            <i class="fa-solid fa-angle-right"></i>
+                    </a>
 
-                    <button type="button" class="category-row" data-category-id="" data-category-name="drinks">
-                        <span class="category-icon">🥤</span>
-                        <strong>Drinks</strong>
-                        <small id="drinkItemCount">0 Items</small>
-                        <i class="fa-solid fa-angle-right"></i>
-                    </button>
+                    <a href="menu.php?category_id=3" class="category-row <?= $selectedCategoryId == 3 ? 'active-category' : '' ?>" data-category-name="drinks">
+                            <span class="category-icon">🥤</span>
+                            <strong>Drinks</strong>
+                            <small id="drinkItemCount"><?= $categoryCounts[3] ?? 0 ?> Items</small>
+                            <i class="fa-solid fa-angle-right"></i>
+                    </a>
 
-                    <button type="button" class="category-row" data-category-id="" data-category-name="sides">
-                        <span class="category-icon">🍟</span>
-                        <strong>Sides</strong>
-                        <small id="sideItemCount">0 Items</small>
-                        <i class="fa-solid fa-angle-right"></i>
-                    </button>
+                    <a href="menu.php?category_id=4" class="category-row <?= $selectedCategoryId == 4 ? 'active-category' : '' ?>" data-category-name="sides">
+                            <span class="category-icon">🍟</span>
+                            <strong>Sides</strong>
+                            <small id="sideItemCount"><?= $categoryCounts[4] ?? 0 ?> Items</small>
+                            <i class="fa-solid fa-angle-right"></i>
+                    </a>
 
-                    <button type="button" class="category-row" data-category-id="" data-category-name="desserts">
-                        <span class="category-icon">🍰</span>
-                        <strong>Desserts</strong>
-                        <small id="dessertItemCount">0 Items</small>
-                        <i class="fa-solid fa-angle-right"></i>
-                    </button>
+                    <a href="menu.php?category_id=5" class="category-row <?= $selectedCategoryId == 5 ? 'active-category' : '' ?>" data-category-name="desserts">
+                          <span class="category-icon">🍰</span>
+                         <strong>Desserts</strong>
+                         <small id="dessertItemCount"><?= $categoryCounts[5] ?? 0 ?> Items</small>
+                          <i class="fa-solid fa-angle-right"></i>
+                    </a>
 
                 </div>
 
@@ -163,7 +228,7 @@
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th>Price</th>
+                                    <th id="priceHeader" style="cursor:pointer;" >Price &#9650;</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -218,6 +283,19 @@
     </main>
 
 </div>
+
+
+<script>
+function confirmLogout(event) {
+    event.preventDefault();
+
+    let logoutConfirm = confirm("Are you sure you want to logout?");
+
+    if (logoutConfirm) {
+        window.location.href = "../controller/logout.php";
+    }
+}
+</script>
 
 </body>
 </html>

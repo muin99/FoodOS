@@ -4,6 +4,11 @@ session_start();
 include '../../dirCommon/dbconnect.php';
 include '../model/agentModel.php';
 
+if (($_SESSION['user_role'] ?? '') != 'agent' || !isset($_SESSION['user_id'])) {
+echo json_encode(['success'=>false,'message'=>'Please login first.']);
+exit;
+}
+
 $name=$_POST['name']??'';
 $phone=$_POST['phone']??'';
 $vehicleType=$_POST['vehicle_type']??'';
