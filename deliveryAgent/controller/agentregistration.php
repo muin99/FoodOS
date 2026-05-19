@@ -1,5 +1,8 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+header('Content-Type: application/json');
 include '../../dirCommon/dbconnect.php';
 include '../model/deliveryagentmodel.php';
 
@@ -53,5 +56,5 @@ if ($result == false) {
 echo json_encode([
     'success' => true,
     'message' => 'Registration successful! Your account is pending admin approval. You will be notified once approved.',
-    'redirect' => '../../dirCommon/login.html'
+    'redirect' => 'login.html'
 ]);

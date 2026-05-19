@@ -1,5 +1,8 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+header('Content-Type: application/json');
 include '../../dirCommon/dbconnect.php';
 include '../model/deliveryagentmodel.php';
 
@@ -32,5 +35,5 @@ $_SESSION['agent_id']   = $user['agent_id'];
 
 echo json_encode([
     'success'  => true,
-    'redirect' => '../deliveryAgent/view/dashboard.html'
+    'redirect' => '../deliveryAgent/view/dashboard.php'
 ]);

@@ -138,6 +138,37 @@ input {
     background: #961800;
 }
 
+.user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 190px;
+    padding: 6px 10px;
+    border: 1px solid #e7dfdc;
+    border-radius: 8px;
+    background: #fff7f2;
+    color: #342b28;
+    font-weight: 700;
+}
+
+.user-chip span {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #b51c00;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.user-chip strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .site-footer {
     margin-top: 48px;
     background: #202020;
