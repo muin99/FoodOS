@@ -4,6 +4,7 @@ $pageTitle  = 'BiteBuddy - Admin Dashboard';
 $activePage = 'dashboard';
 $basePath   = '../../';
 $extraCss   = ['../assets/css/adminDashboard.css'];
+include '../controller/dashboardController.php';
 
 ?>
 
@@ -36,7 +37,6 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
     <div class="topbar">
       <div>
         <h2>Platform Overview</h2>
-        <p>Real-time health and operational metrics for BiteBuddy.</p>
       </div>
 
       <div class="search-box">
@@ -48,27 +48,29 @@ $extraCss   = ['../assets/css/adminDashboard.css'];
     <div class="cards">
 
       <div class="card">
-        <span class="green">+12%</span>
+        <!-- <span class="green">+12%</span> -->
         <p>Total Users</p>
-        <h3>1.2M</h3>
+        <!-- <h3>1.2M</h3> -->
+        <h3><?= $totalUsers ?></h3>
       </div>
 
       <div class="card">
-        <span class="green">+5%</span>
+        <!-- <span class="green">+5%</span> -->
         <p>Active Restaurants</p>
-        <h3>14,208</h3>
+        <!-- <h3>14,208</h3> -->
+         <h3><?= $totalRestaurants ?></h3>
       </div>
 
       <div class="card">
-        <span class="red">-2%</span>
-        <p>Platform Revenue</p>
-        <h3>$4.82M</h3>
+        <!-- <span class="red">-2%</span> -->
+        <p>Active Delivery Agents</p>
+        <h3><?= $totalActiveAgents ?></h3>
       </div>
 
       <div class="card">
-        <span class="green">Stable</span>
-        <p>Avg. Delivery Time</p>
-        <h3>28.4m</h3>
+        <!-- <span class="green">Stable</span> -->
+        <p>Total Orders Today</p>
+        <h3><?= $totalOrdersToday ?></h3>
       </div>
 
     </div>
