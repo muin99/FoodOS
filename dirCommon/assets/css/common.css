@@ -5,8 +5,8 @@
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background: #f7f7f7;
-    color: #222;
+    background: #f8faf9;
+    color: #202124;
 }
 
 a {
@@ -25,16 +25,20 @@ input {
 }
 
 .site-header {
-    background: #fff;
-    border-bottom: 1px solid #e3e3e3;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #e7dfdc;
+    box-shadow: 0 8px 24px rgba(32, 33, 36, 0.05);
 }
 
 .header-inner {
-    min-height: 74px;
+    min-height: 78px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 28px;
+    gap: 22px;
 }
 
 .brand {
@@ -44,11 +48,12 @@ input {
     color: #b51c00;
     font-size: 24px;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 .brand-icon {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -56,6 +61,20 @@ input {
     background: #b51c00;
     color: #fff;
     font-size: 18px;
+}
+
+.brand-copy {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.brand-copy small {
+    margin-top: 3px;
+    color: #6d5f5b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
 }
 
 .main-nav {
@@ -67,12 +86,15 @@ input {
     border-radius: 8px;
     background: #fafafa;
     font-size: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .main-nav a {
-    padding: 8px 12px;
+    padding: 9px 12px;
     border-radius: 6px;
     color: #555;
+    font-weight: 700;
 }
 
 .main-nav a.active,
@@ -86,10 +108,16 @@ input {
     align-items: center;
     gap: 10px;
     font-size: 14px;
+    flex-shrink: 0;
 }
 
 .cart-link {
-    color: #555;
+    padding: 9px 12px;
+    border: 1px solid #e7dfdc;
+    border-radius: 6px;
+    color: #4d403c;
+    font-weight: 700;
+    background: #fff;
 }
 
 .login-link {
@@ -102,6 +130,7 @@ input {
 }
 
 .cart-link:hover {
+    border-color: #b51c00;
     color: #b51c00;
 }
 
@@ -161,16 +190,16 @@ input {
 
     .main-nav {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-start;
     }
 
     .main-nav a {
-        flex: 1;
         text-align: center;
     }
 
     .header-actions {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-start;
+        flex-wrap: wrap;
     }
 }

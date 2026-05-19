@@ -1,0 +1,280 @@
+.landing-hero {
+    padding: 68px 0 48px;
+    background: #fff7f2;
+    border-bottom: 1px solid #eadbd4;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+    gap: 42px;
+    align-items: center;
+}
+
+.eyebrow {
+    display: inline-block;
+    color: #b51c00;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.hero-copy h1 {
+    margin: 12px 0 16px;
+    max-width: 650px;
+    color: #231f20;
+    font-size: clamp(44px, 7vw, 78px);
+    line-height: 0.98;
+}
+
+.hero-copy p {
+    max-width: 620px;
+    margin: 0;
+    color: #5a4b46;
+    font-size: 19px;
+    line-height: 1.65;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.primary-action,
+.secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 18px;
+    border-radius: 7px;
+    font-weight: 800;
+}
+
+.primary-action {
+    background: #b51c00;
+    color: #fff;
+}
+
+.secondary-action {
+    border: 1px solid #cdb9b2;
+    background: #fff;
+    color: #3b302d;
+}
+
+.hero-panel {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid #eadbd4;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 18px 45px rgba(85, 40, 28, 0.12);
+}
+
+.order-card {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid #eee2dc;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.order-card.active {
+    background: #fff4ef;
+}
+
+.order-card img {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #f2ebe8;
+}
+
+.order-card strong,
+.order-card span {
+    display: block;
+}
+
+.order-card strong {
+    margin-bottom: 5px;
+}
+
+.order-card span {
+    color: #6b625f;
+    font-size: 14px;
+}
+
+.route-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: center;
+    color: #6b625f;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.route-card div {
+    height: 2px;
+    background: repeating-linear-gradient(90deg, #b51c00 0, #b51c00 8px, transparent 8px, transparent 14px);
+}
+
+.quick-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 30px;
+}
+
+.quick-stats div {
+    padding: 20px;
+    border: 1px solid #e6e0dd;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.quick-stats strong,
+.quick-stats span {
+    display: block;
+}
+
+.quick-stats strong {
+    color: #b51c00;
+    font-size: 26px;
+}
+
+.quick-stats span {
+    margin-top: 6px;
+    color: #625956;
+    font-weight: 700;
+}
+
+.role-section {
+    padding: 58px 0;
+}
+
+.section-heading {
+    max-width: 620px;
+    margin-bottom: 24px;
+}
+
+.section-heading h2,
+.featured-grid h2 {
+    margin: 8px 0 0;
+    color: #231f20;
+    font-size: 34px;
+    line-height: 1.12;
+}
+
+.role-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.role-card {
+    min-height: 210px;
+    padding: 22px;
+    border: 1px solid #e6e0dd;
+    border-radius: 8px;
+    background: #fff;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-3px);
+    border-color: #b51c00;
+}
+
+.role-card span {
+    color: #b51c00;
+    font-weight: 800;
+}
+
+.role-card h3 {
+    margin: 42px 0 10px;
+    font-size: 21px;
+}
+
+.role-card p,
+.featured-grid p {
+    margin: 0;
+    color: #625956;
+    line-height: 1.6;
+}
+
+.featured-band {
+    padding: 52px 0;
+    background: #212121;
+    color: #fff;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 34px;
+    align-items: center;
+}
+
+.featured-grid h2 {
+    color: #fff;
+}
+
+.featured-grid p {
+    margin-top: 14px;
+    color: #ddd;
+}
+
+.restaurant-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.restaurant-strip img {
+    width: 100%;
+    min-height: 150px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #fff;
+}
+
+@media (max-width: 900px) {
+    .hero-grid,
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-stats,
+    .role-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .landing-hero {
+        padding-top: 42px;
+    }
+
+    .quick-stats,
+    .role-grid,
+    .restaurant-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .order-card {
+        grid-template-columns: 52px 1fr;
+    }
+
+    .order-card b {
+        grid-column: 2;
+    }
+}
