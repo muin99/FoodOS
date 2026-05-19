@@ -1,159 +1,93 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+include __DIR__ . '/../../dirCommon/dbconnect.php';
+include __DIR__ . '/../model/customerModel.php';
+
+$search = trim($_GET['search'] ?? '');
+$cuisine = trim($_GET['cuisine'] ?? '');
+$restaurants = getApprovedRestaurants($conn, $search, $cuisine);
+$cuisines = getCuisineTypes($conn);
+
 $pageTitle = 'BiteBuddy - Browse Restaurants';
 $activePage = 'browse';
 $basePath = '../../';
-$extraCss = ['../assets/css/browseResturants.css'];
+$extraCss = ['../css/browseResturants.css'];
 include __DIR__ . '/../../dirCommon/header.php';
+
+function customerAssetPath($path)
+{
+    if ($path == '') return '../assets/images/burger-culture.svg';
+    if (strpos($path, 'Customer/') === 0 || strpos($path, 'restaurantManager/') === 0) {
+        return '../../' . $path;
+    }
+    return $path;
+}
 ?>
 
-    <main class="page-wrap">
-        <section class="page-title">
+    <main class="page-wrap customer-page">
+        <section class="customer-hero">
             <div>
+                <span class="eyebrow">Customer ordering</span>
                 <h1>Browse Restaurants</h1>
-                <p>Find nearby places and order your favorite meals.</p>
+                <p>Choose a restaurant, add menu items, and place an order in a few simple steps.</p>
             </div>
-            <form class="search-box">
-                <label for="restaurant-search">Search</label>
-                <input id="restaurant-search" type="search" placeholder="Restaurant or dish name">
-            </form>
+            <a class="outline-action" href="orders.php">View My Orders</a>
         </section>
 
-        <section class="filters" aria-label="Restaurant filters">
-            <button class="active" type="button">All</button>
-            <button type="button">Pizza</button>
-            <button type="button">Burgers</button>
-            <button type="button">Sushi</button>
-            <button type="button">Thai</button>
-            <button type="button">Healthy</button>
-        </section>
+        <form class="customer-toolbar" method="get">
+            <label>
+                <span>Search restaurants</span>
+                <input name="search" type="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Restaurant or cuisine">
+            </label>
+            <label>
+                <span>Cuisine</span>
+                <select name="cuisine">
+                    <option value="">All cuisines</option>
+                    <?php foreach ($cuisines as $type): ?>
+                        <option value="<?php echo htmlspecialchars($type); ?>" <?php echo $cuisine === $type ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($type); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <button type="submit">Apply</button>
+            <a href="browseResturants.php">Reset</a>
+        </form>
 
         <section class="restaurant-section">
             <div class="section-heading">
                 <h2>Restaurants Near You</h2>
-                <span>8 results</span>
+                <span><?php echo count($restaurants); ?> results</span>
             </div>
 
-            <div class="restaurant-grid">
-                <article class="restaurant-card">
-                    <img src="../assets/images/burger-culture.svg" alt="Burger Culture food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>Burger Culture</h3>
-                            <span class="rating">4.8</span>
-                        </div>
-                        <p>American, Burgers, Grill</p>
-                        <div class="meta">
-                            <span>20-30 min</span>
-                            <span>Free delivery</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="restaurant-card">
-                    <img src="../assets/images/sakura-sushi.svg" alt="Sakura Sushi food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>Sakura Sushi</h3>
-                            <span class="rating">4.9</span>
-                        </div>
-                        <p>Japanese, Sushi, Healthy</p>
-                        <div class="meta">
-                            <span>35-45 min</span>
-                            <span>$2.99 delivery</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="restaurant-card">
-                    <img src="../assets/images/luigis-pizzeria.svg" alt="Luigi's Pizzeria food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>Luigi's Pizzeria</h3>
-                            <span class="rating">4.5</span>
-                        </div>
-                        <p>Italian, Pizza, Pasta</p>
-                        <div class="meta">
-                            <span>15-25 min</span>
-                            <span>Free delivery</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="restaurant-card">
-                    <img src="../assets/images/thai-express.svg" alt="Thai Express food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>Thai Express</h3>
-                            <span class="rating">4.7</span>
-                        </div>
-                        <p>Thai, Curry, Asian</p>
-                        <div class="meta">
-                            <span>25-40 min</span>
-                            <span>$1.50 delivery</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="restaurant-card">
-                    <img src="../assets/images/green-bowl.svg" alt="The Green Bowl food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>The Green Bowl</h3>
-                            <span class="rating">4.9</span>
-                        </div>
-                        <p>Healthy, Vegan, Bowls</p>
-                        <div class="meta">
-                            <span>10-20 min</span>
-                            <span>Free delivery</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="restaurant-card">
-                    <img src="../assets/images/taco-fiesta.svg" alt="Taco Fiesta food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>Taco Fiesta</h3>
-                            <span class="rating">4.6</span>
-                        </div>
-                        <p>Mexican, Street Food</p>
-                        <div class="meta">
-                            <span>20-30 min</span>
-                            <span>Free delivery</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="restaurant-card">
-                    <img src="../assets/images/brunch-club.svg" alt="Brunch Club food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>Brunch Club</h3>
-                            <span class="rating">4.8</span>
-                        </div>
-                        <p>Breakfast, Pancakes, Coffee</p>
-                        <div class="meta">
-                            <span>25-35 min</span>
-                            <span>$3.50 delivery</span>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="restaurant-card">
-                    <img src="../assets/images/grill-house.svg" alt="The Grill House food preview">
-                    <div class="card-body">
-                        <div class="card-top">
-                            <h3>The Grill House</h3>
-                            <span class="rating">4.4</span>
-                        </div>
-                        <p>Steakhouse, Modern, Grill</p>
-                        <div class="meta">
-                            <span>40-55 min</span>
-                            <span>Free delivery</span>
-                        </div>
-                    </div>
-                </article>
-            </div>
+            <?php if (count($restaurants) === 0): ?>
+                <div class="empty-state">
+                    <h3>No restaurants found</h3>
+                    <p>Import the demo data or try a different search.</p>
+                </div>
+            <?php else: ?>
+                <div class="restaurant-grid">
+                    <?php foreach ($restaurants as $restaurant): ?>
+                        <a class="restaurant-card" href="restaurant.php?id=<?php echo (int)$restaurant['id']; ?>">
+                            <img src="<?php echo htmlspecialchars(customerAssetPath($restaurant['logo_path'])); ?>" alt="<?php echo htmlspecialchars($restaurant['name']); ?> food preview">
+                            <div class="card-body">
+                                <div class="card-top">
+                                    <h3><?php echo htmlspecialchars($restaurant['name']); ?></h3>
+                                    <span class="rating"><?php echo number_format((float)$restaurant['rating'], 1); ?></span>
+                                </div>
+                                <p><?php echo htmlspecialchars($restaurant['cuisine_type'] ?: 'Restaurant'); ?></p>
+                                <div class="meta">
+                                    <span><?php echo htmlspecialchars($restaurant['city']); ?></span>
+                                    <span><?php echo $restaurant['is_open'] ? 'Open now' : 'Closed'; ?></span>
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </section>
     </main>
 

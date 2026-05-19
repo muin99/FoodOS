@@ -80,7 +80,7 @@
                     </div>
 
                     <div class="form-footer">
-                        Don't have an account? <a href="#" onclick="switchTab('register')">Sign Up</a>
+                        Don't have an account? <a href="#" onclick="openRegistration('customer')">Sign Up</a>
                     </div>
                 </div>
 
@@ -135,7 +135,7 @@
                     </div>
 
                     <div class="form-footer">
-                        New restaurant? <a href="#" onclick="switchTab('register')">Register Here</a>
+                        New restaurant? <a href="#" onclick="openRegistration('manager')">Register Here</a>
                     </div>
                 </div>
 
@@ -189,7 +189,7 @@
                     </div>
 
                     <div class="form-footer">
-                        New agent? <a href="#" onclick="switchTab('register')">Sign Up</a>
+                        New agent? <a href="#" onclick="openRegistration('agent')">Sign Up</a>
                     </div>
                 </div>
 
@@ -368,6 +368,15 @@
             });
         }
 
+        function openRegistration(accountType) {
+            switchTab('register');
+            const typeSelect = document.getElementById('reg-type');
+            if (typeSelect && accountType) {
+                typeSelect.value = accountType;
+                updateAccountType(accountType);
+            }
+        }
+
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -499,6 +508,18 @@
                 agentFields.style.display = 'none';
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const tab = params.get('tab');
+            const type = params.get('type');
+
+            if (tab === 'register') {
+                openRegistration(type || '');
+            } else if (tab) {
+                switchTab(tab);
+            }
+        });
 
         // agent login
         function agentLogin(event) {

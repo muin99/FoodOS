@@ -34,6 +34,73 @@ function getAvailableAssignments($conn)
     return $orders;
 }
 
+function getActiveAssignment($conn, $agentId)
+{
+    $sql = "
+        SELECT
+            o.id AS order_id,
+            o.delivery_address,
+            o.delivery_fee,
+            o.total_amount,
+            o.status AS order_status,
+            da.status AS assignment_status,
+            da.assigned_at,
+            da.picked_up_at,
+            r.name AS restaurant_name,
+            r.address AS restaurant_address,
+            u.name AS customer_name
+        FROM delivery_assignments da
+        INNER JOIN orders o ON o.id = da.order_id
+        INNER JOIN restaurants r ON r.id = o.restaurant_id
+        INNER JOIN users u ON u.id = o.customer_id
+        WHERE da.agent_id = ?
+          AND da.status IN ('assigned', 'picked_up')
+        ORDER BY da.assigned_at DESC
+        LIMIT 1
+    ";
+
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $agentId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return mysqli_fetch_assoc($result);
+}
+
+function getAgentActiveDelivery($conn, $agentId)
+{
+    return getActiveAssignment($conn, $agentId);
+}
+
+function getAgentProfile($conn, $userId)
+{
+    $sql = "
+        SELECT
+            da.id AS agent_id,
+            da.is_online,
+            da.vehicle_type,
+            da.total_earnings,
+            da.is_approved,
+            u.id AS user_id,
+            u.name,
+            u.email,
+            u.phone
+        FROM delivery_agents da
+        INNER JOIN users u ON u.id = da.user_id
+        WHERE da.user_id = ? AND u.role = 'agent'
+        LIMIT 1
+    ";
+
+    $stmt = mysqli_prepare($conn, $sql);
+    if (!$stmt) return null;
+
+    mysqli_stmt_bind_param($stmt, 'i', $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    return mysqli_fetch_assoc($result) ?: null;
+}
+
 function getNewAssignmentsSince($conn, $lastChecked)
 {
     $sql = "
@@ -60,11 +127,19 @@ function acceptAssignment($conn, $orderId, $agentId, $userId)
 
     mysqli_begin_transaction($conn);
 
-    $sql = "INSERT INTO delivery_assignments (order_id, agent_id, status) VALUES (?, ?, 'assigned')";
+    $sql = "
+        INSERT INTO delivery_assignments (order_id, agent_id, status)
+        SELECT o.id, ?, 'assigned'
+        FROM orders o
+        WHERE o.id = ?
+          AND o.agent_id IS NULL
+          AND o.status IN ('accepted', 'ready')
+        LIMIT 1
+    ";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+    mysqli_stmt_bind_param($stmt, 'ii', $agentId, $orderId);
 
-    if (!mysqli_stmt_execute($stmt)) {
+    if (!mysqli_stmt_execute($stmt) || mysqli_stmt_affected_rows($stmt) < 1) {
         mysqli_rollback($conn);
         return false;
     }
@@ -83,21 +158,26 @@ function acceptAssignment($conn, $orderId, $agentId, $userId)
 
 function declineAssignment($conn, $orderId, $agentId)
 {
-    if ($orderId <= 0 || $agentId <= 0) return false;
-
-    $sql = "UPDATE delivery_assignments SET status = 'cancelled' WHERE order_id = ? AND agent_id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
-
-    return mysqli_stmt_execute($stmt);
+    return $orderId > 0 && $agentId > 0;
 }
 
-function toggleAgentOnlineStatus($conn, $userId, $isOnline)
+function toggleAgentOnlineStatus($conn, $userId, $agentId, $isOnline)
 {
-    $sql = "UPDATE delivery_agents SET is_online = ? WHERE user_id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'ii', $isOnline, $userId);
+    if ($userId <= 0 || $agentId <= 0) return false;
 
+    $checkSql = "SELECT id FROM delivery_agents WHERE user_id = ? AND id = ? LIMIT 1";
+    $checkStmt = mysqli_prepare($conn, $checkSql);
+    if (!$checkStmt) return false;
+    mysqli_stmt_bind_param($checkStmt, 'ii', $userId, $agentId);
+    mysqli_stmt_execute($checkStmt);
+    $checkResult = mysqli_stmt_get_result($checkStmt);
+    if (!$checkResult || mysqli_num_rows($checkResult) === 0) return false;
+
+    $sql = "UPDATE delivery_agents SET is_online = ? WHERE user_id = ? AND id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    if (!$stmt) return false;
+
+    mysqli_stmt_bind_param($stmt, 'iii', $isOnline, $userId, $agentId);
     return mysqli_stmt_execute($stmt);
 }
 
@@ -106,36 +186,86 @@ function updateDeliveryStatus($conn, $orderId, $agentId, $newStatus)
     $allowed = ['assigned', 'picked_up', 'delivered', 'cancelled'];
     if ($orderId <= 0 || $agentId <= 0 || !in_array($newStatus, $allowed)) return false;
 
-    $pickedUpAt = $newStatus == 'picked_up' ? date('Y-m-d H:i:s') : null;
-    $deliveredAt = $newStatus == 'delivered' ? date('Y-m-d H:i:s') : null;
+    mysqli_begin_transaction($conn);
 
-    $sql = "
-        UPDATE delivery_assignments
-        SET status = ?,
-            picked_up_at = IF(? IS NULL, picked_up_at, ?),
-            delivered_at = IF(? IS NULL, delivered_at, ?)
-        WHERE order_id = ? AND agent_id = ?
-    ";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssssii', $newStatus, $pickedUpAt, $pickedUpAt, $deliveredAt, $deliveredAt, $orderId, $agentId);
-
-    if (!mysqli_stmt_execute($stmt)) return false;
-
-    if ($newStatus == 'delivered') {
-        $orderStatus = 'delivered';
-    } elseif ($newStatus == 'picked_up') {
-        $orderStatus = 'picked_up';
-    } elseif ($newStatus == 'cancelled') {
-        $orderStatus = 'accepted';
-    } else {
+    if ($newStatus == 'assigned') {
+        $sql = "UPDATE delivery_assignments SET status = 'assigned' WHERE order_id = ? AND agent_id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+        if (!mysqli_stmt_execute($stmt)) {
+            mysqli_rollback($conn);
+            return false;
+        }
+        mysqli_commit($conn);
         return true;
     }
 
-    $sql = "UPDATE orders SET status = ? WHERE id = ? AND agent_id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'sii', $orderStatus, $orderId, $agentId);
+    if ($newStatus == 'picked_up') {
+        $sql = "UPDATE delivery_assignments SET status = 'picked_up', picked_up_at = NOW() WHERE order_id = ? AND agent_id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+        if (!mysqli_stmt_execute($stmt)) {
+            mysqli_rollback($conn);
+            return false;
+        }
 
-    return mysqli_stmt_execute($stmt);
+        $sql = "UPDATE orders SET status = 'picked_up' WHERE id = ? AND agent_id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+        if (!mysqli_stmt_execute($stmt)) {
+            mysqli_rollback($conn);
+            return false;
+        }
+
+        mysqli_commit($conn);
+        return true;
+    }
+
+    if ($newStatus == 'delivered') {
+        $sql = "
+            UPDATE delivery_assignments
+            SET status = 'delivered',
+                picked_up_at = IFNULL(picked_up_at, NOW()),
+                delivered_at = NOW()
+            WHERE order_id = ? AND agent_id = ?
+        ";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+        if (!mysqli_stmt_execute($stmt)) {
+            mysqli_rollback($conn);
+            return false;
+        }
+
+        $sql = "UPDATE orders SET status = 'delivered' WHERE id = ? AND agent_id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+        if (!mysqli_stmt_execute($stmt)) {
+            mysqli_rollback($conn);
+            return false;
+        }
+
+        mysqli_commit($conn);
+        return true;
+    }
+
+    $sql = "UPDATE delivery_assignments SET status = 'cancelled' WHERE order_id = ? AND agent_id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+    if (!mysqli_stmt_execute($stmt)) {
+        mysqli_rollback($conn);
+        return false;
+    }
+
+    $sql = "UPDATE orders SET status = 'accepted', agent_id = NULL WHERE id = ? AND agent_id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $orderId, $agentId);
+    if (!mysqli_stmt_execute($stmt)) {
+        mysqli_rollback($conn);
+        return false;
+    }
+
+    mysqli_commit($conn);
+    return true;
 }
 
 function getAgentEarningsSummary($conn, $agentId)
@@ -183,7 +313,7 @@ function getAgentPerformanceStats($conn, $agentId, $userId)
 {
     $earnings = getAgentEarningsSummary($conn, $agentId);
 
-    $sql = "SELECT is_online, vehicle_type FROM delivery_agents WHERE id = ? AND user_id = ? LIMIT 1";
+    $sql = "SELECT da.is_online, da.vehicle_type, u.name, u.email, u.phone FROM delivery_agents da INNER JOIN users u ON u.id = da.user_id WHERE da.id = ? AND da.user_id = ? LIMIT 1";
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, 'ii', $agentId, $userId);
     mysqli_stmt_execute($stmt);

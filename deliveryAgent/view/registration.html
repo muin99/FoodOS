@@ -1,238 +1,54 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Join the Fleet - BiteBuddy</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "outline-variant": "#e5bdb6",
-                    "on-secondary-fixed": "#002106",
-                    "on-secondary-container": "#007327",
-                    "surface-container": "#e8eff1",
-                    "error": "#ba1a1a",
-                    "on-error": "#ffffff",
-                    "on-error-container": "#93000a",
-                    "on-secondary-fixed-variant": "#00531a",
-                    "on-tertiary": "#ffffff",
-                    "primary": "#b51c00",
-                    "outline": "#916f69",
-                    "primary-fixed": "#ffdad3",
-                    "surface-container-lowest": "#ffffff",
-                    "secondary-fixed-dim": "#66df75",
-                    "on-primary-fixed-variant": "#8e1300",
-                    "surface-container-highest": "#dde4e6",
-                    "secondary-container": "#80f98b",
-                    "on-primary": "#ffffff",
-                    "surface-container-low": "#eef5f7",
-                    "secondary": "#006e25",
-                    "secondary-fixed": "#83fc8e",
-                    "on-background": "#161d1f",
-                    "tertiary-fixed": "#5af9f3",
-                    "tertiary": "#006764",
-                    "on-tertiary-fixed-variant": "#00504e",
-                    "tertiary-container": "#00827f",
-                    "on-secondary": "#ffffff",
-                    "surface-container-high": "#e2e9ec",
-                    "primary-container": "#dc3214",
-                    "surface-tint": "#ba1c00",
-                    "background": "#f4fafd",
-                    "on-surface": "#161d1f",
-                    "error-container": "#ffdad6",
-                    "on-primary-container": "#fffbff",
-                    "tertiary-fixed-dim": "#2edcd7",
-                    "surface-dim": "#d4dbdd",
-                    "primary-fixed-dim": "#ffb4a5",
-                    "on-tertiary-fixed": "#00201f",
-                    "inverse-surface": "#2b3234",
-                    "surface": "#f4fafd",
-                    "on-tertiary-container": "#f3fffd",
-                    "on-primary-fixed": "#3e0400",
-                    "inverse-primary": "#ffb4a5",
-                    "on-surface-variant": "#5c403a",
-                    "inverse-on-surface": "#ebf2f4",
-                    "surface-variant": "#dde4e6",
-                    "surface-bright": "#f4fafd"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "0.75rem",
-                    "full": "9999px"
-            },
-            "spacing": {
-                    "margin-mobile": "20px",
-                    "margin-desktop": "40px",
-                    "container-max": "1280px",
-                    "unit": "8px",
-                    "gutter-mobile": "16px",
-                    "gutter-desktop": "24px"
-            },
-            "fontFamily": {
-                    "label-md": ["Geist"],
-                    "headline-md": ["Geist"],
-                    "headline-lg-mobile": ["Geist"],
-                    "body-lg": ["Geist"],
-                    "headline-sm": ["Geist"],
-                    "display-lg": ["Geist"],
-                    "headline-lg": ["Geist"],
-                    "body-md": ["Geist"],
-                    "body-sm": ["Geist"]
-            },
-            "fontSize": {
-                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
-                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
-                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
-                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
-                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
-                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
-                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
-                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
-            }
-          },
-        },
-      }
-    </script>
-<style>
-        body { font-family: 'Geist', sans-serif; }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=../../dirCommon/login.html?tab=register&type=agent">
+    <title>Agent Registration - BiteBuddy</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f6f7f5;
+            color: #201f1d;
+            font-family: Arial, Helvetica, sans-serif;
         }
-        .file-upload-zone:hover {
-            border-color: #b51c00;
-            background-color: rgba(181, 28, 0, 0.04);
+
+        .redirect-box {
+            width: min(420px, calc(100% - 32px));
+            padding: 28px;
+            border: 1px solid #e4ded8;
+            border-radius: 8px;
+            background: #fff;
+            text-align: center;
+            box-shadow: 0 12px 26px rgba(45, 32, 27, 0.06);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            color: #b51c00;
+            font-size: 24px;
+        }
+
+        p {
+            margin: 0;
+            color: #68615d;
+            line-height: 1.5;
+        }
+
+        a {
+            color: #b51c00;
+            font-weight: 700;
         }
     </style>
 </head>
-<body class="bg-background text-on-background min-h-screen">
-<!-- TopAppBar -->
-<nav class="bg-surface/80 backdrop-blur-md sticky top-0 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 w-full z-50 shadow-sm">
-<div class="flex items-center gap-4">
-<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">BiteBuddy</span>
-</div>
-<div class="flex items-center gap-4">
-<button class="text-on-surface-variant hover:text-primary-container transition-colors active:scale-95 duration-200">
-<span class="material-symbols-outlined" data-icon="help">help</span>
-</button>
-<button class="text-on-surface-variant hover:text-primary-container transition-colors active:scale-95 duration-200">
-<span class="material-symbols-outlined" data-icon="language">language</span>
-</button>
-</div>
-</nav>
-<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-16">
-<div class="grid lg:grid-cols-2 gap-12 items-center">
-<!-- Hero Content Section -->
-<div class="space-y-8">
-<div class="space-y-4">
-<span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md">
-                        Delivery Partner Program
-                    </span>
-<h1 class="font-display-lg text-display-lg leading-tight text-on-background">
-                        Join the fleet and start earning today
-                    </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
-                        Be your own boss with BiteBuddy. Deliver delicious meals to customers in your city and enjoy flexible hours, competitive pay, and instant payouts.
-                    </p>
-</div>
-<!-- Benefits Bento Style Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30">
-<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-primary" data-icon="schedule">schedule</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm mb-1">Total Flexibility</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Choose when and how often you want to work.</p>
-</div>
-<div class="bg-white p-6 rounded-xl shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-outline-variant/30">
-<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center mb-4">
-<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm mb-1">Fast Payouts</h3>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Track your earnings and get paid daily or weekly.</p>
-</div>
-</div>
-<div class="rounded-2xl overflow-hidden shadow-lg h-64 w-full relative">
-<img alt="Delivery agent on a scooter" class="w-full h-full object-cover" data-alt="A focused delivery agent wearing a modern minimalist red uniform jacket and a professional helmet riding a sleek electric scooter through a clean, sunlit urban street. The lighting is high-key and bright, emphasizing a modern city vibe with soft shadows. The overall aesthetic is clean, professional, and efficient, using a palette of bright whites, grays, and pops of appetite red to match the BiteBuddy brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCES5UagAKUBtPNp04GbIMEyXfnmzbcfxsAkWyc_TORSj7YGOO8t6wSP4Xu-2zW0MFtQjW67DULN6vdUIDIIRkS1gI2t5R4aBjCck70Z2L63Tug0QtU1EMJbuYZ4M8YWWJkFyM4OQei1E3XDPO5icPRCc9OFlAgghoduC2ozB-djJMaP9cUorwtoWM5qaO-DLebdk4zN4clIerWDn0eGLspOEFpGo9wUTbGms-oxrLo8KSZAoPrtezbAxlKg_K2exE1aqW2sj6LKwg"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-</div>
-</div>
-<!-- Registration Form Section -->
-<div class="bg-white p-8 md:p-10 rounded-2xl shadow-[0px_8px_30px_rgba(0,0,0,0.08)] border border-outline-variant/20">
-<h2 class="font-headline-lg text-headline-lg mb-8 text-on-surface">Become an Agent</h2>
-<form class="space-y-6">
-<!-- Name -->
-<div class="space-y-2">
-<label class="font-label-md text-label-md text-on-surface-variant" for="fullname">Full Name</label>
-<input class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" id="fullname" name="fullname" placeholder="Enter your full legal name" type="text"/>
-</div>
-<!-- Email & Phone Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-<div class="space-y-2">
-<label class="font-label-md text-label-md text-on-surface-variant" for="email">Email</label>
-<input class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" id="email" name="email" placeholder="name@example.com" type="email"/>
-</div>
-<div class="space-y-2">
-<label class="font-label-md text-label-md text-on-surface-variant" for="phone">Phone</label>
-<input class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" id="phone" name="phone" placeholder="+1 (555) 000-0000" type="tel"/>
-</div>
-</div>
-<!-- Vehicle Type -->
-<div class="space-y-2">
-<label class="font-label-md text-label-md text-on-surface-variant" for="vehicle">Vehicle Type</label>
-<div class="relative">
-<select class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-white appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" id="vehicle" name="vehicle">
-<option disabled="" selected="" value="">Select your vehicle</option>
-<option value="bicycle">Bicycle</option>
-<option value="scooter">Scooter</option>
-<option value="car">Car</option>
-</select>
-<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
-</div>
-</div>
-</div>
-<!-- File Upload -->
-<div class="space-y-2">
-<label class="font-label-md text-label-md text-on-surface-variant">Driver's License/ID</label>
-<div class="file-upload-zone border-2 border-dashed border-outline-variant rounded-xl p-8 transition-all flex flex-col items-center justify-center cursor-pointer text-center">
-<input class="hidden" id="id-upload" type="file"/>
-<span class="material-symbols-outlined text-on-surface-variant mb-2 scale-125" data-icon="upload_file">upload_file</span>
-<p class="font-body-md text-body-md font-semibold text-on-surface">Click to upload or drag and drop</p>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">PDF, JPG or PNG (max. 5MB)</p>
-</div>
-</div>
-<!-- Submit Button -->
-<div class="pt-4">
-<button class="w-full bg-primary hover:bg-[#a31a00] text-white font-label-md text-body-md py-4 rounded-xl shadow-lg active:scale-[0.98] transition-all duration-200" type="submit">
-                            Register as Agent
-                        </button>
-</div>
-<p class="text-center font-body-sm text-body-sm text-on-surface-variant">
-                        By registering, you agree to our <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
-                    </p>
-</form>
-</div>
-</div>
-</main>
-<!-- Simple Transactional Footer (No Nav Bar per rules) -->
-<footer class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-12 border-t border-outline-variant/30 flex flex-col md:flex-row justify-between items-center gap-6">
-<div class="flex items-center gap-2">
-<span class="font-headline-sm text-headline-sm font-bold text-primary">BiteBuddy</span>
-<span class="text-on-surface-variant font-body-sm text-body-sm">© 2024 BiteBuddy Inc.</span>
-</div>
-<div class="flex gap-8 text-on-surface-variant font-body-sm text-body-sm">
-<a class="hover:text-primary transition-colors" href="#">Help Center</a>
-<a class="hover:text-primary transition-colors" href="#">Safety</a>
-<a class="hover:text-primary transition-colors" href="#">Earnings</a>
-</div>
-</footer>
-</body></html>
+<body>
+    <main class="redirect-box">
+        <h1>Opening Registration</h1>
+        <p>Agent registration is handled from the shared login page. <a href="../../dirCommon/login.html?tab=register&type=agent">Continue now</a>.</p>
+    </main>
+</body>
+</html>

@@ -70,7 +70,7 @@ include __DIR__ . '/dirCommon/header.php';
                     <h3>Restaurant Manager</h3>
                     <p>Track orders, update menu items, and view restaurant insights.</p>
                 </a>
-                <a class="role-card" href="deliveryAgent/view/dashboard.html">
+                <a class="role-card" href="deliveryAgent/view/dashboard.php">
                     <span>03</span>
                     <h3>Delivery Agent</h3>
                     <p>Check available orders, manage status, and review earnings.</p>
