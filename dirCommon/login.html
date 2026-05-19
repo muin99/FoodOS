@@ -189,7 +189,7 @@
                     </div>
 
                     <div class="form-footer">
-                        New agent? <a href="#" onclick="switchTab('register')">Sign Up</a>
+                        New agent? <a href="#" onclick="switchAgentRegister()">Sign Up</a>
                     </div>
                 </div>
 
@@ -401,12 +401,21 @@
             });
         }
 
-        function customerRegister(event) {
+        function registerAccount(event) {
             event.preventDefault();
 
             const formData = new FormData(event.target);
+            const accountType = formData.get('account_type');
+            let url = '../Customer/controller/loginRegistrationControl.php';
 
-            fetch('../Customer/controller/loginRegistrationControl.php', {
+            if (accountType === 'agent') {
+                url = '../deliveryAgent/controller/agentregistration.php';
+            } else if (accountType === 'restaurant_manager') {
+                alert('Restaurant manager registration is not connected yet.');
+                return;
+            }
+
+            fetch(url, {
                 method: 'POST',
                 body: formData
             })
@@ -415,6 +424,9 @@
             })
             .then(function(data) {
                 if (data.success) {
+                    if (accountType === 'agent') {
+                        alert(data.message || 'Registration successful! Please login to continue.');
+                    }
                     window.location.href = data.redirect;
                 } else {
                     alert(data.message);

@@ -1,5 +1,6 @@
 <?php
 session_start();
+header('Content-Type: application/json');
 include '../../dirCommon/dbconnect.php';
 include '../model/deliveryagentmodel.php';
 
@@ -18,17 +19,13 @@ if ($user == false) {
     exit;
 }
 
-
-if (!$user['is_approved']) {
-    echo json_encode(['success' => false, 'message' => 'Your agent account is pending admin approval.']);
-    exit;
-}
+session_regenerate_id(true);
 
 $_SESSION['user_id']    = $user['id'];
 $_SESSION['user_name']  = $user['name'];
 $_SESSION['user_email'] = $user['email'];
 $_SESSION['user_role']  = $user['role'];
-$_SESSION['agent_id']   = $user['agent_id'];   
+$_SESSION['agent_id']   = $user['agent_id'];
 
 echo json_encode([
     'success'  => true,

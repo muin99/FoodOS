@@ -26,11 +26,8 @@ function agentEmailExists($conn, $email)
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, 's', $email);
     mysqli_stmt_execute($stmt);
-
     $result = mysqli_stmt_get_result($stmt);
-    $user = mysqli_fetch_assoc($result);
-
-    return $user != null;
+    return mysqli_fetch_assoc($result) != null;
 }
 
 function agentRegister($conn, $name, $email, $phone, $password, $vehicleType)
@@ -38,32 +35,30 @@ function agentRegister($conn, $name, $email, $phone, $password, $vehicleType)
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
     $role = 'agent';
 
+    mysqli_begin_transaction($conn);
+
     $sql = 'INSERT INTO users (name, email, password_hash, phone, role)
             VALUES (?, ?, ?, ?, ?)';
-
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssss',
-        $name,
-        $email,
-        $passwordHash,
-        $phone,
-        $role
-    );
+    mysqli_stmt_bind_param($stmt, 'sssss', $name, $email, $passwordHash, $phone, $role);
 
-    if (!mysqli_stmt_execute($stmt)) return false;
+    if (!mysqli_stmt_execute($stmt)) {
+        mysqli_rollback($conn);
+        return false;
+    }
 
     $userId = mysqli_insert_id($conn);
 
     $sql2 = 'INSERT INTO delivery_agents (user_id, vehicle_type)
              VALUES (?, ?)';
-
     $stmt2 = mysqli_prepare($conn, $sql2);
-    mysqli_stmt_bind_param($stmt2, 'is',
-        $userId,
-        $vehicleType
-    );
+    mysqli_stmt_bind_param($stmt2, 'is', $userId, $vehicleType);
 
-    if (!mysqli_stmt_execute($stmt2)) return false;
+    if (!mysqli_stmt_execute($stmt2)) {
+        mysqli_rollback($conn);
+        return false;
+    }
 
+    mysqli_commit($conn);
     return $userId;
 }
