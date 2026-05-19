@@ -1,13 +1,13 @@
 <?php
 
-$pageTitle  = 'Restaurants - Admin';
-$activePage = 'restaurants';
+$pageTitle  = 'Delivery Agents - Admin';
+$activePage = 'agents';
 $basePath   = '../../';
 
-include '../controller/restaurantController.php';
+include '../controller/agentController.php';
 
-if (!isset($restaurants)) {
-    $restaurants = [];
+if (!isset($agents)) {
+    $agents = [];
 }
 
 ?>
@@ -24,7 +24,6 @@ if (!isset($restaurants)) {
 
 <link rel="stylesheet" href="../assets/css/restaurants.css">
 
-
 </head>
 
 <body>
@@ -34,17 +33,15 @@ if (!isset($restaurants)) {
     <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <div class="main">
-\
+
         <div class="topbar">
 
-            <div>
-                <h2>Restaurant Management</h2>
-            </div>
+            <h2>Delivery Agent Management</h2>
 
             <div class="search-box">
                 <input type="text"
-                       id="searchRestaurant"
-                       placeholder="Search restaurants...">
+                       id="searchAgent"
+                       placeholder="Search agents...">
             </div>
 
         </div>
@@ -52,28 +49,28 @@ if (!isset($restaurants)) {
         <div class="cards">
 
             <div class="card">
-                <p>Total Restaurants</p>
-                <h3><?= count($restaurants) ?></h3>
+                <p>Total Agents</p>
+                <h3><?= count($agents) ?></h3>
             </div>
 
             <div class="card">
                 <p>Pending</p>
                 <h3>
-                    <?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 1)) ?>
+                    <?= count(array_filter($agents, fn($a) => $a['is_active'] == 2)) ?>
                 </h3>
             </div>
 
             <div class="card">
-                <p>Approved</p>
+                <p>Active</p>
                 <h3>
-                    <?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 2)) ?>
+                    <?= count(array_filter($agents, fn($a) => $a['is_active'] == 1)) ?>
                 </h3>
             </div>
 
             <div class="card">
-                <p>Blocked</p>
+                <p>Block</p>
                 <h3>
-                    <?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 3)) ?>
+                    <?= count(array_filter($agents, fn($a) => $a['is_active'] == 0)) ?>
                 </h3>
             </div>
 
@@ -81,69 +78,71 @@ if (!isset($restaurants)) {
 
 
         <div class="content">
+
             <div class="table-section">
 
                 <div class="table-header">
-                    <h3>Restaurant List</h3>
+                    <h3>Agent List</h3>
                 </div>
 
                 <div class="table-wrapper">
 
-                    <table id="restaurantTable">
+                    <table id="agentTable">
 
                         <thead>
 
                             <tr>
-                                <th>Restaurant</th>
-                                <th>Manager</th>
-                                <th>City</th>
+                                <th>Agent</th>
+                                <th>Email</th>
+                                <th>Phone</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                <th>Action</th>
                             </tr>
 
                         </thead>
 
                         <tbody>
 
-                        <?php foreach ($restaurants as $r): ?>
+                        <?php foreach ($agents as $a): ?>
 
-                            <?php if ($r['is_approved'] != 1): ?>
+                            <?php if ($a['is_active'] != 2): ?>
 
                             <tr>
+
+                                <!-- AGENT -->
                                 <td>
 
                                     <div class="user-info">
 
-                                        <img src="../assets/default-restaurant.png"
-                                             alt="restaurant">
+                                        <img src="https://i.pravatar.cc/150?img=<?= $a['id'] ?>">
 
                                         <span>
-                                            <?= htmlspecialchars($r['name']) ?>
+                                            <?= htmlspecialchars($a['name']) ?>
                                         </span>
 
                                     </div>
 
                                 </td>
                                 <td>
-                                    <?= htmlspecialchars($r['manager_name'] ?? 'N/A') ?>
+                                    <?= htmlspecialchars($a['email']) ?>
                                 </td>
 
                                 <td>
-                                    <?= htmlspecialchars($r['city']) ?>
+                                    <?= htmlspecialchars($a['phone']) ?>
                                 </td>
 
                                 <td>
 
-                                    <?php if ($r['is_approved'] == 2): ?>
+                                    <?php if ($a['is_active'] == 1): ?>
 
-                                        <span class="status active-status">
-                                            Approved
+                                        <span class="status active">
+                                            Active
                                         </span>
 
-                                    <?php elseif ($r['is_approved'] == 3): ?>
+                                    <?php elseif ($a['is_active'] == 0): ?>
 
-                                        <span class="status suspended">
-                                            Blocked
+                                        <span class="status inactive">
+                                            Inactive
                                         </span>
 
                                     <?php endif; ?>
@@ -153,41 +152,42 @@ if (!isset($restaurants)) {
                                 <td>
 
                                     <form method="POST"
-                                          action="../controller/restaurantController.php"
+                                          action="../controller/agentController.php"
                                           style="display:flex; gap:5px;">
 
                                         <input type="hidden"
                                                name="id"
-                                               value="<?= $r['id'] ?>">
+                                               value="<?= $a['id'] ?>">
 
                                         <!-- VIEW -->
                                         <button type="button"
-                                                class="btn"
-                                                onclick='viewRestaurant(<?= json_encode($r) ?>)'>
+                                                class="btn view"
+                                                onclick='viewAgent(<?= json_encode($a) ?>)'>
 
                                             View
 
                                         </button>
 
-                                        <?php if ($r['is_approved'] == 2): ?>
+                                        <!-- DEACTIVATE -->
+                                        <?php if ($a['is_active'] == 1): ?>
 
                                             <button type="submit"
                                                     name="action"
-                                                    value="block"
+                                                    value="deactivate"
                                                     class="reject-btn">
 
                                                 Block
 
                                             </button>
 
-                                        <?php elseif ($r['is_approved'] == 3): ?>
+                                        <?php elseif ($a['is_active'] == 0): ?>
 
                                             <button type="submit"
                                                     name="action"
-                                                    value="approve"
+                                                    value="activate"
                                                     class="approve-btn">
 
-                                                Re-Activate
+                                                Reactivate
 
                                             </button>
 
@@ -217,24 +217,24 @@ if (!isset($restaurants)) {
 
                 <div class="box">
 
-                    <h3>Pending Approvals</h3>
+                    <h3>Pending Agent Approvals</h3>
 
                     <?php
-                    $pendingList = array_filter(
-                        $restaurants,
-                        fn($r) => $r['is_approved'] == 1
+                    $pendingAgents = array_filter(
+                        $agents,
+                        fn($a) => $a['is_active'] == 2
                     );
                     ?>
 
-                    <?php if (count($pendingList) === 0): ?>
+                    <?php if (count($pendingAgents) === 0): ?>
 
                         <p style="font-size:13px;color:#999;">
-                            No pending restaurants.
+                            No pending agents.
                         </p>
 
                     <?php else: ?>
 
-                        <?php foreach ($pendingList as $p): ?>
+                        <?php foreach ($pendingAgents as $p): ?>
 
                             <div class="box" style="margin-bottom:10px;">
 
@@ -243,18 +243,15 @@ if (!isset($restaurants)) {
                                 </p>
 
                                 <p style="font-size:12px;color:#888;margin:4px 0;">
-                                    <?= htmlspecialchars($p['city']) ?>
+                                    <?= htmlspecialchars($p['email']) ?>
                                 </p>
 
                                 <p style="font-size:12px;color:#888;margin:4px 0;">
-
-                                    Manager:
-                                    <?= htmlspecialchars($p['manager_name'] ?? 'N/A') ?>
-
+                                    <?= htmlspecialchars($p['phone']) ?>
                                 </p>
 
                                 <form method="POST"
-                                      action="../controller/restaurantController.php"
+                                      action="../controller/agentController.php"
                                       style="margin-top:8px;">
 
                                     <input type="hidden"
@@ -263,11 +260,11 @@ if (!isset($restaurants)) {
 
                                     <button type="submit"
                                             name="action"
-                                            value="approve"
-                                            class="approve-btn"
+                                            value="activate"
+                                            class="btn success"
                                             style="width:100%;">
 
-                                        Approve
+                                        Approve Agent
 
                                     </button>
 
@@ -291,11 +288,11 @@ if (!isset($restaurants)) {
 
 
 <!-- MODAL -->
-<div id="restaurantModal" class="modal">
+<div id="agentModal" class="modal">
 
     <div class="modal-content">
 
-        <h3>Restaurant Details</h3>
+        <h3>Agent Details</h3>
 
         <p>
             <b>Name:</b>
@@ -303,18 +300,13 @@ if (!isset($restaurants)) {
         </p>
 
         <p>
-            <b>Manager:</b>
-            <span id="m_manager"></span>
-        </p>
-
-        <p>
-            <b>Manager Email:</b>
+            <b>Email:</b>
             <span id="m_email"></span>
         </p>
 
         <p>
-            <b>City:</b>
-            <span id="m_city"></span>
+            <b>Phone:</b>
+            <span id="m_phone"></span>
         </p>
 
         <p>
@@ -322,7 +314,7 @@ if (!isset($restaurants)) {
             <span id="m_status"></span>
         </p>
 
-        <button onclick="closeModal()" class="btn">
+        <button onclick="closeModal()" class="btn danger">
             Close
         </button>
 
@@ -333,47 +325,41 @@ if (!isset($restaurants)) {
 
 <script>
 
-// VIEW MODAL
-function viewRestaurant(r)
+function viewAgent(a)
 {
     document.getElementById("m_name").innerText =
-        r.name;
-
-    document.getElementById("m_manager").innerText =
-        r.manager_name ?? 'N/A';
+        a.name;
 
     document.getElementById("m_email").innerText =
-        r.manager_email ?? 'N/A';
+        a.email;
 
-    document.getElementById("m_city").innerText =
-        r.city;
+    document.getElementById("m_phone").innerText =
+        a.phone;
 
     document.getElementById("m_status").innerText =
-        (r.is_approved == 1)
+        (a.is_active == 2)
         ? "Pending"
-        : (r.is_approved == 2)
-            ? "Approved"
-            : "Blocked";
+        : (a.is_active == 1)
+            ? "Active"
+            : "Inactive";
 
-    document.getElementById("restaurantModal").style.display = "flex";
+    document.getElementById("agentModal").style.display = "flex";
 }
 
 
-// CLOSE MODAL
 function closeModal()
 {
-    document.getElementById("restaurantModal").style.display = "none";
+    document.getElementById("agentModal").style.display = "none";
 }
 
 
-// SEARCH
-document.getElementById("searchRestaurant")
+document.getElementById("searchAgent")
 .addEventListener("keyup", function () {
 
     let val = this.value.toLowerCase();
 
     let rows = document.querySelectorAll(
-        "#restaurantTable tbody tr"
+        "#agentTable tbody tr"
     );
 
     rows.forEach(row => {
