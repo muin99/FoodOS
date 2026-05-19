@@ -1,10 +1,11 @@
 <?php
 session_start();
+header('Content-Type: application/json');
 
 include '../../dirCommon/dbconnect.php';
 include '../model/agentModel.php';
 
-if($_SESSION['user_role']!='agent'){
+if(($_SESSION['user_role'] ?? '')!='agent'){
 echo json_encode([
 'success'=>false
 ]);

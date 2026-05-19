@@ -139,7 +139,7 @@
                         <h2>Delivery Agent Login</h2>
                         <p>Log in to your delivery account</p>
                     </div>
-                    <form action="#" method="post">
+                    <form onsubmit="agentLogin(event)">
                         <div class="form-group">
                             <label for="agent-email">Email Address</label>
                             <div class="input-wrapper">
@@ -181,7 +181,7 @@
                     </div>
 
                     <div class="form-footer">
-                        New agent? <a href="#" onclick="switchTab('register')">Sign Up</a>
+                        New agent? <a href="#" onclick="switchAgentRegister()">Sign Up</a>
                     </div>
                 </div>
 
@@ -227,7 +227,7 @@
                         <h2>Create Account</h2>
                         <p>Join BiteBuddy today</p>
                     </div>
-                    <form onsubmit="customerRegister(event)">
+                    <form onsubmit="registerAccount(event)">
                         <div class="section-title">Personal Information</div>
                         
                         <div class="form-row">
@@ -268,7 +268,7 @@
                             <select id="reg-type" name="account_type" required onchange="updateAccountType(this.value)">
                                 <option value="">Choose account type...</option>
                                 <option value="customer">Customer</option>
-                                <option value="delivery_agent">Delivery Agent</option>
+                                <option value="agent">Delivery Agent</option>
                                 <option value="restaurant_manager">Restaurant Manager</option>
                             </select>
                         </div>
@@ -299,6 +299,21 @@
                                     <label for="reg-address">Address</label>
                                     <input type="text" id="reg-address" name="address" placeholder="123 Restaurant St">
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Delivery Agent Fields (shown conditionally) -->
+                        <div id="agent-fields" style="display: none;">
+                            <div class="section-title">Delivery Agent Details</div>
+                            <div class="form-group">
+                                <label for="reg-vehicle">Vehicle Type</label>
+                                <select id="reg-vehicle" name="vehicle_type">
+                                    <option value="">Select vehicle...</option>
+                                    <option value="bike">Bike</option>
+                                    <option value="cycle">Cycle</option>
+                                    <option value="scooter">Scooter</option>
+                                    <option value="car">Car</option>
+                                </select>
                             </div>
                         </div>
 
@@ -355,6 +370,11 @@
             });
         });
 
+        const requestedTab = new URLSearchParams(window.location.search).get('tab');
+        if (requestedTab && document.getElementById(requestedTab)) {
+            switchTab(requestedTab);
+        }
+
         // Toggle password visibility
         function togglePassword(inputId) {
             const input = document.getElementById(inputId);
@@ -382,12 +402,74 @@
             });
         }
 
-        function customerRegister(event) {
+        function registerAccount(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const accountType = formData.get('account_type');
+            let url = '../Customer/controller/loginRegistrationControl.php';
+
+            if (accountType === 'agent') {
+                url = '../deliveryAgent/controller/agentregistration.php';
+            } else if (accountType === 'restaurant_manager') {
+                alert('Restaurant manager registration is not connected yet.');
+                return;
+            }
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    if (accountType === 'agent') {
+                        alert(data.message || 'Registration successful! Please login to continue.');
+                    }
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        // Update account type
+        function updateAccountType(value) {
+            const restaurantFields = document.getElementById('restaurant-fields');
+            const agentFields = document.getElementById('agent-fields');
+            const vehicleField = document.getElementById('reg-vehicle');
+
+            if (value === 'restaurant_manager') {
+                restaurantFields.style.display = 'block';
+            } else {
+                restaurantFields.style.display = 'none';
+            }
+
+            if (value === 'agent') {
+                agentFields.style.display = 'block';
+                vehicleField.required = true;
+            } else {
+                agentFields.style.display = 'none';
+                vehicleField.required = false;
+                vehicleField.value = '';
+            }
+        }
+
+        function switchAgentRegister() {
+            switchTab('register');
+            const accountType = document.getElementById('reg-type');
+            accountType.value = 'agent';
+            updateAccountType('agent');
+        }
+
+        function agentLogin(event) {
             event.preventDefault();
 
             const formData = new FormData(event.target);
 
-            fetch('../Customer/controller/loginRegistrationControl.php', {
+            fetch('../deliveryAgent/controller/agentlogin.php', {
                 method: 'POST',
                 body: formData
             })
@@ -400,17 +482,10 @@
                 } else {
                     alert(data.message);
                 }
+            })
+            .catch(function() {
+                alert('Agent login failed. Please try again.');
             });
-        }
-
-        // Update account type
-        function updateAccountType(value) {
-            const restaurantFields = document.getElementById('restaurant-fields');
-            if (value === 'restaurant_manager') {
-                restaurantFields.style.display = 'block';
-            } else {
-                restaurantFields.style.display = 'none';
-            }
         }
 
         // admin login
