@@ -23,13 +23,10 @@ include '../controller/restaurantController.php';
 
 <div class="admin-wrap">
 
-  <!-- SIDEBAR -->
   <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
-  <!-- MAIN -->
   <div class="main">
 
-    <!-- TOPBAR -->
     <div class="topbar">
       <div>
         <h2>Restaurant Management</h2>
@@ -71,7 +68,6 @@ include '../controller/restaurantController.php';
 
     </div>
 
-    <!-- TABLE SECTION (dashboard style) -->
     <div class="content">
 
       <div class="table-section">
@@ -81,67 +77,97 @@ include '../controller/restaurantController.php';
           <button class="export-btn">Export CSV</button>
         </div>
 
-        <table>
+<table>
 
-          <thead>
-            <tr>
-              <th>Restaurant</th>
-              <th>Manager</th>
-              <th>City</th>
-              <th>Status</th>
-              <th>Approval</th>
-            </tr>
-          </thead>
+  <thead>
+    <tr>
+      <th>Restaurant</th>
+      <th>Manager</th>
+      <th>City</th>
+      <th>Status</th>
+      <th>Approval</th>
+    </tr>
+  </thead>
 
-          <tbody>
+  <tbody>
 
-          <?php foreach ($restaurants as $r): ?>
+  <?php foreach ($restaurants as $r): ?>
 
-            <tr>
+    <tr>
 
-              <td>
-                <div class="user-info">
-                  <img src="../assets/default-restaurant.png">
-                  <span><?= htmlspecialchars($r['name']) ?></span>
-                </div>
-              </td>
+      <!-- RESTAURANT INFO -->
+      <td>
+        <div class="user-info">
+          <img src="../assets/default-restaurant.png" alt="restaurant">
+          <span><?= htmlspecialchars($r['name']) ?></span>
+        </div>
+      </td>
 
-              <td>
-                <?= $r['manager_name'] ?? 'N/A' ?>
-              </td>
+      <!-- MANAGER -->
+      <td>
+        <?= $r['manager_name'] ?? 'N/A' ?>
+      </td>
 
-              <td><?= $r['city'] ?></td>
+      <!-- CITY -->
+      <td>
+        <?= htmlspecialchars($r['city']) ?>
+      </td>
 
-              <td>
-                <?php if ($r['is_open'] == 1): ?>
-                  <span class="status active-status">Open</span>
-                <?php else: ?>
-                  <span class="status suspended">Closed</span>
-                <?php endif; ?>
-              </td>
+      <!-- STATUS -->
+      <td>
+        <?php if ($r['is_open'] == 1): ?>
+          <span class="status active-status">Open</span>
+        <?php else: ?>
+          <span class="status suspended">Closed</span>
+        <?php endif; ?>
+      </td>
 
-              <td>
-                <?php if ($r['is_approved'] == 0): ?>
+      <!-- ACTIONS -->
+      <td>
 
-                  <div class="btn-group">
-                    <button class="approve-btn">✔</button>
-                    <button class="reject-btn">✖</button>
-                  </div>
+        <form method="POST" action="../controller/restaurantController.php" style="display:flex; gap:5px;">
 
-                <?php else: ?>
+          <input type="hidden" name="id" value="<?= $r['id'] ?>">
 
-                  <span class="status active-status">Approved</span>
+          <?php if ($r['is_approved'] == 0): ?>
 
-                <?php endif; ?>
-              </td>
+              <button type="submit" name="action" value="approve" class="approve-btn" title="Approve">
+                ✔
+              </button>
 
-            </tr>
+              <button type="submit" name="action" value="reject" class="reject-btn" title="Reject">
+                ✖
+              </button>
 
-          <?php endforeach; ?>
+          <?php else: ?>
 
-          </tbody>
+              <?php if ($r['is_open'] == 1): ?>
 
-        </table>
+                  <button type="submit" name="action" value="suspend" class="reject-btn" title="Suspend">
+                    Block
+                  </button>
+
+              <?php else: ?>
+
+                  <button type="submit" name="action" value="reactivate" class="approve-btn" title="Reactivate">
+                    Reactivate
+                  </button>
+
+              <?php endif; ?>
+
+          <?php endif; ?>
+
+        </form>
+
+      </td>
+
+    </tr>
+
+  <?php endforeach; ?>
+
+  </tbody>
+
+</table>
 
       </div>
 

@@ -1,4 +1,4 @@
-/* ========== RESET ========== */
+
 * {
     margin: 0;
     padding: 0;
@@ -11,13 +11,11 @@ body {
     color: #1a1c1c;
 }
 
-/* ========== LAYOUT ========== */
 .container {
     display: flex;
     min-height: 100vh;
 }
 
-/* ========== SIDEBAR ========== */
 .sidebar {
     width: 280px;
     background: #f3f3f3;
@@ -64,14 +62,11 @@ body {
     background: #ff5722;
     color: white;
 }
-
-/* ========== MAIN ========== */
 .main {
     margin-left: 280px;
     width: calc(100% - 280px);
 }
 
-/* ========== TOPBAR ========== */
 .topbar {
     background: #fff;
     padding: 15px 30px;
@@ -90,7 +85,6 @@ body {
     border-radius: 8px;
 }
 
-/* ========== CONTENT ========== */
 .content {
     padding: 30px;
 }
@@ -111,7 +105,6 @@ body {
     cursor: pointer;
 }
 
-/* ========== FILTERS ========== */
 .filters {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -125,7 +118,6 @@ body {
     border-radius: 6px;
 }
 
-/* ========== TABLE ========== */
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -161,7 +153,6 @@ body {
     color: #721c24;
 }
 
-/* ========== ACTIONS ========== */
 .actions button {
     padding: 6px 10px;
     border: none;
@@ -170,7 +161,6 @@ body {
     cursor: pointer;
 }
 
-/* ========== FOOTER ========== */
 .footer {
     margin-top: 30px;
     padding: 20px;

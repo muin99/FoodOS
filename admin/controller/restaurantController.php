@@ -5,14 +5,8 @@ session_start();
 include '../../dirCommon/dbconnect.php';
 include '../model/restaurantModel.php';
 
-/* =========================
-   LOAD DATA
-========================= */
 $restaurants = getAllRestaurants($conn);
 
-/* =========================
-   ACTION HANDLER (POST)
-========================= */
 if (isset($_POST['action'])) {
 
     $id = $_POST['id'];
