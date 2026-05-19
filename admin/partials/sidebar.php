@@ -52,6 +52,10 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
        Agents
     </a>
 
+    <a href="orders.php"
+       class="<?= ($activePage === 'orders') ? 'active' : '' ?>">
+       Orders
+    </a>
     <a href="complaints.php"
        class="<?= ($activePage === 'complaints') ? 'active' : '' ?>">
        Complaints
