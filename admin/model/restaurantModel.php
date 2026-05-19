@@ -1,6 +1,5 @@
 <?php
 
-// Get all restaurants with manager info
 function getAllRestaurants($conn)
 {
     $sql = "

@@ -1,10 +1,4 @@
 <?php
-/*
- * Admin Sidebar Partial
- * File: admin/partials/sidebar.php
- * Included by every admin view.
- * Expects $activePage to be set by the including view.
- */
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -20,6 +14,7 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
     <h1>BiteBuddy</h1>
     <p>Admin Console</p>
   </div>
+
   <!-- admin -->
   <div class="profile">
     <img src="https://i.pravatar.cc/100" alt="Admin Avatar">
@@ -30,7 +25,6 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
     </div>
   </div>
 
-  <!-- menu -->
   <nav class="menu">
     <a href="adminDashboard.php"
        class="<?= ($activePage === 'dashboard') ? 'active' : '' ?>">
@@ -67,9 +61,7 @@ $adminRole  = $_SESSION['admin_role'] ?? 'admin';
     </a>
   </nav>
 
-  <!-- bottom -->
   <div class="bottom-links">
-    <a href="#">Help Center</a>
 
     <button class="logout-btn" onclick="window.location.href='../controller/logout.php'">
       Sign Out
