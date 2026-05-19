@@ -6,6 +6,10 @@ $basePath   = '../../';
 
 include '../controller/restaurantController.php';
 
+if (!isset($restaurants)) {
+    $restaurants = [];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +41,7 @@ include '../controller/restaurantController.php';
       </div>
     </div>
 
-    <!-- CARDS (same dashboard style) -->
+    <!-- CARDS -->
     <div class="cards">
 
       <div class="card">
@@ -47,23 +51,17 @@ include '../controller/restaurantController.php';
 
       <div class="card">
         <p>Pending</p>
-        <h3>
-          <?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 0)) ?>
-        </h3>
+        <h3><?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 1)) ?></h3>
       </div>
 
       <div class="card">
         <p>Approved</p>
-        <h3>
-          <?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 1)) ?>
-        </h3>
+        <h3><?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 2)) ?></h3>
       </div>
 
       <div class="card">
-        <p>Closed</p>
-        <h3>
-          <?= count(array_filter($restaurants, fn($r) => $r['is_open'] == 0)) ?>
-        </h3>
+        <p>Blocked</p>
+        <h3><?= count(array_filter($restaurants, fn($r) => $r['is_approved'] == 3)) ?></h3>
       </div>
 
     </div>
@@ -77,119 +75,123 @@ include '../controller/restaurantController.php';
           <button class="export-btn">Export CSV</button>
         </div>
 
-<table>
+        <table>
 
-  <thead>
-    <tr>
-      <th>Restaurant</th>
-      <th>Manager</th>
-      <th>City</th>
-      <th>Status</th>
-      <th>Approval</th>
-    </tr>
-  </thead>
+          <thead>
+            <tr>
+              <th>Restaurant</th>
+              <th>Manager</th>
+              <th>City</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-  <tbody>
+          <tbody>
 
-  <?php foreach ($restaurants as $r): ?>
+          <?php foreach ($restaurants as $r): ?>
+          <?php if ($r['is_approved'] != 1): ?>
 
-    <tr>
+            <tr>
 
-      <!-- RESTAURANT INFO -->
-      <td>
-        <div class="user-info">
-          <img src="../assets/default-restaurant.png" alt="restaurant">
-          <span><?= htmlspecialchars($r['name']) ?></span>
-        </div>
-      </td>
+              <!-- RESTAURANT INFO -->
+              <td>
+                <div class="user-info">
+                  <img src="../assets/default-restaurant.png" alt="restaurant">
+                  <span><?= htmlspecialchars($r['name']) ?></span>
+                </div>
+              </td>
 
-      <!-- MANAGER -->
-      <td>
-        <?= $r['manager_name'] ?? 'N/A' ?>
-      </td>
+              <!-- MANAGER -->
+              <td>
+                <?= htmlspecialchars($r['manager_name'] ?? 'N/A') ?>
+              </td>
 
-      <!-- CITY -->
-      <td>
-        <?= htmlspecialchars($r['city']) ?>
-      </td>
+              <!-- CITY -->
+              <td>
+                <?= htmlspecialchars($r['city']) ?>
+              </td>
 
-      <!-- STATUS -->
-      <td>
-        <?php if ($r['is_open'] == 1): ?>
-          <span class="status active-status">Open</span>
-        <?php else: ?>
-          <span class="status suspended">Closed</span>
-        <?php endif; ?>
-      </td>
+              <!-- STATUS -->
+              <td>
+                <?php if ($r['is_approved'] == 2): ?>
+                  <span class="status active-status">Approved</span>
+                <?php elseif ($r['is_approved'] == 3): ?>
+                  <span class="status suspended">Blocked</span>
+                <?php endif; ?>
+              </td>
 
-      <!-- ACTIONS -->
-      <td>
+              <!-- ACTIONS -->
+              <td>
+                <form method="POST" action="../controller/restaurantController.php" style="display:flex; gap:5px;">
+                  <input type="hidden" name="id" value="<?= $r['id'] ?>">
 
-        <form method="POST" action="../controller/restaurantController.php" style="display:flex; gap:5px;">
+                  <?php if ($r['is_approved'] == 2): ?>
+                    <button type="submit" name="action" value="block" class="reject-btn">
+                      Block
+                    </button>
 
-          <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                  <?php elseif ($r['is_approved'] == 3): ?>
+                    <button type="submit" name="action" value="approve" class="approve-btn">
+                      Re-Activate
+                    </button>
 
-          <?php if ($r['is_approved'] == 0): ?>
+                  <?php endif; ?>
 
-              <button type="submit" name="action" value="approve" class="approve-btn" title="Approve">
-                ✔
-              </button>
+                </form>
+              </td>
 
-              <button type="submit" name="action" value="reject" class="reject-btn" title="Reject">
-                ✖
-              </button>
-
-          <?php else: ?>
-
-              <?php if ($r['is_open'] == 1): ?>
-
-                  <button type="submit" name="action" value="suspend" class="reject-btn" title="Suspend">
-                    Block
-                  </button>
-
-              <?php else: ?>
-
-                  <button type="submit" name="action" value="reactivate" class="approve-btn" title="Reactivate">
-                    Reactivate
-                  </button>
-
-              <?php endif; ?>
+            </tr>
 
           <?php endif; ?>
+          <?php endforeach; ?>
 
-        </form>
+          </tbody>
 
-      </td>
-
-    </tr>
-
-  <?php endforeach; ?>
-
-  </tbody>
-
-</table>
+        </table>
 
       </div>
 
-      <!-- RIGHT PANEL (same dashboard structure) -->
+      <!-- RIGHT PANEL — Pending Approvals -->
       <div class="right-panel">
 
         <div class="box">
-
-          <h3>Restaurant Actions</h3>
-
+          <h3>Pending Approvals</h3>
           <p style="font-size:13px;color:#666;">
-            Manage approval, suspension and onboarding here.
+            <!-- New restaurants waiting for approval. -->
+             <?php $pendingList = array_filter($restaurants, fn($r) => $r['is_approved'] == 1); ?>
+
+        <?php if (count($pendingList) === 0): ?>
+
+          <div class="box">
+            <p style="font-size:13px;color:#999;">No pending restaurants.</p>
+          </div>
+
+        <?php else: ?>
+
+          <?php foreach ($pendingList as $p): ?>
+
+            <div class="box" style="margin-bottom:10px;">
+
+              <p style="font-weight:600;margin:0;"><?= htmlspecialchars($p['name']) ?></p>
+              <p style="font-size:12px;color:#888;margin:4px 0;"><?= htmlspecialchars($p['city']) ?></p>
+              <p style="font-size:12px;color:#888;margin:4px 0;">
+                Manager: <?= htmlspecialchars($p['manager_name'] ?? 'N/A') ?>
+              </p>
+
+              <form method="POST" action="../controller/restaurantController.php" style="margin-top:8px;">
+                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                <button type="submit" name="action" value="approve" class="approve-btn" style="width:100%;">
+                  Approve
+                </button>
+              </form>
+
+            </div>
+
+          <?php endforeach; ?>
+
+        <?php endif; ?>
           </p>
-
-        </div>
-
-        <div class="box settings">
-
-          <h3>Quick Info</h3>
-
-          <p>Total: <?= count($restaurants) ?></p>
-
         </div>
 
       </div>

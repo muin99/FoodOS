@@ -1,32 +1,22 @@
 <?php
-
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 include '../../dirCommon/dbconnect.php';
 include '../model/restaurantModel.php';
 
-$restaurants = getAllRestaurants($conn);
+$action = $_POST['action'] ?? null;
+$id     = $_POST['id'] ?? null;
 
-if (isset($_POST['action'])) {
-
-    $id = $_POST['id'];
-
-    if ($_POST['action'] == 'approve') {
-        approveRestaurant($conn, $id);
+if ($action && $id) {
+    switch ($action) {
+        case 'approve': approveRestaurant($conn, $id); break;
+        case 'block':   blockRestaurant($conn, $id);   break;
+        case 'pending': pendingRestaurant($conn, $id); break;
     }
-
-    if ($_POST['action'] == 'reject') {
-        rejectRestaurant($conn, $id);
-    }
-
-    if ($_POST['action'] == 'suspend') {
-        suspendRestaurant($conn, $id);
-    }
-
-    if ($_POST['action'] == 'reactivate') {
-        reactivateRestaurant($conn, $id);
-    }
-
     header("Location: ../view/restaurants.php");
     exit;
 }
+
+$restaurants = getAllRestaurants($conn);
