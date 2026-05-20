@@ -36,9 +36,6 @@ include '../controller/dashboardController.php';
         <h2>Platform Overview</h2>
       </div>
 
-      <div class="search-box">
-        <input type="text" placeholder="Search resources...">
-      </div>
     </div>
 
     <div class="cards">
