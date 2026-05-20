@@ -1,3 +1,7 @@
+
+<!-- is_approved = 1 → Pending  -->
+<!-- is_approved = 2 → Approved  -->
+<!-- is_approved = 3 → Blocked  -->
 <?php
 
 $pageTitle  = 'Restaurants - Admin';

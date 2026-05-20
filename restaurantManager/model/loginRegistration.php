@@ -54,8 +54,8 @@ function managerRegister($conn, $name, $email, $phone, $password, $restaurantNam
 
     mysqli_begin_transaction($conn);
 
-    $sql = "INSERT INTO users (name, email, password_hash, phone, role)
-            VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO users (name, email, password_hash, phone, role, is_active)
+            VALUES (?, ?, ?, ?, ?, 2)";
 
     $stmt = mysqli_prepare($conn, $sql);
 
@@ -77,7 +77,7 @@ function managerRegister($conn, $name, $email, $phone, $password, $restaurantNam
     $description = $cuisineType . ' restaurant';
 
     $sql = "INSERT INTO restaurants (manager_id, name, description, cuisine_type, address, city, is_open, is_approved)
-            VALUES (?, ?, ?, ?, ?, ?, 0, 0)";
+            VALUES (?, ?, ?, ?, ?, ?, 0, 1)";
 
     $stmt = mysqli_prepare($conn, $sql);
 

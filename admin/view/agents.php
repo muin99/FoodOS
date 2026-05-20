@@ -1,3 +1,7 @@
+<!-- is_active = 2 → Pending -->
+<!-- is_active = 1 → Active -->
+<!-- is_active = 0 → Blocked -->
+
 <?php
 
 $pageTitle  = 'Delivery Agents - Admin';
