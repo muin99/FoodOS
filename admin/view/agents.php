@@ -1,3 +1,6 @@
+<!-- is_active = 2 → Pending -->
+<!-- is_active = 1 → Active -->
+<!-- is_active = 0 → Blocked -->
 <?php
 
 $pageTitle  = 'Delivery Agents - Admin';
@@ -153,6 +156,7 @@ if (!isset($agents)) {
 
                                     <form method="POST"
                                           action="../controller/agentController.php"
+                                          class="admin-ajax-form"
                                           style="display:flex; gap:5px;">
 
                                         <input type="hidden"
@@ -252,6 +256,7 @@ if (!isset($agents)) {
 
                                 <form method="POST"
                                       action="../controller/agentController.php"
+                                      class="admin-ajax-form"
                                       style="margin-top:8px;">
 
                                     <input type="hidden"
@@ -371,6 +376,50 @@ document.getElementById("searchAgent")
 
     });
 
+});
+
+document.querySelectorAll(".admin-ajax-form").forEach(function(form) {
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const button = event.submitter;
+        const formData = new FormData(form);
+        if (button && button.name) {
+            formData.append(button.name, button.value);
+        }
+        formData.append("ajax", "1");
+
+        if (button) {
+            button.disabled = true;
+        }
+
+        fetch(form.action, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            alert(data.message || "Agent action completed.");
+            if (data.success) {
+                location.reload();
+                return;
+            }
+            if (button) {
+                button.disabled = false;
+            }
+        })
+        .catch(function() {
+            alert("Agent action failed.");
+            if (button) {
+                button.disabled = false;
+            }
+        });
+    });
 });
 
 </script>

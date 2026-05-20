@@ -37,8 +37,8 @@ function agentRegister($conn, $name, $email, $phone, $password, $vehicleType)
 
     mysqli_begin_transaction($conn);
 
-    $sql = 'INSERT INTO users (name, email, password_hash, phone, role)
-            VALUES (?, ?, ?, ?, ?)';
+    $sql = 'INSERT INTO users (name, email, password_hash, phone, role, is_active)
+        VALUES (?, ?, ?, ?, ?, 2)';
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, 'sssss', $name, $email, $passwordHash, $phone, $role);
 
