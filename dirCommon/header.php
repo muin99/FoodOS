@@ -10,6 +10,27 @@ $extraCss = $extraCss ?? [];
 $loggedIn = isset($_SESSION['user_id']);
 $userName = $_SESSION['user_name'] ?? $_SESSION['name'] ?? '';
 $userRole = $_SESSION['user_role'] ?? $_SESSION['role'] ?? '';
+$roleHome = $basePath . 'Customer/view/browseResturants.php';
+$profileHref = $basePath . 'Customer/view/profile.php';
+$logoutHref = $basePath . 'Customer/controller/logout.php';
+$roleLabel = 'Customer';
+
+if ($userRole === 'manager') {
+    $roleHome = $basePath . 'restaurantManager/view/dashboard.php';
+    $profileHref = $basePath . 'restaurantManager/view/profile.php';
+    $logoutHref = $basePath . 'restaurantManager/controller/logout.php';
+    $roleLabel = 'Restaurant Manager';
+} elseif ($userRole === 'agent') {
+    $roleHome = $basePath . 'deliveryAgent/view/dashboard.php';
+    $profileHref = $basePath . 'deliveryAgent/view/dashboard.php';
+    $logoutHref = $basePath . 'deliveryAgent/controller/logout.php';
+    $roleLabel = 'Delivery Agent';
+} elseif ($userRole === 'admin') {
+    $roleHome = $basePath . 'admin/view/adminDashboard.php';
+    $profileHref = $basePath . 'admin/view/adminDashboard.php';
+    $logoutHref = $basePath . 'admin/controller/logout.php';
+    $roleLabel = 'Admin';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,13 +56,25 @@ $userRole = $_SESSION['user_role'] ?? $_SESSION['role'] ?? '';
 
             <nav class="main-nav" aria-label="Main navigation">
                 <a class="<?php echo $activePage === 'home' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>index.php">Home</a>
-                <a class="<?php echo $activePage === 'browse' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>Customer/view/browseResturants.php">Restaurants</a>
-                <?php if ($userRole === 'customer'): ?>
+                <?php if (!$loggedIn || $userRole === 'customer'): ?>
+                    <a class="<?php echo $activePage === 'browse' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>Customer/view/browseResturants.php">Restaurants</a>
+                <?php endif; ?>
+                <?php if ($loggedIn && $userRole === 'customer'): ?>
                     <a class="<?php echo $activePage === 'orders' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>Customer/view/orders.php">My Orders</a>
                 <?php endif; ?>
-                <a href="<?php echo $basePath; ?>restaurantManager/view/dashboard.php">Manager</a>
-                <a href="<?php echo $basePath; ?>deliveryAgent/view/dashboard.php">Delivery</a>
-                <a href="<?php echo $basePath; ?>admin/view/adminDashboard.php">Admin</a>
+                <?php if ($loggedIn && $userRole === 'manager'): ?>
+                    <a class="<?php echo $activePage === 'manager' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>restaurantManager/view/dashboard.php">Dashboard</a>
+                    <a href="<?php echo $basePath; ?>restaurantManager/view/orders.php">Orders</a>
+                    <a href="<?php echo $basePath; ?>restaurantManager/view/menu.php">Menu</a>
+                    <a href="<?php echo $basePath; ?>restaurantManager/view/insights.php">Insights</a>
+                <?php endif; ?>
+                <?php if ($loggedIn && $userRole === 'agent'): ?>
+                    <a class="<?php echo $activePage === 'delivery' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>deliveryAgent/view/dashboard.php">Delivery Dashboard</a>
+                <?php endif; ?>
+                <?php if ($loggedIn && $userRole === 'admin'): ?>
+                    <a class="<?php echo $activePage === 'admin' ? 'active' : ''; ?>" href="<?php echo $basePath; ?>admin/view/adminDashboard.php">Admin Dashboard</a>
+                    <a href="<?php echo $basePath; ?>admin/view/restaurants.php">Restaurants</a>
+                <?php endif; ?>
             </nav>
 
             <div class="header-actions">
@@ -51,13 +84,13 @@ $userRole = $_SESSION['user_role'] ?? $_SESSION['role'] ?? '';
                         <span><?php echo htmlspecialchars(substr($userName, 0, 1)); ?></span>
                         <strong><?php echo htmlspecialchars($userName); ?></strong>
                     </a>
-                    <a class="login-link" href="<?php echo $basePath; ?>Customer/controller/logout.php">Logout</a>
+                    <a class="login-link" href="<?php echo htmlspecialchars($logoutHref); ?>">Logout</a>
                 <?php elseif ($loggedIn): ?>
-                    <a class="user-chip" href="<?php echo $basePath; ?>dirCommon/login.html">
+                    <a class="user-chip" href="<?php echo htmlspecialchars($profileHref); ?>" title="<?php echo htmlspecialchars($roleLabel); ?>">
                         <span><?php echo htmlspecialchars(substr($userName, 0, 1)); ?></span>
                         <strong><?php echo htmlspecialchars($userName); ?></strong>
                     </a>
-                    <a class="login-link" href="<?php echo $basePath; ?>Customer/controller/logout.php">Logout</a>
+                    <a class="login-link" href="<?php echo htmlspecialchars($logoutHref); ?>">Logout</a>
                 <?php else: ?>
                     <a class="cart-link" href="<?php echo $basePath; ?>Customer/view/browseResturants.php">Browse Food</a>
                     <a class="login-link" href="<?php echo $basePath; ?>dirCommon/login.html">Login / Register</a>

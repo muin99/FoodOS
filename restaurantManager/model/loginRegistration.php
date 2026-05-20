@@ -2,7 +2,14 @@
 
 function managerLogin($conn, $email, $password)
 {
-    $sql = "SELECT * FROM users WHERE email = ? AND role = 'manager' LIMIT 1";
+    $sql = "
+        SELECT u.*, r.id AS restaurant_id, r.is_approved
+        FROM users u
+        LEFT JOIN restaurants r ON r.manager_id = u.id
+        WHERE u.email = ? AND u.role = 'manager'
+        ORDER BY r.id ASC
+        LIMIT 1
+    ";
 
     $stmt = mysqli_prepare($conn, $sql);
 

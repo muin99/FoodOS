@@ -1,11 +1,12 @@
 <?php
-session_start();
-include '../../dirCommon/dbconnect.php';
+include __DIR__ . '/../controller/managerSession.php';
+managerRequirePage();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
 $managerId = $_SESSION['user_id'] ?? 0;
 $restaurantId = 0;
 
-$stmt = mysqli_prepare($conn, "SELECT id FROM restaurants WHERE manager_id = ? LIMIT 1");
+$stmt = mysqli_prepare($conn, "SELECT id, name, is_open FROM restaurants WHERE manager_id = ? LIMIT 1");
 mysqli_stmt_bind_param($stmt, "i", $managerId);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
@@ -14,6 +15,8 @@ $restaurant = mysqli_fetch_assoc($result);
 if ($restaurant) {
     $restaurantId = (int)$restaurant['id'];
 }
+$restaurantName = $restaurant['name'] ?? 'Your restaurant';
+$isOpen = (int)($restaurant['is_open'] ?? 0);
 
 // Total Orders
 $sql = "SELECT COUNT(*) as total_orders FROM orders WHERE restaurant_id = ?";
@@ -188,8 +191,8 @@ while ($row = mysqli_fetch_assoc($result)) {
             <h1>welcome back, Manager</h1>
 
             <p>
-                Khana's Kitchen is currently
-                <span id="restaurantStatus">Online</span>
+                <?php echo htmlspecialchars($restaurantName); ?> is currently
+                <span id="restaurantStatus"><?php echo $isOpen ? 'Online' : 'Closed'; ?></span>
             </p>
 
         </div>
@@ -338,47 +341,17 @@ while ($row = mysqli_fetch_assoc($result)) {
         </div>
 
         <div class="top-selling-grid">
+            <?php foreach ($topSellingItems as $item): ?>
+                <div class="top-food-card">
+                    <img src="<?php echo htmlspecialchars('../../' . ($item['image_path'] ?: 'restaurantManager/assets/images/burger.png')); ?>">
+                    <h4><?php echo htmlspecialchars($item['name']); ?></h4>
+                    <p><?php echo (int)$item['total_sold']; ?> Orders</p>
+                </div>
+            <?php endforeach; ?>
 
-            <div class="top-food-card">
-
-                <img src="../assets/images/burger.png">
-
-                <h4>BBQ Burger</h4>
-
-                <p>120 Orders</p>
-
-            </div>
-
-            <div class="top-food-card">
-
-                <img src="../assets/images/pizza.png">
-
-                <h4>Cheese Pizza</h4>
-
-                <p>98 Orders</p>
-
-            </div>
-
-            <div class="top-food-card">
-
-                <img src="../assets/images/fries.png">
-
-                <h4>French Fries</h4>
-
-                <p>75 Orders</p>
-
-            </div>
-
-            <div class="top-food-card">
-
-                <img src="../assets/images/coca.png">
-
-                <h4>Cold Coffee</h4>
-
-                <p>65 Orders</p>
-
-            </div>
-
+            <?php if (count($topSellingItems) === 0): ?>
+                <p>No sales data yet.</p>
+            <?php endif; ?>
         </div>
 
     </div>
@@ -399,7 +372,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                         <p>
                             Your restaurant is currently
                             <span id="restaurantStatusText">
-                                Online
+                                <?php echo $isOpen ? 'Online' : 'Closed'; ?>
                             </span>
                         </p>
 
@@ -412,7 +385,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                         <input
                             type="checkbox"
                             id="restaurantToggle"
-                            checked
+                            <?php echo $isOpen ? 'checked' : ''; ?>
                         >
 
                         <span class="slider"></span>
@@ -477,14 +450,30 @@ document.getElementById('viewAllSales').addEventListener('click', function(event
 document.getElementById('restaurantToggle').addEventListener('change', function() {
     const statusText = document.getElementById('restaurantStatusText');
     const topStatus = document.getElementById('restaurantStatus');
+    const toggle = this;
+    const isOpen = toggle.checked ? 1 : 0;
 
-    if (this.checked) {
-        statusText.innerText = 'Online';
-        if (topStatus) topStatus.innerText = 'Online';
-    } else {
-        statusText.innerText = 'Closed';
-        if (topStatus) topStatus.innerText = 'Closed';
-    }
+    fetch('../controller/restaurantStatusControl.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'is_open=' + encodeURIComponent(isOpen)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) {
+            toggle.checked = !toggle.checked;
+            alert(data.message || 'Could not update restaurant status.');
+            return;
+        }
+
+        const label = isOpen ? 'Online' : 'Closed';
+        statusText.innerText = label;
+        if (topStatus) topStatus.innerText = label;
+    })
+    .catch(() => {
+        toggle.checked = !toggle.checked;
+        alert('Could not update restaurant status.');
+    });
 });
 </script>
 

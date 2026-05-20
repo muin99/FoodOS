@@ -784,6 +784,58 @@ textarea {
     color: var(--muted);
 }
 
+.review-panel {
+    grid-column: 1 / -1;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #eee4dd;
+}
+
+.review-panel h3 {
+    margin: 0 0 10px;
+    color: var(--ink);
+    font-size: 18px;
+}
+
+.review-form {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.review-form label {
+    display: grid;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.review-form select,
+.review-form textarea {
+    width: 100%;
+    border: 1px solid #eadfd7;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: inherit;
+}
+
+.review-form textarea {
+    resize: vertical;
+}
+
+.review-message,
+.review-reply {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--muted);
+}
+
+.review-reply {
+    margin-bottom: 10px;
+}
+
 @media (max-width: 980px) {
     .restaurant-grid,
     .menu-grid {
@@ -792,7 +844,8 @@ textarea {
 
     .menu-layout,
     .checkout-layout,
-    .profile-layout {
+    .profile-layout,
+    .review-form {
         grid-template-columns: 1fr;
     }
 

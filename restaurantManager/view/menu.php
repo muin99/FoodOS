@@ -1,6 +1,7 @@
 <?php
-session_start();
-include '../../dirCommon/dbconnect.php'; // your DB connection
+include __DIR__ . '/../controller/managerSession.php';
+managerRequirePage();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
 $managerId = $_SESSION['user_id'] ?? 0;
 $restaurantId = 0;
@@ -44,6 +45,7 @@ while($row = mysqli_fetch_assoc($result)){
 
 // ---------- Selected category ----------
 $selectedCategoryId = $_GET['category_id'] ?? array_key_first($categories) ?? 0;
+$selectedCategoryName = $categories[$selectedCategoryId]['name'] ?? 'Menu Items';
 
 // ---------- Fetch menu items for selected category ----------
 $sql = "SELECT * FROM menu_items WHERE restaurant_id = ? AND category_id = ?";
@@ -161,6 +163,11 @@ while($row = mysqli_fetch_assoc($result)){
                         Add Item
                     </button>
 
+                    <button type="button" class="outline-btn" id="addCategoryBtn" data-action="add-category">
+                        <i class="fa-solid fa-folder-plus"></i>
+                        Add Category
+                    </button>
+
                 </div>
 
             </div>
@@ -171,53 +178,91 @@ while($row = mysqli_fetch_assoc($result)){
                 </button>
             </div>
 
+            <section class="manager-form-panel" id="addCategoryPanel" style="display: none;">
+                <h2>Add Category</h2>
+                <form id="addCategoryForm">
+                    <input type="hidden" name="action" value="add_category">
+                    <label>
+                        <span>Name</span>
+                        <input type="text" name="name" required>
+                    </label>
+                    <label>
+                        <span>Display Order</span>
+                        <input type="number" name="display_order" min="0" value="0">
+                    </label>
+                    <button type="submit" class="solid-btn">Save Category</button>
+                    <p id="categoryMessage"></p>
+                </form>
+            </section>
+
+            <section class="manager-form-panel" id="addItemPanel" style="display: none;">
+                <h2>Add Menu Item</h2>
+                <form id="addItemForm">
+                    <input type="hidden" name="action" value="add">
+                    <label>
+                        <span>Category</span>
+                        <select name="category_id" required>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= (int)$category['id'] ?>" <?= (int)$selectedCategoryId === (int)$category['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($category['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                    <label>
+                        <span>Name</span>
+                        <input type="text" name="name" required>
+                    </label>
+                    <label>
+                        <span>Description</span>
+                        <textarea name="description" rows="2"></textarea>
+                    </label>
+                    <label>
+                        <span>Price</span>
+                        <input type="number" name="price" min="1" step="0.01" required>
+                    </label>
+                    <label>
+                        <span>Image Path</span>
+                        <input type="text" name="image_path" value="restaurantManager/assets/images/burger.png">
+                    </label>
+                    <label class="manager-check">
+                        <input type="checkbox" name="is_available" value="1" checked>
+                        <span>Available</span>
+                    </label>
+                    <button type="submit" class="solid-btn">Save Item</button>
+                    <p id="menuMessage"></p>
+                </form>
+            </section>
+
             <section class="menu-management-area">
 
                 <div class="category-box" id="categoryList">
 
-                    <!-- JS can load categories here later -->
+                    <?php foreach ($categories as $category): ?>
+                        <div class="category-row-wrap">
+                            <a href="menu.php?category_id=<?= (int)$category['id'] ?>" class="category-row <?= (int)$selectedCategoryId === (int)$category['id'] ? 'active-category' : '' ?>" data-category-name="<?= htmlspecialchars(strtolower($category['name'])) ?>">
+                                <span class="category-icon">☰</span>
+                                <strong><?= htmlspecialchars($category['name']) ?></strong>
+                                <small><?= (int)($categoryCounts[$category['id']] ?? 0) ?> Items</small>
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                            <div class="category-actions">
+                                <button type="button" class="edit-category-btn" data-category-id="<?= (int)$category['id'] ?>" data-name="<?= htmlspecialchars($category['name']) ?>" data-display-order="<?= (int)$category['display_order'] ?>">Edit</button>
+                                <button type="button" class="delete-category-btn" data-category-id="<?= (int)$category['id'] ?>" data-item-count="<?= (int)($categoryCounts[$category['id']] ?? 0) ?>">Delete</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
 
-                    <a href="menu.php?category_id=1" class="category-row <?= $selectedCategoryId == 1 ? 'active-category' : '' ?>" data-category-name="burgers">
-                           <span class="category-icon">🍔</span>
-                            <strong>Burgers</strong>
-                           <small id="burgerItemCount"><?= $categoryCounts[1] ?? 0 ?> Items</small>
-                        <i class="fa-solid fa-angle-right"></i>
-                    </a>
-
-                    <a href="menu.php?category_id=2" class="category-row <?= $selectedCategoryId == 2 ? 'active-category' : '' ?>" data-category-name="pizzas">
-                            <span class="category-icon">🍕</span>
-                            <strong>Pizzas</strong>
-                            <small id="pizzaItemCount"><?= $categoryCounts[2] ?? 0 ?> Items</small>
-                            <i class="fa-solid fa-angle-right"></i>
-                    </a>
-
-                    <a href="menu.php?category_id=3" class="category-row <?= $selectedCategoryId == 3 ? 'active-category' : '' ?>" data-category-name="drinks">
-                            <span class="category-icon">🥤</span>
-                            <strong>Drinks</strong>
-                            <small id="drinkItemCount"><?= $categoryCounts[3] ?? 0 ?> Items</small>
-                            <i class="fa-solid fa-angle-right"></i>
-                    </a>
-
-                    <a href="menu.php?category_id=4" class="category-row <?= $selectedCategoryId == 4 ? 'active-category' : '' ?>" data-category-name="sides">
-                            <span class="category-icon">🍟</span>
-                            <strong>Sides</strong>
-                            <small id="sideItemCount"><?= $categoryCounts[4] ?? 0 ?> Items</small>
-                            <i class="fa-solid fa-angle-right"></i>
-                    </a>
-
-                    <a href="menu.php?category_id=5" class="category-row <?= $selectedCategoryId == 5 ? 'active-category' : '' ?>" data-category-name="desserts">
-                          <span class="category-icon">🍰</span>
-                         <strong>Desserts</strong>
-                         <small id="dessertItemCount"><?= $categoryCounts[5] ?? 0 ?> Items</small>
-                          <i class="fa-solid fa-angle-right"></i>
-                    </a>
+                    <?php if (count($categories) === 0): ?>
+                        <p>No menu categories found.</p>
+                    <?php endif; ?>
 
                 </div>
 
                 <div class="items-box">
 
                     <div class="items-box-header">
-                        <h2 id="selectedCategoryTitle">Burgers</h2>
+                        <h2 id="selectedCategoryTitle"><?= htmlspecialchars($selectedCategoryName) ?></h2>
                         <span id="menuScrollText">Scroll for more items</span>
                     </div>
 
@@ -236,37 +281,43 @@ while($row = mysqli_fetch_assoc($result)){
 
                             <tbody id="menuItemsTable">
 
-                                <!-- JS can load menu items here later -->
-
-                                <tr data-item-id="">
-                                    <td>
-                                        <div class="item-info">
-                                            <img src="../assets/images/burger.png" alt="Menu Item">
-                                            <div>
-                                                <h4 id="firstMenuItemName">No item loaded</h4>
-                                                <p id="firstMenuItemDescription">Menu items will appear here after JS/AJAX.</p>
+                                <?php foreach ($menuItems as $item): ?>
+                                    <tr data-item-id="<?= (int)$item['id'] ?>">
+                                        <td>
+                                            <div class="item-info">
+                                                <img src="<?= htmlspecialchars('../../' . ($item['image_path'] ?: 'restaurantManager/assets/images/burger.png')) ?>" alt="Menu Item">
+                                                <div>
+                                                    <h4><?= htmlspecialchars($item['name']) ?></h4>
+                                                    <p><?= htmlspecialchars($item['description'] ?? '') ?></p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
+                                        </td>
 
-                                    <td id="firstMenuItemPrice">৳0</td>
+                                        <td>৳<?= number_format((float)$item['price'], 2) ?></td>
 
-                                    <td>
-                                        <span class="available-badge" id="firstMenuItemStatus">
-                                            Waiting
-                                        </span>
-                                    </td>
+                                        <td>
+                                            <span class="available-badge">
+                                                <?= (int)$item['is_available'] === 1 ? 'Available' : 'Hidden' ?>
+                                            </span>
+                                        </td>
 
-                                    <td>
-                                        <button type="button" class="edit-item-btn" data-action="edit-item" data-item-id="">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </button>
+                                        <td>
+                                            <button type="button" class="edit-item-btn" data-action="edit-item" data-item-id="<?= (int)$item['id'] ?>" data-price="<?= htmlspecialchars($item['price']) ?>" data-available="<?= (int)$item['is_available'] ?>">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
 
-                                        <button type="button" class="delete-item-btn" data-action="delete-item" data-item-id="">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                            <button type="button" class="delete-item-btn" data-action="delete-item" data-item-id="<?= (int)$item['id'] ?>">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+
+                                <?php if (count($menuItems) === 0): ?>
+                                    <tr>
+                                        <td colspan="4">No items found in this category.</td>
+                                    </tr>
+                                <?php endif; ?>
 
                             </tbody>
 
@@ -295,6 +346,141 @@ function confirmLogout(event) {
         window.location.href = "../controller/logout.php";
     }
 }
+</script>
+
+<script>
+const addItemBtn = document.getElementById('addItemBtn');
+const addCategoryBtn = document.getElementById('addCategoryBtn');
+const addItemPanel = document.getElementById('addItemPanel');
+const addCategoryPanel = document.getElementById('addCategoryPanel');
+const addItemForm = document.getElementById('addItemForm');
+const addCategoryForm = document.getElementById('addCategoryForm');
+const menuMessage = document.getElementById('menuMessage');
+const categoryMessage = document.getElementById('categoryMessage');
+
+if (addItemBtn && addItemPanel) {
+    addItemBtn.addEventListener('click', function() {
+        addItemPanel.style.display = addItemPanel.style.display === 'none' ? 'block' : 'none';
+    });
+}
+
+if (addCategoryBtn && addCategoryPanel) {
+    addCategoryBtn.addEventListener('click', function() {
+        addCategoryPanel.style.display = addCategoryPanel.style.display === 'none' ? 'block' : 'none';
+    });
+}
+
+function submitMenuAction(formData) {
+    return fetch('../controller/menuControl.php', {
+        method: 'POST',
+        body: formData
+    }).then(function(response) {
+        return response.json();
+    });
+}
+
+if (addItemForm) {
+    addItemForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        submitMenuAction(new FormData(addItemForm)).then(function(data) {
+            menuMessage.textContent = data.message || '';
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+}
+
+if (addCategoryForm) {
+    addCategoryForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        submitMenuAction(new FormData(addCategoryForm)).then(function(data) {
+            categoryMessage.textContent = data.message || '';
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+}
+
+document.querySelectorAll('.edit-category-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        const name = prompt('Category name', button.dataset.name || '');
+        if (name === null) return;
+        const displayOrder = prompt('Display order', button.dataset.displayOrder || '0');
+        if (displayOrder === null) return;
+
+        const formData = new FormData();
+        formData.append('action', 'update_category');
+        formData.append('id', button.dataset.categoryId);
+        formData.append('name', name);
+        formData.append('display_order', displayOrder);
+
+        submitMenuAction(formData).then(function(data) {
+            alert(data.message || 'Category updated.');
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.delete-category-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        if (Number(button.dataset.itemCount || 0) > 0) {
+            alert('Move or delete items before deleting this category.');
+            return;
+        }
+
+        if (!confirm('Delete this category?')) return;
+        const formData = new FormData();
+        formData.append('action', 'delete_category');
+        formData.append('id', button.dataset.categoryId);
+
+        submitMenuAction(formData).then(function(data) {
+            alert(data.message || 'Category deleted.');
+            if (data.success) {
+                location.href = 'menu.php';
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.edit-item-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        const price = prompt('New price', button.dataset.price || '0');
+        if (price === null) return;
+        const available = confirm('Should this item be available?');
+        const formData = new FormData();
+        formData.append('action', 'update');
+        formData.append('id', button.dataset.itemId);
+        formData.append('price', price);
+        formData.append('is_available', available ? '1' : '0');
+
+        submitMenuAction(formData).then(function(data) {
+            alert(data.message || 'Menu item updated.');
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.delete-item-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        if (!confirm('Delete this menu item?')) return;
+        const formData = new FormData();
+        formData.append('action', 'delete');
+        formData.append('id', button.dataset.itemId);
+
+        submitMenuAction(formData).then(function(data) {
+            alert(data.message || 'Menu item deleted.');
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
 </script>
 
 </body>

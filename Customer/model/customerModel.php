@@ -220,9 +220,16 @@ function createCustomerOrder($conn, $customerId, $restaurantId, $items, $deliver
 function getCustomerOrders($conn, $customerId)
 {
     $sql = "
-        SELECT o.*, r.name AS restaurant_name
+        SELECT
+            o.*,
+            r.name AS restaurant_name,
+            rv.id AS review_id,
+            rv.rating AS review_rating,
+            rv.comment AS review_comment,
+            rv.manager_reply AS review_reply
         FROM orders o
         INNER JOIN restaurants r ON r.id = o.restaurant_id
+        LEFT JOIN reviews rv ON rv.order_id = o.id AND rv.customer_id = o.customer_id
         WHERE o.customer_id = ?
         ORDER BY o.created_at DESC, o.id DESC
     ";
@@ -238,6 +245,50 @@ function getCustomerOrders($conn, $customerId)
     }
 
     return $orders;
+}
+
+function saveCustomerReview($conn, $customerId, $orderId, $rating, $comment)
+{
+    $rating = (int)$rating;
+    $comment = trim($comment);
+
+    if ($customerId <= 0 || $orderId <= 0 || $rating < 1 || $rating > 5 || $comment === '') {
+        return ['success' => false, 'message' => 'Please choose a rating and write a short review.'];
+    }
+
+    $sql = "
+        SELECT id, restaurant_id
+        FROM orders
+        WHERE id = ? AND customer_id = ? AND status = 'delivered'
+        LIMIT 1
+    ";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $orderId, $customerId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $order = mysqli_fetch_assoc($result);
+
+    if (!$order) {
+        return ['success' => false, 'message' => 'Only delivered orders can be reviewed.'];
+    }
+
+    $restaurantId = (int)$order['restaurant_id'];
+
+    $sql = "
+        INSERT INTO reviews (order_id, customer_id, restaurant_id, rating, comment)
+        VALUES (?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            rating = VALUES(rating),
+            comment = VALUES(comment)
+    ";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 'iiiis', $orderId, $customerId, $restaurantId, $rating, $comment);
+
+    if (!mysqli_stmt_execute($stmt)) {
+        return ['success' => false, 'message' => 'Review could not be saved.'];
+    }
+
+    return ['success' => true, 'message' => 'Review saved successfully.'];
 }
 
 function getCustomerProfile($conn, $customerId)

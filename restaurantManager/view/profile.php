@@ -1,7 +1,8 @@
 <?php
-session_start();
+include __DIR__ . '/../controller/managerSession.php';
+managerRequirePage();
 
-include '../../dirCommon/dbconnect.php';
+include __DIR__ . '/../../dirCommon/dbconnect.php';
 
 $managerName = $_SESSION['user_name'] ?? 'Manager';
 $managerId = $_SESSION['user_id'] ?? 0;

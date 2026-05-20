@@ -1,8 +1,11 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+header('Content-Type: application/json');
 
-include '../../dirCommon/dbconnect.php';
-include '../model/loginRegistration.php';
+include __DIR__ . '/../../dirCommon/dbconnect.php';
+include __DIR__ . '/../model/loginRegistration.php';
 
 $firstName = $_POST['firstname'] ?? '';
 $lastName = $_POST['lastname'] ?? '';
@@ -48,12 +51,8 @@ if ($newUserId == false) {
     exit;
 }
 
-$_SESSION['user_id'] = $newUserId;
-$_SESSION['user_name'] = $name;
-$_SESSION['user_email'] = $email;
-$_SESSION['user_role'] = 'manager';
-
 echo json_encode([
     'success' => true,
-    'redirect' => '../restaurantManager/view/dashboard.php'
+    'message' => 'Registration successful. Your restaurant is pending admin approval.',
+    'redirect' => 'login.html?tab=manager-login'
 ]);

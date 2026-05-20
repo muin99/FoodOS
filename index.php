@@ -4,6 +4,20 @@ $activePage = 'home';
 $basePath = '';
 $extraCss = ['dirCommon/assets/css/landing.css'];
 include __DIR__ . '/dirCommon/header.php';
+$landingRole = $_SESSION['user_role'] ?? '';
+$dashboardHref = 'Customer/view/browseResturants.php';
+$dashboardLabel = 'Browse Restaurants';
+
+if ($landingRole === 'manager') {
+    $dashboardHref = 'restaurantManager/view/dashboard.php';
+    $dashboardLabel = 'Open Manager Dashboard';
+} elseif ($landingRole === 'agent') {
+    $dashboardHref = 'deliveryAgent/view/dashboard.php';
+    $dashboardLabel = 'Open Delivery Dashboard';
+} elseif ($landingRole === 'admin') {
+    $dashboardHref = 'admin/view/adminDashboard.php';
+    $dashboardLabel = 'Open Admin Dashboard';
+}
 ?>
 
     <main>
@@ -12,11 +26,13 @@ include __DIR__ . '/dirCommon/header.php';
                 <div class="hero-copy">
                     <span class="eyebrow">Online food ordering system</span>
                     <h1>BiteBuddy FoodOS</h1>
-                    <p>Browse restaurants, place orders, manage menus, assign deliveries, and monitor the platform from one simple PHP project.</p>
+                    <p>Order fresh meals from trusted local restaurants and track everything from checkout to delivery.</p>
 
                     <div class="hero-actions">
-                        <a class="primary-action" href="Customer/view/browseResturants.php">Browse Restaurants</a>
-                        <a class="secondary-action" href="dirCommon/login.html">Login or Register</a>
+                        <a class="primary-action" href="<?php echo htmlspecialchars($dashboardHref); ?>"><?php echo htmlspecialchars($dashboardLabel); ?></a>
+                        <?php if (empty($_SESSION['user_id'])): ?>
+                            <a class="secondary-action" href="dirCommon/login.html">Login or Register</a>
+                        <?php endif; ?>
                     </div>
                 </div>
 
@@ -47,38 +63,38 @@ include __DIR__ . '/dirCommon/header.php';
         </section>
 
         <section class="page-wrap quick-stats" aria-label="Platform summary">
-            <div><strong>4</strong><span>User roles</span></div>
-            <div><strong>12+</strong><span>Demo orders</span></div>
-            <div><strong>3</strong><span>Restaurant samples</span></div>
-            <div><strong>Basic</strong><span>PHP + MySQL</span></div>
+            <div><strong>Fast</strong><span>Simple ordering</span></div>
+            <div><strong>Local</strong><span>Nearby restaurants</span></div>
+            <div><strong>Fresh</strong><span>Prepared meals</span></div>
+            <div><strong>Clear</strong><span>Order tracking</span></div>
         </section>
 
         <section class="page-wrap role-section">
             <div class="section-heading">
-                <span class="eyebrow">Work areas</span>
-                <h2>Everything has a clear dashboard</h2>
+                <span class="eyebrow">For customers</span>
+                <h2>A cleaner way to order food</h2>
             </div>
 
             <div class="role-grid">
                 <a class="role-card" href="Customer/view/browseResturants.php">
                     <span>01</span>
-                    <h3>Customer</h3>
-                    <p>Browse restaurants, discover food, and start an order.</p>
+                    <h3>Browse</h3>
+                    <p>Explore approved restaurants and available menu items.</p>
                 </a>
-                <a class="role-card" href="restaurantManager/view/dashboard.php">
+                <a class="role-card" href="Customer/view/checkout.php">
                     <span>02</span>
-                    <h3>Restaurant Manager</h3>
-                    <p>Track orders, update menu items, and view restaurant insights.</p>
+                    <h3>Checkout</h3>
+                    <p>Review your cart, delivery address, and payment method.</p>
                 </a>
-                <a class="role-card" href="deliveryAgent/view/dashboard.php">
+                <a class="role-card" href="Customer/view/orders.php">
                     <span>03</span>
-                    <h3>Delivery Agent</h3>
-                    <p>Check available orders, manage status, and review earnings.</p>
+                    <h3>Track</h3>
+                    <p>Follow order status from restaurant acceptance to delivery.</p>
                 </a>
-                <a class="role-card" href="admin/view/adminDashboard.php">
+                <a class="role-card" href="Customer/view/orders.php">
                     <span>04</span>
-                    <h3>Admin</h3>
-                    <p>Review users, restaurants, platform totals, and approvals.</p>
+                    <h3>Review</h3>
+                    <p>Rate delivered orders and help restaurants improve.</p>
                 </a>
             </div>
         </section>
@@ -86,9 +102,9 @@ include __DIR__ . '/dirCommon/header.php';
         <section class="featured-band">
             <div class="page-wrap featured-grid">
                 <div>
-                    <span class="eyebrow">Demo restaurants</span>
-                    <h2>Import the demo SQL and start clicking around.</h2>
-                    <p>The demo data includes customers, managers, agents, restaurants, menus, orders, reviews, addresses, saved restaurants, and complaints.</p>
+                    <span class="eyebrow">Popular picks</span>
+                    <h2>Find something good without extra noise.</h2>
+                    <p>BiteBuddy keeps the customer side focused on food, cart, orders, and reviews. Team dashboards stay behind the right login.</p>
                 </div>
 
                 <div class="restaurant-strip">

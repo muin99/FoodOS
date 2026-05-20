@@ -1,17 +1,9 @@
 <?php
 
-session_start();
-
-include '../../dirCommon/dbconnect.php';
-include '../model/profileModel.php';
-
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Please login first.'
-    ]);
-    exit;
-}
+include __DIR__ . '/managerSession.php';
+managerRequireJson();
+include __DIR__ . '/../../dirCommon/dbconnect.php';
+include __DIR__ . '/../model/profileModel.php';
 
 $managerId = $_SESSION['user_id'];
 

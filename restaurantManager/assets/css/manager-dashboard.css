@@ -1217,6 +1217,90 @@ body{
     margin-right: 8px;
 }
 
+.manager-form-panel {
+    margin: 0 0 24px;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #ece4db;
+    border-radius: 8px;
+}
+
+.manager-form-panel h2 {
+    margin: 0 0 14px;
+    font-size: 20px;
+}
+
+.manager-form-panel form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.manager-form-panel label {
+    display: grid;
+    gap: 6px;
+    font-size: 14px;
+    color: #544b43;
+}
+
+.manager-form-panel input,
+.manager-form-panel select,
+.manager-form-panel textarea {
+    width: 100%;
+    border: 1px solid #ded4ca;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font: inherit;
+}
+
+.manager-form-panel textarea,
+.manager-form-panel .manager-check,
+.manager-form-panel button,
+.manager-form-panel p {
+    grid-column: 1 / -1;
+}
+
+.manager-check {
+    display: flex !important;
+    grid-template-columns: none !important;
+    align-items: center;
+    gap: 8px !important;
+}
+
+.manager-check input {
+    width: auto;
+}
+
+.category-row-wrap {
+    border-bottom: 1px solid #f0e6df;
+}
+
+.category-row-wrap .category-row {
+    border-bottom: 0;
+}
+
+.category-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 18px 12px 62px;
+}
+
+.category-actions button {
+    border: 1px solid #e0d3ca;
+    border-radius: 6px;
+    background: #fff;
+    color: #4b3029;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 7px 10px;
+}
+
+.category-actions button:hover {
+    border-color: #c21807;
+    color: #c21807;
+}
+
 /* ---------- Menu Tabs ---------- */
 .menu-tabs {
     display: flex;
@@ -3669,4 +3753,3 @@ body{
 .edit-hours-btn:hover {
     background-color: #0b2d21;
 }
-
