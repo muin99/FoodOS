@@ -1,8 +1,7 @@
 
 <!-- is_approved = 1 → Pending  -->
 <!-- is_approved = 2 → Approved  -->
-<!-- is_approved = 3 → Blocked  -->
-<?php
+<!-- is_approved = 3 → Blocked  --><?php
 
 $pageTitle  = 'Restaurants - Admin';
 $activePage = 'restaurants';
@@ -158,6 +157,7 @@ if (!isset($restaurants)) {
 
                                     <form method="POST"
                                           action="../controller/restaurantController.php"
+                                          class="admin-ajax-form"
                                           style="display:flex; gap:5px;">
 
                                         <input type="hidden"
@@ -259,6 +259,7 @@ if (!isset($restaurants)) {
 
                                 <form method="POST"
                                       action="../controller/restaurantController.php"
+                                      class="admin-ajax-form"
                                       style="margin-top:8px;">
 
                                     <input type="hidden"
@@ -389,6 +390,50 @@ document.getElementById("searchRestaurant")
 
     });
 
+});
+
+document.querySelectorAll(".admin-ajax-form").forEach(function(form) {
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const button = event.submitter;
+        const formData = new FormData(form);
+        if (button && button.name) {
+            formData.append(button.name, button.value);
+        }
+        formData.append("ajax", "1");
+
+        if (button) {
+            button.disabled = true;
+        }
+
+        fetch(form.action, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: formData
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            alert(data.message || "Restaurant action completed.");
+            if (data.success) {
+                location.reload();
+                return;
+            }
+            if (button) {
+                button.disabled = false;
+            }
+        })
+        .catch(function() {
+            alert("Restaurant action failed.");
+            if (button) {
+                button.disabled = false;
+            }
+        });
+    });
 });
 
 </script>
